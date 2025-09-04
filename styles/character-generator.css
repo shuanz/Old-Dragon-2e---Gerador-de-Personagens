@@ -143,11 +143,11 @@
 }
 
 .old-dragon-generator-modal .attribute-item {
-    background: #f9f9f9;
+    background: #f7f6ef; /* Cor dourado-50 do sistema Old Dragon 2e */
     padding: 8px;
     border-radius: 4px;
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid #d3d3d3;
 }
 
 .old-dragon-generator-modal .attribute-name {
@@ -338,7 +338,7 @@
     gap: 15px;
     margin-bottom: 20px;
     padding: 15px;
-    background: #f5f5f5; /* Cinza claro como na ficha */
+    background: #f7f6ef; /* Cor dourado-50 do sistema Old Dragon 2e */
     border-radius: 6px;
     border: 1px solid #d3d3d3;
 }
