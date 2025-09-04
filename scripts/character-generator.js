@@ -345,9 +345,45 @@ class OldDragon2eCharacterGenerator {
             }
 
             const allSpells = await spellPack.getDocuments();
-            const firstCircleSpells = allSpells.filter(spell => 
-                spell.system && spell.system.circle === 1
-            );
+            console.log('Total de magias encontradas:', allSpells.length);
+            
+            // Debug: mostra algumas magias para entender o formato
+            console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 3).map(s => ({ 
+                name: s.name, 
+                circle: s.system?.circle, 
+                system: s.system,
+                type: s.type,
+                systemKeys: Object.keys(s.system || {})
+            })));
+            
+            const firstCircleSpells = allSpells.filter(spell => {
+                // No Old Dragon 2e, as magias de 1º círculo têm valor "1" nos campos de escola
+                const system = spell.system || {};
+                
+                // Debug: mostra algumas magias para entender o formato
+                if (spell.name === 'Lama em Pedra' || spell.name === 'Simulacro' || spell.name === 'Disco Flutuante') {
+                    console.log(`Debug magia ${spell.name}:`, {
+                        arcane: system.arcane,
+                        divine: system.divine,
+                        necromancer: system.necromancer,
+                        illusionist: system.illusionist
+                    });
+                }
+                
+                // Verifica se qualquer escola tem valor "1" (string)
+                return system.arcane === "1" || 
+                       system.divine === "1" || 
+                       system.necromancer === "1" || 
+                       system.illusionist === "1";
+            });
+
+            console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
+            console.log('Exemplos de magias de 1º círculo:', firstCircleSpells.slice(0, 3).map(s => ({ name: s.name, circle: s.system?.circle })));
+            
+            // Debug: mostra todas as magias de 1º círculo para verificar se as exclusivas estão lá
+            if (firstCircleSpells.length > 0) {
+                console.log('Todas as magias de 1º círculo disponíveis:', firstCircleSpells.map(s => s.name));
+            }
 
             if (firstCircleSpells.length === 0) {
                 console.warn('Nenhuma magia de 1º círculo encontrada');
@@ -388,8 +424,18 @@ class OldDragon2eCharacterGenerator {
             const exclusiveSpells = this.getExclusiveSpells(characterClass, firstCircleSpells);
             initialSpells.push(...exclusiveSpells);
 
-            console.log(`Magias iniciais para ${characterClass}:`, initialSpells.map(s => s.name));
-            return initialSpells;
+            // Remove duplicatas pelo nome da magia
+            const seen = new Set();
+            const uniqueSpells = [];
+            for (const spell of initialSpells) {
+                if (!seen.has(spell.name)) {
+                    seen.add(spell.name);
+                    uniqueSpells.push(spell);
+                }
+            }
+
+            console.log(`Magias iniciais para ${characterClass}:`, uniqueSpells.map(s => s.name));
+            return uniqueSpells;
 
         } catch (error) {
             console.error('Erro ao gerar magias iniciais:', error);
@@ -414,8 +460,8 @@ class OldDragon2eCharacterGenerator {
         const exclusiveSpells = {
             necromante: ['Toque Sombrio', 'Aterrorizar'],
             necromancer: ['Toque Sombrio', 'Aterrorizar'],
-            ilusionista: ['Imagem Silenciosa', 'Desorientar'],
-            illusionist: ['Imagem Silenciosa', 'Desorientar']
+            ilusionista: ['Ilusão', 'Som Ilusório'],
+            illusionist: ['Ilusão', 'Som Ilusório']
         };
 
         for (const [key, spells] of Object.entries(exclusiveSpells)) {
@@ -434,15 +480,38 @@ class OldDragon2eCharacterGenerator {
         const exclusiveSpellNames = this.getExclusiveSpellNames(characterClass);
         const exclusiveSpells = [];
 
+        console.log(`Buscando magias exclusivas para ${characterClass}:`, exclusiveSpellNames);
+
         for (const spellName of exclusiveSpellNames) {
-            const spell = firstCircleSpells.find(s => 
-                s.name.toLowerCase().includes(spellName.toLowerCase())
+            // Busca exata primeiro
+            let spell = firstCircleSpells.find(s => 
+                s.name.toLowerCase() === spellName.toLowerCase()
             );
+            
+            // Se não encontrou, busca por contém
+            if (!spell) {
+                spell = firstCircleSpells.find(s => 
+                    s.name.toLowerCase().includes(spellName.toLowerCase())
+                );
+            }
+            
+            // Se ainda não encontrou, busca por palavras-chave
+            if (!spell) {
+                const keywords = spellName.toLowerCase().split(' ');
+                spell = firstCircleSpells.find(s => 
+                    keywords.every(keyword => s.name.toLowerCase().includes(keyword))
+                );
+            }
+            
             if (spell) {
                 exclusiveSpells.push(spell);
+                console.log(`  → Encontrada magia exclusiva: ${spell.name}`);
+            } else {
+                console.log(`  → Magia exclusiva não encontrada: ${spellName}`);
             }
         }
 
+        console.log(`Total de magias exclusivas encontradas: ${exclusiveSpells.length}`);
         return exclusiveSpells;
     }
 
@@ -977,12 +1046,18 @@ class OldDragon2eCharacterGenerator {
             try {
                 const className = (characterData.class || '').toString().toLowerCase();
                 const level = characterData.level || 1;
+                console.log('=== IMPORTAÇÃO DE MAGIAS ===');
+                console.log('Classe detectada:', className);
+                console.log('Nível:', level);
+                
                 // Mapeia classe -> escola de magia
                 let school = null;
                 if (/mago|bruxo|feiticeiro|sorcerer|wizard|warlock/.test(className)) school = 'arcane';
-                else if (/clérigo|clerigo|cleric|druida|xam[aã]/.test(className)) school = 'divine';
+                else if (/clérigo|clerigo|cleric|druida|xam[aã]|acad[eê]mico/.test(className)) school = 'divine';
                 else if (/necromante|necromancer/.test(className)) school = 'necromancer';
                 else if (/ilusionista|illusionist/.test(className)) school = 'illusionist';
+                
+                console.log('Escola de magia detectada:', school);
                 
                 // Para classes arcanas (Mago e especializações), não importa magias do SRD
                 // pois elas já são adicionadas via generateInitialSpells
@@ -992,10 +1067,12 @@ class OldDragon2eCharacterGenerator {
                 }
 
                 if (school) {
+                    console.log('Iniciando importação de magias para escola:', school);
                     const maxCircle = Math.max(1, Math.ceil(level / 2));
 
                     let spellPack = game.packs.get('olddragon2e.spells');
                     if (!spellPack) {
+                        console.log('Compêndio padrão não encontrado, buscando alternativas...');
                         spellPack = Array.from(game.packs).find(p => {
                             const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
                             const label = (p.metadata.label || '').toLowerCase();
@@ -1004,14 +1081,33 @@ class OldDragon2eCharacterGenerator {
                     }
 
                     if (spellPack) {
+                        console.log('Compêndio de magias encontrado:', spellPack.metadata.name);
                         const allSpells = await spellPack.getDocuments();
+                        console.log('Total de magias no compêndio:', allSpells.length);
+                        
                         const toCreate = [];
                         const existing = new Set(actor.items.filter(i => i.type === 'spell').map(i => i.name));
+                        console.log('Magias já existentes no personagem:', existing.size);
+                        
+                        let processedCount = 0;
+                        let validCount = 0;
+                        
                         for (const s of allSpells) {
                             if (s.type !== 'spell') continue;
-                            const v = parseInt(s.system?.[school]);
-                            if (!isNaN(v) && v > 0 && v <= maxCircle) {
-                                if (existing.has(s.name)) continue;
+                            processedCount++;
+                            
+                            const system = s.system || {};
+                            const schoolValue = system[school];
+                            const v = parseInt(schoolValue) || 0;
+                            console.log(`Magia ${s.name}: ${school}=${schoolValue} (${v}), círculo máximo: ${maxCircle}`);
+                            
+                            // Verifica se a magia tem valor válido para a escola e está dentro do círculo máximo
+                            if (schoolValue && schoolValue !== "null" && v > 0 && v <= maxCircle) {
+                                validCount++;
+                                if (existing.has(s.name)) {
+                                    console.log(`  → Já existe, pulando: ${s.name}`);
+                                    continue;
+                                }
                                 
                                 // Evita duplicação de magias que são tanto arcanas quanto divinas
                                 // Se a magia já existe com outro tipo, não adiciona novamente
@@ -1023,15 +1119,28 @@ class OldDragon2eCharacterGenerator {
                                         i.name === s.name && 
                                         i.system?.arcane
                                     );
-                                    if (existingArcane) continue;
+                                    if (existingArcane) {
+                                        console.log(`  → Já existe como arcana, pulando: ${s.name}`);
+                                        continue;
+                                    }
                                 }
                                 
                                 const obj = s.toObject();
                                 delete obj._id;
                                 toCreate.push(obj);
+                                existing.add(s.name);
+                                console.log(`  → Adicionada: ${s.name}`);
                             }
                         }
-                        if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
+                        
+                        console.log(`Processadas: ${processedCount}, Válidas: ${validCount}, Para criar: ${toCreate.length}`);
+                        
+                        if (toCreate.length) {
+                            await actor.createEmbeddedDocuments('Item', toCreate);
+                            console.log('Magias criadas com sucesso!');
+                        } else {
+                            console.log('Nenhuma magia válida encontrada para criar');
+                        }
                     } else {
                         console.warn('Compêndio de magias não encontrado.');
                     }
@@ -1173,15 +1282,19 @@ class OldDragon2eCharacterGenerator {
             // Adiciona magias iniciais se for classe que usa magias
             if (characterData.initialSpells && characterData.initialSpells.length > 0) {
                 try {
-                    const spellData = characterData.initialSpells.map(spell => ({
+                    const existingNames = new Set(actor.items.filter(i => i.type === 'spell').map(i => i.name));
+                    const spellsToAdd = characterData.initialSpells.filter(spell => !existingNames.has(spell.name));
+                    const spellData = spellsToAdd.map(spell => ({
                         name: spell.name,
                         type: 'spell',
                         img: spell.img || 'icons/svg/magic-swirl.svg',
                         system: spell.system
                     }));
-                    
-                    await actor.createEmbeddedDocuments('Item', spellData);
-                    console.log('Magias iniciais adicionadas:', characterData.initialSpells.map(s => s.name));
+
+                    if (spellData.length) {
+                        await actor.createEmbeddedDocuments('Item', spellData);
+                        console.log('Magias iniciais adicionadas:', spellsToAdd.map(s => s.name));
+                    }
                 } catch (error) {
                     console.error('Erro ao adicionar magias iniciais:', error);
                 }
@@ -1539,3 +1652,4 @@ Hooks.on('ready', function() {
     // Também tenta adicionar imediatamente se a aba já estiver aberta
     setTimeout(addGeneratorButton, 1000);
 });
+
