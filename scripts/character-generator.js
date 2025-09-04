@@ -1010,12 +1010,18 @@ class OldDragon2eCharacterGenerator {
             try {
                 const className = (characterData.class || '').toString().toLowerCase();
                 const level = characterData.level || 1;
+                console.log('=== IMPORTAÇÃO DE MAGIAS ===');
+                console.log('Classe detectada:', className);
+                console.log('Nível:', level);
+                
                 // Mapeia classe -> escola de magia
                 let school = null;
                 if (/mago|bruxo|feiticeiro|sorcerer|wizard|warlock/.test(className)) school = 'arcane';
-                else if (/clérigo|clerigo|cleric|druida|xam[aã]/.test(className)) school = 'divine';
+                else if (/clérigo|clerigo|cleric|druida|xam[aã]|acad[eê]mico/.test(className)) school = 'divine';
                 else if (/necromante|necromancer/.test(className)) school = 'necromancer';
                 else if (/ilusionista|illusionist/.test(className)) school = 'illusionist';
+                
+                console.log('Escola de magia detectada:', school);
                 
                 // Para classes arcanas (Mago e especializações), não importa magias do SRD
                 // pois elas já são adicionadas via generateInitialSpells
@@ -1025,10 +1031,12 @@ class OldDragon2eCharacterGenerator {
                 }
 
                 if (school) {
+                    console.log('Iniciando importação de magias para escola:', school);
                     const maxCircle = Math.max(1, Math.ceil(level / 2));
 
                     let spellPack = game.packs.get('olddragon2e.spells');
                     if (!spellPack) {
+                        console.log('Compêndio padrão não encontrado, buscando alternativas...');
                         spellPack = Array.from(game.packs).find(p => {
                             const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
                             const label = (p.metadata.label || '').toLowerCase();
@@ -1037,14 +1045,31 @@ class OldDragon2eCharacterGenerator {
                     }
 
                     if (spellPack) {
+                        console.log('Compêndio de magias encontrado:', spellPack.metadata.name);
                         const allSpells = await spellPack.getDocuments();
+                        console.log('Total de magias no compêndio:', allSpells.length);
+                        
                         const toCreate = [];
                         const existing = new Set(actor.items.filter(i => i.type === 'spell').map(i => i.name));
+                        console.log('Magias já existentes no personagem:', existing.size);
+                        
+                        let processedCount = 0;
+                        let validCount = 0;
+                        
                         for (const s of allSpells) {
                             if (s.type !== 'spell') continue;
-                            const v = parseInt(s.system?.[school]);
+                            processedCount++;
+                            
+                            const schoolValue = s.system?.[school];
+                            const v = parseInt(schoolValue);
+                            console.log(`Magia ${s.name}: ${school}=${schoolValue} (${v}), círculo máximo: ${maxCircle}`);
+                            
                             if (!isNaN(v) && v > 0 && v <= maxCircle) {
-                                if (existing.has(s.name)) continue;
+                                validCount++;
+                                if (existing.has(s.name)) {
+                                    console.log(`  → Já existe, pulando: ${s.name}`);
+                                    continue;
+                                }
                                 
                                 // Evita duplicação de magias que são tanto arcanas quanto divinas
                                 // Se a magia já existe com outro tipo, não adiciona novamente
@@ -1056,16 +1081,28 @@ class OldDragon2eCharacterGenerator {
                                         i.name === s.name && 
                                         i.system?.arcane
                                     );
-                                    if (existingArcane) continue;
+                                    if (existingArcane) {
+                                        console.log(`  → Já existe como arcana, pulando: ${s.name}`);
+                                        continue;
+                                    }
                                 }
                                 
                                 const obj = s.toObject();
                                 delete obj._id;
                                 toCreate.push(obj);
                                 existing.add(s.name);
+                                console.log(`  → Adicionada: ${s.name}`);
                             }
                         }
-                        if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
+                        
+                        console.log(`Processadas: ${processedCount}, Válidas: ${validCount}, Para criar: ${toCreate.length}`);
+                        
+                        if (toCreate.length) {
+                            await actor.createEmbeddedDocuments('Item', toCreate);
+                            console.log('Magias criadas com sucesso!');
+                        } else {
+                            console.log('Nenhuma magia válida encontrada para criar');
+                        }
                     } else {
                         console.warn('Compêndio de magias não encontrado.');
                     }
@@ -1577,3 +1614,4 @@ Hooks.on('ready', function() {
     // Também tenta adicionar imediatamente se a aba já estiver aberta
     setTimeout(addGeneratorButton, 1000);
 });
+
