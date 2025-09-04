@@ -1590,6 +1590,13 @@ class OldDragon2eCharacterGenerator {
                 // Debug: mostra classes específicas de raça
                 if (srdClass.name.includes('Aventureiro')) {
                     console.log('Classe específica encontrada:', srdClass.name, 'para raça:', localRaceId);
+                    console.log('Verificando condições:');
+                    console.log('  - localRaceId === "dwarf":', localRaceId === 'dwarf');
+                    console.log('  - localRaceId === "elf":', localRaceId === 'elf');
+                    console.log('  - localRaceId === "halfling":', localRaceId === 'halfling');
+                    console.log('  - className.includes("anão aventureiro"):', className.includes('anão aventureiro'));
+                    console.log('  - className.includes("elfo aventureiro"):', className.includes('elfo aventureiro'));
+                    console.log('  - className.includes("halfling aventureiro"):', className.includes('halfling aventureiro'));
                 }
                 
                 // Classes específicas de raça
