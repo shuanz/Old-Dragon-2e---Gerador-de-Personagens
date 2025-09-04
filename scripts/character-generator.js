@@ -361,15 +361,37 @@ class OldDragon2eCharacterGenerator {
                 armor: ['couro'],
                 forbidden: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'cota de malha', 'placa']
             },
+            // Especializações de Guerreiro
             paladin: {
                 weapons: ['espada', 'martelo', 'lança', 'arco'],
                 armor: ['couro', 'cota de malha', 'placa'],
                 forbidden: ['machado', 'adaga', 'best']
             },
+            bárbaro: {
+                weapons: ['machado', 'martelo', 'lança', 'arco'],
+                armor: ['couro'],
+                forbidden: ['espada longa', 'best', 'cota de malha', 'placa']
+            },
+            arqueiro: {
+                weapons: ['arco longo', 'arco curto', 'besta', 'adaga'],
+                armor: ['couro'],
+                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'cota de malha', 'placa']
+            },
+            // Especializações de Ladrão
             ranger: {
                 weapons: ['espada curta', 'arco longo', 'lança', 'adaga'],
                 armor: ['couro'],
                 forbidden: ['espada longa', 'machado', 'martelo', 'best', 'cota de malha', 'placa']
+            },
+            bardo: {
+                weapons: ['espada curta', 'adaga', 'arco curto'],
+                armor: ['couro'],
+                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'arco longo', 'best', 'cota de malha', 'placa']
+            },
+            assassino: {
+                weapons: ['adaga', 'espada curta', 'besta'],
+                armor: ['couro'],
+                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'arco', 'cota de malha', 'placa']
             },
             // Especializações divinas (herdam restrições do Clérigo)
             proscrito: {
@@ -434,9 +456,13 @@ class OldDragon2eCharacterGenerator {
         // Verifica se é uma classe divina (Clérigo e especializações)
         const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(characterClass);
         
+        // Verifica se é uma classe de habilidade (Ladrão e especializações que recebem magias)
+        const isSkillClassWithMagic = /bardo|bard/i.test(characterClass);
+        
         // Classes divinas (Clérigo, Druida, Acadêmico, Xamã, Proscrito) recebem todas as magias via importação do SRD
-        // Apenas classes arcanas recebem magias iniciais limitadas
-        if (!isMageClass && !isDivineClass) {
+        // Classes arcanas recebem magias iniciais limitadas
+        // Bardo recebe magias arcanas limitadas
+        if (!isMageClass && !isDivineClass && !isSkillClassWithMagic) {
             return [];
         }
 
@@ -1566,21 +1592,21 @@ class OldDragon2eCharacterGenerator {
                 if (localRaceId === 'elf' && className.includes('elfo aventureiro')) return true;
                 if (localRaceId === 'halfling' && className.includes('halfling aventureiro')) return true;
                 
-                // Classes de combate (Guerreiro e especializações)
-                const combatClasses = ['guerreiro', 'paladino', 'ranger', 'bárbaro', 'arqueiro', 'assassino'];
-                if (combatClasses.some(gc => className.includes(gc))) return true;
-                
-                // Classes arcanas (Mago e especializações)
-                const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bardo', 'bruxo'];
-                if (arcaneClasses.some(gc => className.includes(gc))) return true;
-                
-                // Classes divinas (Clérigo e especializações)
-                const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
-                if (divineClasses.some(gc => className.includes(gc))) return true;
-                
-                // Classes de habilidade
-                const skillClasses = ['ladino', 'ladrão'];
-                if (skillClasses.some(gc => className.includes(gc))) return true;
+                            // Classes de combate (Guerreiro e especializações)
+            const combatClasses = ['guerreiro', 'bárbaro', 'paladino', 'arqueiro'];
+            if (combatClasses.some(gc => className.includes(gc))) return true;
+            
+            // Classes arcanas (Mago e especializações)
+            const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bruxo'];
+            if (arcaneClasses.some(gc => className.includes(gc))) return true;
+            
+            // Classes divinas (Clérigo e especializações)
+            const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
+            if (divineClasses.some(gc => className.includes(gc))) return true;
+            
+            // Classes de habilidade (Ladrão e especializações)
+            const skillClasses = ['ladrão', 'ranger', 'bardo', 'assassino'];
+            if (skillClasses.some(gc => className.includes(gc))) return true;
                 
                 return false;
             });
@@ -1628,8 +1654,9 @@ class OldDragon2eCharacterGenerator {
             // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
             const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
             const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(selectedClass.name);
+            const isSkillClassWithMagic = /bardo|bard/i.test(selectedClass.name);
             
-            if (isArcaneClass) {
+            if (isArcaneClass || isSkillClassWithMagic) {
                 character.initialSpells = await this.generateInitialSpells(selectedClass.name);
                 console.log('Magias iniciais geradas:', character.initialSpells?.map(s => s.name) || 'Nenhuma');
             } else if (isDivineClass) {
