@@ -360,6 +360,16 @@ class OldDragon2eCharacterGenerator {
                 // No Old Dragon 2e, as magias de 1º círculo têm valor "1" nos campos de escola
                 const system = spell.system || {};
                 
+                // Debug: mostra algumas magias para entender o formato
+                if (spell.name === 'Lama em Pedra' || spell.name === 'Simulacro' || spell.name === 'Disco Flutuante') {
+                    console.log(`Debug magia ${spell.name}:`, {
+                        arcane: system.arcane,
+                        divine: system.divine,
+                        necromancer: system.necromancer,
+                        illusionist: system.illusionist
+                    });
+                }
+                
                 // Verifica se qualquer escola tem valor "1" (string)
                 return system.arcane === "1" || 
                        system.divine === "1" || 
