@@ -896,7 +896,12 @@ class OldDragon2eCharacterGenerator {
             return true;
         });
         
+        console.log('Raça selecionada:', race.id, race.name);
+        console.log('Classes disponíveis:', availableClasses.map(c => c.name));
+        console.log('Total de classes disponíveis:', availableClasses.length);
+        
         const characterClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
+        console.log('Classe selecionada:', characterClass.name, 'ID:', characterClass.id);
         const name = this.generateRaceName(race.id);
         const equipment = this.generateEquipment(characterClass.id);
         const hitPoints = this.calculateHitPoints(characterClass.id, attributes.constitution);
@@ -1422,6 +1427,42 @@ class OldDragon2eCharacterGenerator {
     }
     
     /**
+     * Carrega uma classe pelo nome do compêndio SRD
+     */
+    async loadClassByName(className) {
+        try {
+            let classPack = game.packs.get('olddragon2e.classes');
+            if (!classPack) {
+                // Fallback: tenta localizar um compêndio de classes pelo nome
+                classPack = Array.from(game.packs).find(p => {
+                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                    const label = (p.metadata.label || '').toLowerCase();
+                    return key.includes('classes') || label.includes('classe') || label.includes('classes');
+                });
+            }
+            if (!classPack) {
+                console.warn('Compêndio de classes não encontrado');
+                return null;
+            }
+            
+            const classesAll = await classPack.getDocuments();
+            const classes = classesAll.filter(doc => doc.type === 'class');
+            
+            // Busca a classe pelo nome (exato ou similar)
+            const classDoc = classes.find(doc => 
+                doc.name.toLowerCase() === className.toLowerCase() ||
+                doc.name.toLowerCase().includes(className.toLowerCase()) ||
+                className.toLowerCase().includes(doc.name.toLowerCase())
+            );
+            
+            return classDoc || null;
+        } catch (error) {
+            console.error('Erro ao carregar classe por nome:', error);
+            return null;
+        }
+    }
+
+    /**
      * Carrega uma classe aleatória do compêndio SRD
      */
     async loadRandomClass() {
@@ -1464,7 +1505,43 @@ class OldDragon2eCharacterGenerator {
         // Carrega raça e classe aleatórias do SRD
         console.log('Carregando raça e classe do SRD...');
         const selectedRace = await this.loadRandomRace();
-        const selectedClass = await this.loadRandomClass();
+        
+        // Carrega classe respeitando restrições de raça
+        let selectedClass = null;
+        if (selectedRace) {
+            // Mapeia o ID da raça do SRD para o formato local
+            const raceIdMapping = {
+                'gnome': 'gnome',
+                'dwarf': 'dwarf', 
+                'elf': 'elf',
+                'halfling': 'halfling',
+                'human': 'human',
+                'orc': 'orc'
+            };
+            
+            const localRaceId = raceIdMapping[selectedRace.id] || selectedRace.id;
+            console.log('Raça do SRD:', selectedRace.id, 'Mapeada para:', localRaceId);
+            
+            // Filtra classes disponíveis baseado na raça
+            const availableClasses = this.classes.filter(cls => {
+                if (cls.raceRestriction) {
+                    return cls.raceRestriction === localRaceId;
+                }
+                return true;
+            });
+            
+            console.log('Classes disponíveis para', localRaceId + ':', availableClasses.map(c => c.name));
+            
+            // Seleciona uma classe aleatória das disponíveis
+            const randomClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
+            
+            // Busca a classe correspondente no SRD
+            selectedClass = await this.loadClassByName(randomClass.name);
+            
+            console.log('Classe selecionada:', randomClass.name, 'SRD:', selectedClass);
+        } else {
+            selectedClass = await this.loadRandomClass();
+        }
         
         console.log('Raça selecionada:', selectedRace);
         console.log('Classe selecionada:', selectedClass);
