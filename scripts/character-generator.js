@@ -563,32 +563,32 @@ class OldDragon2eCharacterGenerator {
     generateEquipment(characterClass) {
         const baseEquipment = {
             fighter: [
-                'Espada longa', 'Escudo', 'Armadura de couro', 'Mochila', 'Rações (3 dias)',
-                'Corda (15m)', 'Tochas (6)', 'Pederneira e aço', 'Pote de ferro', 'Tenda'
+                'Espada Longa', 'Escudo', 'Armadura de Couro', 'Mochila', 'Ração de viagem (3)',
+                'Corda de Cânhamo', 'Tocha (6)', 'Pederneira', 'Tenda pequena', 'Saco de Dormir'
             ],
             mage: [
-                'Cajado', 'Túnica', 'Mochila', 'Pergaminhos', 'Tinta e pena',
-                'Vela (3)', 'Rações (2 dias)', 'Garrafa de água', 'Saco de dormir'
+                'Bordão/Cajado', 'Mochila', 'Pergaminho (3)', 'Pena e Tinta',
+                'Vela (3)', 'Ração de viagem (2)', 'Odre', 'Saco de Dormir'
             ],
             cleric: [
-                'Martelo de guerra', 'Escudo', 'Armadura de couro', 'Símbolo sagrado',
-                'Mochila', 'Rações (3 dias)', 'Garrafa de água', 'Vela (3)'
+                'Martelo de Batalha', 'Escudo', 'Armadura de Couro', 'Símbolo divino',
+                'Mochila', 'Ração de viagem (3)', 'Odre', 'Vela (3)'
             ],
             thief: [
-                'Adaga (2)', 'Arco curto', 'Flechas (20)', 'Armadura de couro',
-                'Mochila', 'Corda (15m)', 'Gancho de escalada', 'Rações (2 dias)'
+                'Adaga (2)', 'Arco Curto', 'Flecha de Guerra (20)', 'Armadura de Couro',
+                'Mochila', 'Corda de Cânhamo', 'Cravos/Ganchos', 'Ração de viagem (2)'
             ],
             druid: [
-                'Bastão', 'Armadura de couro', 'Mochila', 'Símbolo natural',
-                'Rações (3 dias)', 'Garrafa de água', 'Saco de dormir', 'Tochas (3)'
+                'Bordão/Cajado', 'Armadura de Couro', 'Mochila', 'Símbolo divino',
+                'Ração de viagem (3)', 'Odre', 'Saco de Dormir', 'Tocha (3)'
             ],
             paladin: [
-                'Espada longa', 'Escudo', 'Armadura de couro', 'Símbolo sagrado',
-                'Mochila', 'Rações (3 dias)', 'Garrafa de água', 'Tochas (3)'
+                'Espada Longa', 'Escudo', 'Armadura de Couro', 'Símbolo divino',
+                'Mochila', 'Ração de viagem (3)', 'Odre', 'Tocha (3)'
             ],
             ranger: [
-                'Espada curta', 'Arco longo', 'Flechas (20)', 'Armadura de couro',
-                'Mochila', 'Rações (3 dias)', 'Corda (15m)', 'Tochas (3)'
+                'Espada Curta', 'Arco Longo', 'Flecha de Guerra (20)', 'Armadura de Couro',
+                'Mochila', 'Ração de viagem (3)', 'Corda de Cânhamo', 'Tocha (3)'
             ]
         };
 
@@ -1286,23 +1286,7 @@ class OldDragon2eCharacterGenerator {
 
                         if (allow) itemsToCreate.push(itemData);
                     } else {
-                        // Sem documento no compêndio: aplica heurísticas de restrição antes de criar genérico
-                        const lower = baseName.toLowerCase();
-                        let allow = true;
-                        if (/escudo|shield/.test(lower) && !restrictions.shield) allow = false;
-                        if (/armadura|armor/.test(lower)) {
-                            if (restrictions.armor === 'none') allow = false;
-                            if (restrictions.armor === 'light' && !this.patterns.leatherArmor.test(lower)) allow = false;
-                            if (restrictions.leatherOnly && !this.patterns.leatherArmor.test(lower)) allow = false;
-                        }
-                        if (/espada|lan[cç]a|adaga|punhal|faca|arco|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante/.test(lower)) {
-                            if (restrictions.onlyImpact && !this.patterns.impactWeapons.test(lower)) allow = false;
-                            if (restrictions.onlySmall && !this.patterns.smallWeapons.test(lower)) allow = false;
-                            if (restrictions.noLarge && this.patterns.twoHandedHints.test(lower)) allow = false;
-                        }
-                        if (allow) {
-                            itemsToCreate.push({ name: baseName, type: 'misc', system: { quantity } });
-                        }
+                        console.warn(`Item não encontrado no SRD: ${baseName}`);
                     }
                 }
 
