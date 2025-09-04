@@ -1594,13 +1594,13 @@ class OldDragon2eCharacterGenerator {
                     console.log('  - localRaceId === "dwarf":', localRaceId === 'dwarf');
                     console.log('  - localRaceId === "elf":', localRaceId === 'elf');
                     console.log('  - localRaceId === "halfling":', localRaceId === 'halfling');
-                    console.log('  - className.includes("anão aventureiro"):', className.includes('anão aventureiro'));
+                    console.log('  - className.includes("anao aventureiro"):', className.includes('anao aventureiro'));
                     console.log('  - className.includes("elfo aventureiro"):', className.includes('elfo aventureiro'));
                     console.log('  - className.includes("halfling aventureiro"):', className.includes('halfling aventureiro'));
                 }
                 
                 // Classes específicas de raça
-                if (localRaceId === 'dwarf' && className.includes('anão aventureiro')) return true;
+                if (localRaceId === 'dwarf' && className.includes('anao aventureiro')) return true;
                 if (localRaceId === 'elf' && className.includes('elfo aventureiro')) return true;
                 if (localRaceId === 'halfling' && className.includes('halfling aventureiro')) return true;
                 
