@@ -1453,6 +1453,18 @@ class OldDragon2eCharacterGenerator {
             <div class="old-dragon-generator-modal">
                 <h2><i class="fas fa-dice-d20"></i> Gerador de Personagem - Old Dragon 2e</h2>
                 
+                <div class="buttons">
+                    <button class="btn btn-primary" id="create-character">
+                        <i class="fas fa-plus"></i> Criar Personagem
+                    </button>
+                    <button class="btn btn-secondary" id="regenerate-character">
+                        <i class="fas fa-redo"></i> Regenerar
+                    </button>
+                    <button class="btn btn-secondary" id="close-modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+                
                 <div class="character-preview">
                     <h3>Prévia do Personagem</h3>
                     
@@ -1546,18 +1558,6 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="buttons">
-                    <button class="btn btn-primary" id="create-character">
-                        <i class="fas fa-plus"></i> Criar Personagem
-                    </button>
-                    <button class="btn btn-secondary" id="regenerate-character">
-                        <i class="fas fa-redo"></i> Regenerar
-                    </button>
-                    <button class="btn btn-secondary" id="close-modal">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
                 </div>
             </div>
         `;
