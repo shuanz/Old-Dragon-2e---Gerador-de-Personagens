@@ -357,16 +357,15 @@ class OldDragon2eCharacterGenerator {
             })));
             
             const firstCircleSpells = allSpells.filter(spell => {
-                // Tenta diferentes formatos de círculo
-                const circle = spell.system?.circle;
+                // No Old Dragon 2e, as magias de 1º círculo têm valor "1" nos campos de escola
+                const system = spell.system || {};
+                const arcane = parseInt(system.arcane) || 0;
+                const divine = parseInt(system.divine) || 0;
+                const necromancer = parseInt(system.necromancer) || 0;
+                const illusionist = parseInt(system.illusionist) || 0;
                 
-                if (typeof circle === 'number') return circle === 1;
-                if (typeof circle === 'string') {
-                    const parsed = parseInt(circle, 10);
-                    return !isNaN(parsed) && parsed === 1;
-                }
-                // Fallback: verifica se contém "1" no círculo
-                return circle && circle.toString().includes('1');
+                // Magia de 1º círculo se qualquer escola tiver valor 1
+                return arcane === 1 || divine === 1 || necromancer === 1 || illusionist === 1;
             });
 
             console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
@@ -1060,11 +1059,12 @@ class OldDragon2eCharacterGenerator {
                             if (s.type !== 'spell') continue;
                             processedCount++;
                             
-                            const schoolValue = s.system?.[school];
-                            const v = parseInt(schoolValue);
+                            const system = s.system || {};
+                            const schoolValue = system[school];
+                            const v = parseInt(schoolValue) || 0;
                             console.log(`Magia ${s.name}: ${school}=${schoolValue} (${v}), círculo máximo: ${maxCircle}`);
                             
-                            if (!isNaN(v) && v > 0 && v <= maxCircle) {
+                            if (v > 0 && v <= maxCircle) {
                                 validCount++;
                                 if (existing.has(s.name)) {
                                     console.log(`  → Já existe, pulando: ${s.name}`);
