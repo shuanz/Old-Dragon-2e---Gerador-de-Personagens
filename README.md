@@ -20,82 +20,96 @@ Um módulo para Foundry Virtual Tabletop que permite gerar personagens automatic
 
 ## Como Usar
 
-1. Abra o menu de Atores (Actors) no Foundry VTT
-2. Clique no botão "Gerar Personagem" no cabeçalho da janela
-3. Um personagem será criado automaticamente com:
-   - Nome aleatório
+1. Abra o menu de Atores no Foundry VTT
+2. Clique no botão "Gerar Personagem" que aparece no canto superior direito
+3. O módulo gerará automaticamente um personagem com:
+   - Atributos aleatórios (3d6)
    - Raça e classe aleatórias
-   - Atributos gerados com 3d6
-   - Equipamento apropriado para a classe
+   - Equipamento apropriado
    - Pontos de vida calculados
+   - Modificadores de atributos
 
-## Requisitos
+## Configurações
 
-- Foundry Virtual Tabletop v11 ou superior
-- Sistema Old Dragon 2e instalado
+O módulo não requer configurações especiais. Ele funciona automaticamente com o sistema Old Dragon 2e.
+
+## Compatibilidade
+
+- **Foundry VTT**: v10+
+- **Sistema**: Old Dragon 2e
+- **Idioma**: Português Brasileiro
 
 ## Estrutura do Projeto
 
 ```
 old-dragon-2e-gerador-de-personagens/
-├── module.json                 # Manifesto do módulo
+├── module.json              # Configuração do módulo
 ├── scripts/
-│   └── character-generator.js   # Script principal
+│   ├── character-generator.js  # Lógica principal
+│   └── settings.js            # Configurações
 ├── styles/
-│   └── character-generator.css  # Estilos CSS
+│   └── character-generator.css # Estilos do modal
 ├── templates/
 │   └── character-generator.html # Template HTML
 ├── lang/
-│   └── pt-BR.json             # Localização em português
-└── README.md                   # Este arquivo
+│   └── pt-BR.json            # Traduções
+└── README.md                 # Este arquivo
 ```
 
-## Funcionalidades Técnicas
+## Funcionalidades Detalhadas
 
 ### Geração de Atributos
 - Usa 3d6 para cada atributo (Força, Destreza, Constituição, Inteligência, Sabedoria, Carisma)
-- Calcula modificadores automaticamente baseado na tabela do Old Dragon 2e
+- Calcula modificadores automaticamente
+- Aplica bônus de raça quando aplicável
 
-### Cálculo de HP
-- HP base por classe:
-  - Guerreiro/Paladino: 8 HP
-  - Clérigo/Druida/Ranger: 6 HP
-  - Mago/Ladino: 4 HP
-- Modificador de constituição aplicado
+### Raças Suportadas
+- **Humano**: Bônus +1 em todos os atributos
+- **Elfo**: +1 Inteligência, +1 Destreza, -1 Constituição
+- **Anão**: +1 Constituição, +1 Força, -1 Carisma
+- **Halfling**: +1 Destreza, +1 Carisma, -1 Força
+- **Orc**: +1 Força, +1 Constituição, -1 Inteligência, -1 Carisma
+- **Goblin**: +1 Destreza, +1 Inteligência, -1 Força, -1 Constituição
+
+### Classes Suportadas
+- **Guerreiro**: D10 de vida, armas e armaduras
+- **Mago**: D4 de vida, magias arcanas
+- **Clérigo**: D8 de vida, magias divinas
+- **Ladino**: D6 de vida, habilidades furtivas
+- **Druida**: D8 de vida, magias divinas da natureza
+- **Paladino**: D10 de vida, habilidades sagradas
+- **Ranger**: D6 de vida, habilidades de sobrevivência
 
 ### Equipamento por Classe
-- **Guerreiro**: Espada longa, escudo, armadura de couro, mochila, rações, etc.
-- **Mago**: Cajado, túnica, pergaminhos, tinta e pena, etc.
-- **Clérigo**: Martelo de guerra, escudo, símbolo sagrado, etc.
-- **Ladino**: Adagas, arco curto, flechas, gancho de escalada, etc.
-- **Druida**: Bastão, símbolo natural, saco de dormir, etc.
-- **Paladino**: Espada longa, escudo, símbolo sagrado, etc.
-- **Ranger**: Espada curta, arco longo, flechas, etc.
+Cada classe recebe equipamento apropriado:
+- **Guerreiro**: Espada longa, escudo, armadura de couro
+- **Mago**: Cajado, túnica, pergaminhos
+- **Clérigo**: Martelo de guerra, escudo, armadura
+- **Ladino**: Adaga, armadura de couro, ferramentas
+- E assim por diante...
 
 ## Desenvolvimento
 
-### Hooks Utilizados
-- `Hooks.on('init')`: Inicialização do módulo
-- `Hooks.on('ready')`: Configuração após carregamento
-- `Hooks.on('renderActorDirectory')`: Adição do botão na interface
+### Pré-requisitos
+- Node.js (opcional, para desenvolvimento)
+- Foundry VTT
+- Sistema Old Dragon 2e
 
-### Classes Principais
-- `OldDragon2eCharacterGenerator`: Classe principal para geração de personagens
+### Estrutura do Código
+- `character-generator.js`: Contém toda a lógica de geração
+- `settings.js`: Configurações do módulo
+- `character-generator.css`: Estilos do modal
+- `character-generator.html`: Template do modal
 
 ## Licença
 
-MIT License - veja o arquivo LICENSE para detalhes.
-
-## Suporte
-
-Para reportar bugs ou solicitar funcionalidades, abra uma issue no GitHub:
-https://github.com/shuanzoleiron/old-dragon-2e-gerador-de-personagens/issues
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
 ## Changelog
 
 ### v1.0.0
-- Versão inicial do módulo
-- Geração automática de personagens
+- Lançamento inicial
+- Geração básica de personagens
 - Suporte a todas as raças e classes do Old Dragon 2e
 - Interface integrada ao Foundry VTT
 - Localização em português brasileiro
