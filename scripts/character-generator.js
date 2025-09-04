@@ -370,6 +370,22 @@ class OldDragon2eCharacterGenerator {
                 weapons: ['espada curta', 'arco longo', 'lança', 'adaga'],
                 armor: ['couro'],
                 forbidden: ['espada longa', 'machado', 'martelo', 'best', 'cota de malha', 'placa']
+            },
+            // Especializações divinas (herdam restrições do Clérigo)
+            proscrito: {
+                weapons: ['martelo', 'clava', 'maça', 'cajado'],
+                armor: ['couro', 'cota de malha', 'placa'],
+                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
+            },
+            xamã: {
+                weapons: ['martelo', 'clava', 'maça', 'cajado'],
+                armor: ['couro', 'cota de malha', 'placa'],
+                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
+            },
+            acadêmico: {
+                weapons: ['martelo', 'clava', 'maça', 'cajado'],
+                armor: ['couro', 'cota de malha', 'placa'],
+                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
             }
         };
 
@@ -415,9 +431,12 @@ class OldDragon2eCharacterGenerator {
         // Verifica se é uma classe arcana (Mago e especializações)
         const isMageClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(characterClass);
         
-        // Classes divinas (Clérigo, Druida) recebem todas as magias via importação do SRD
+        // Verifica se é uma classe divina (Clérigo e especializações)
+        const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(characterClass);
+        
+        // Classes divinas (Clérigo, Druida, Acadêmico, Xamã, Proscrito) recebem todas as magias via importação do SRD
         // Apenas classes arcanas recebem magias iniciais limitadas
-        if (!isMageClass) {
+        if (!isMageClass && !isDivineClass) {
             return [];
         }
 
@@ -1608,10 +1627,12 @@ class OldDragon2eCharacterGenerator {
             
             // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
             const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
+            const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(selectedClass.name);
+            
             if (isArcaneClass) {
                 character.initialSpells = await this.generateInitialSpells(selectedClass.name);
                 console.log('Magias iniciais geradas:', character.initialSpells?.map(s => s.name) || 'Nenhuma');
-            } else {
+            } else if (isDivineClass) {
                 console.log('Classe divina detectada, magias serão importadas do SRD');
             }
         }
