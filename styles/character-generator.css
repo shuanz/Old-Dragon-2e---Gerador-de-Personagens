@@ -49,35 +49,39 @@
 
 /* Modal de geração de personagem */
 .old-dragon-generator-modal {
-    background: #f5f5f5;
+    background: #faf9f6; /* Cor de pergaminho claro */
     border-radius: 8px;
     padding: 20px;
     max-width: 1000px;
     margin: 20px auto;
     max-height: 80vh;
     overflow-y: auto;
+    border: 1px solid #d3d3d3;
 }
 
 .old-dragon-generator-modal h2 {
-    color: #8B4513;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     text-align: center;
     margin-bottom: 20px;
     font-size: 1.5em;
+    font-weight: bold;
 }
 
 .old-dragon-generator-modal .character-preview {
-    background: white;
-    border: 2px solid #8B4513;
+    background: #fefefe; /* Branco levemente off-white */
+    border: 1px solid #d3d3d3;
     border-radius: 6px;
     padding: 15px;
     margin: 15px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .old-dragon-generator-modal .character-preview h3 {
-    color: #A0522D;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 15px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #d3d3d3;
     padding-bottom: 5px;
+    font-weight: bold;
 }
 
 /* Layout principal de duas colunas */
@@ -97,17 +101,18 @@
 
 /* Informações básicas compactas */
 .old-dragon-generator-modal .character-basic-info {
-    background: white;
-    border: 2px solid #8B4513;
+    background: #fefefe; /* Branco levemente off-white */
+    border: 1px solid #d3d3d3;
     border-radius: 6px;
     padding: 12px;
     margin: 0;
 }
 
 .old-dragon-generator-modal .character-basic-info h4 {
-    color: #A0522D;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 8px;
     font-size: 1em;
+    font-weight: bold;
 }
 
 .old-dragon-generator-modal .info-grid {
@@ -130,9 +135,10 @@
 
 .old-dragon-generator-modal .attributes-grid h4 {
     grid-column: 1 / -1;
-    color: #A0522D;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 8px;
     font-size: 1em;
+    font-weight: bold;
 }
 
 .old-dragon-generator-modal .attribute-item {
@@ -145,7 +151,7 @@
 
 .old-dragon-generator-modal .attribute-name {
     font-weight: bold;
-    color: #8B4513;
+    color: #333; /* Texto escuro como na ficha */
     font-size: 0.9em;
 }
 
@@ -161,17 +167,18 @@
 }
 
 .old-dragon-generator-modal .race-abilities {
-    background: #f0f8ff;
+    background: #fefefe; /* Branco levemente off-white */
     padding: 10px;
     border-radius: 4px;
-    border: 1px solid #4a90e2;
+    border: 1px solid #d3d3d3;
     margin: 0;
 }
 
 .old-dragon-generator-modal .race-abilities h4 {
-    color: #2c5aa0;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 8px;
     font-size: 1em;
+    font-weight: bold;
 }
 
 .old-dragon-generator-modal .race-abilities ul {
@@ -329,9 +336,9 @@
     gap: 15px;
     margin-bottom: 20px;
     padding: 15px;
-    background: #f8f9fa;
+    background: #f5f5f5; /* Cinza claro como na ficha */
     border-radius: 6px;
-    border: 1px solid #dee2e6;
+    border: 1px solid #d3d3d3;
 }
 
 .old-dragon-generator-modal .btn {
@@ -345,13 +352,15 @@
 }
 
 .old-dragon-generator-modal .btn-primary {
-    background: linear-gradient(135deg, #8B4513, #A0522D);
+    background: #8B0000; /* Vermelho escuro como na ficha */
     color: white;
+    border: 1px solid #660000;
 }
 
 .old-dragon-generator-modal .btn-secondary {
-    background: #6c757d;
+    background: #696969; /* Cinza escuro como na ficha */
     color: white;
+    border: 1px solid #555555;
 }
 
 .old-dragon-generator-modal .btn:hover {
