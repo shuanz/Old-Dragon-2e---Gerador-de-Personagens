@@ -1587,6 +1587,11 @@ class OldDragon2eCharacterGenerator {
             const availableClasses = srdClasses.filter(srdClass => {
                 const className = srdClass.name.toLowerCase();
                 
+                // Debug: mostra classes específicas de raça
+                if (srdClass.name.includes('Aventureiro')) {
+                    console.log('Classe específica encontrada:', srdClass.name, 'para raça:', localRaceId);
+                }
+                
                 // Classes específicas de raça
                 if (localRaceId === 'dwarf' && className.includes('anão aventureiro')) return true;
                 if (localRaceId === 'elf' && className.includes('elfo aventureiro')) return true;
