@@ -359,13 +359,12 @@ class OldDragon2eCharacterGenerator {
             const firstCircleSpells = allSpells.filter(spell => {
                 // No Old Dragon 2e, as magias de 1º círculo têm valor "1" nos campos de escola
                 const system = spell.system || {};
-                const arcane = parseInt(system.arcane) || 0;
-                const divine = parseInt(system.divine) || 0;
-                const necromancer = parseInt(system.necromancer) || 0;
-                const illusionist = parseInt(system.illusionist) || 0;
                 
-                // Magia de 1º círculo se qualquer escola tiver valor 1
-                return arcane === 1 || divine === 1 || necromancer === 1 || illusionist === 1;
+                // Verifica se qualquer escola tem valor "1" (string)
+                return system.arcane === "1" || 
+                       system.divine === "1" || 
+                       system.necromancer === "1" || 
+                       system.illusionist === "1";
             });
 
             console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
@@ -1064,7 +1063,8 @@ class OldDragon2eCharacterGenerator {
                             const v = parseInt(schoolValue) || 0;
                             console.log(`Magia ${s.name}: ${school}=${schoolValue} (${v}), círculo máximo: ${maxCircle}`);
                             
-                            if (v > 0 && v <= maxCircle) {
+                            // Verifica se a magia tem valor válido para a escola e está dentro do círculo máximo
+                            if (schoolValue && schoolValue !== "null" && v > 0 && v <= maxCircle) {
                                 validCount++;
                                 if (existing.has(s.name)) {
                                     console.log(`  → Já existe, pulando: ${s.name}`);
