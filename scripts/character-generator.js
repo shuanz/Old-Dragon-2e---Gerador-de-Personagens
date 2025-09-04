@@ -328,12 +328,16 @@ class OldDragon2eCharacterGenerator {
      * Gera magias iniciais para o Mago (3 escolhidas + 1 aleatória) + magias exclusivas se especializado
      */
     async generateInitialSpells(characterClass) {
+        console.log('generateInitialSpells chamada para:', characterClass);
+        
         // Verifica se é uma classe arcana (Mago e especializações)
         const isMageClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(characterClass);
+        console.log('É classe arcana?', isMageClass);
         
         // Classes divinas (Clérigo, Druida) recebem todas as magias via importação do SRD
         // Apenas classes arcanas recebem magias iniciais limitadas
         if (!isMageClass) {
+            console.log('Classe não é arcana, retornando array vazio');
             return [];
         }
 
@@ -345,9 +349,12 @@ class OldDragon2eCharacterGenerator {
             }
 
             const allSpells = await spellPack.getDocuments();
+            console.log('Total de magias encontradas:', allSpells.length);
+            
             const firstCircleSpells = allSpells.filter(spell => 
                 spell.system && spell.system.circle === 1
             );
+            console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
 
             if (firstCircleSpells.length === 0) {
                 console.warn('Nenhuma magia de 1º círculo encontrada');
@@ -365,11 +372,15 @@ class OldDragon2eCharacterGenerator {
 
             // Adiciona as 3 magias escolhidas se existirem
             for (const spellName of recommendedSpells) {
+                console.log(`Buscando magia: ${spellName}`);
                 const spell = firstCircleSpells.find(s => 
                     s.name.toLowerCase().includes(spellName.toLowerCase())
                 );
                 if (spell) {
+                    console.log(`Magia encontrada: ${spell.name}`);
                     initialSpells.push(spell);
+                } else {
+                    console.log(`Magia não encontrada: ${spellName}`);
                 }
             }
 
@@ -385,7 +396,9 @@ class OldDragon2eCharacterGenerator {
             }
 
             // 3. Adiciona magias exclusivas da especialização (se aplicável)
+            console.log('Buscando magias exclusivas para:', characterClass);
             const exclusiveSpells = this.getExclusiveSpells(characterClass, firstCircleSpells);
+            console.log('Magias exclusivas encontradas:', exclusiveSpells.map(s => s.name));
             initialSpells.push(...exclusiveSpells);
 
             console.log(`Magias iniciais para ${characterClass}:`, initialSpells.map(s => s.name));
