@@ -1547,9 +1547,21 @@ class OldDragon2eCharacterGenerator {
                 if (localRaceId === 'elf' && className.includes('elfo aventureiro')) return true;
                 if (localRaceId === 'halfling' && className.includes('halfling aventureiro')) return true;
                 
-                // Classes genéricas (não específicas de raça)
-                const genericClasses = ['guerreiro', 'clérigo', 'ladino', 'ladrão', 'mago', 'druida', 'paladino', 'ranger', 'bárbaro', 'bardo', 'bruxo', 'acadêmico', 'arqueiro', 'assassino', 'ilusionista', 'necromante', 'proscrito', 'xamã'];
-                if (genericClasses.some(gc => className.includes(gc))) return true;
+                // Classes de combate (Guerreiro e especializações)
+                const combatClasses = ['guerreiro', 'paladino', 'ranger', 'bárbaro', 'arqueiro', 'assassino'];
+                if (combatClasses.some(gc => className.includes(gc))) return true;
+                
+                // Classes arcanas (Mago e especializações)
+                const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bardo', 'bruxo'];
+                if (arcaneClasses.some(gc => className.includes(gc))) return true;
+                
+                // Classes divinas (Clérigo e especializações)
+                const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
+                if (divineClasses.some(gc => className.includes(gc))) return true;
+                
+                // Classes de habilidade
+                const skillClasses = ['ladino', 'ladrão'];
+                if (skillClasses.some(gc => className.includes(gc))) return true;
                 
                 return false;
             });
