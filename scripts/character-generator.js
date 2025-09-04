@@ -379,6 +379,11 @@ class OldDragon2eCharacterGenerator {
 
             console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
             console.log('Exemplos de magias de 1º círculo:', firstCircleSpells.slice(0, 3).map(s => ({ name: s.name, circle: s.system?.circle })));
+            
+            // Debug: mostra todas as magias de 1º círculo para verificar se as exclusivas estão lá
+            if (firstCircleSpells.length > 0) {
+                console.log('Todas as magias de 1º círculo disponíveis:', firstCircleSpells.map(s => s.name));
+            }
 
             if (firstCircleSpells.length === 0) {
                 console.warn('Nenhuma magia de 1º círculo encontrada');
@@ -455,8 +460,8 @@ class OldDragon2eCharacterGenerator {
         const exclusiveSpells = {
             necromante: ['Toque Sombrio', 'Aterrorizar'],
             necromancer: ['Toque Sombrio', 'Aterrorizar'],
-            ilusionista: ['Imagem Silenciosa', 'Desorientar'],
-            illusionist: ['Imagem Silenciosa', 'Desorientar']
+            ilusionista: ['Ilusão', 'Som Ilusório'],
+            illusionist: ['Ilusão', 'Som Ilusório']
         };
 
         for (const [key, spells] of Object.entries(exclusiveSpells)) {
@@ -475,15 +480,38 @@ class OldDragon2eCharacterGenerator {
         const exclusiveSpellNames = this.getExclusiveSpellNames(characterClass);
         const exclusiveSpells = [];
 
+        console.log(`Buscando magias exclusivas para ${characterClass}:`, exclusiveSpellNames);
+
         for (const spellName of exclusiveSpellNames) {
-            const spell = firstCircleSpells.find(s => 
-                s.name.toLowerCase().includes(spellName.toLowerCase())
+            // Busca exata primeiro
+            let spell = firstCircleSpells.find(s => 
+                s.name.toLowerCase() === spellName.toLowerCase()
             );
+            
+            // Se não encontrou, busca por contém
+            if (!spell) {
+                spell = firstCircleSpells.find(s => 
+                    s.name.toLowerCase().includes(spellName.toLowerCase())
+                );
+            }
+            
+            // Se ainda não encontrou, busca por palavras-chave
+            if (!spell) {
+                const keywords = spellName.toLowerCase().split(' ');
+                spell = firstCircleSpells.find(s => 
+                    keywords.every(keyword => s.name.toLowerCase().includes(keyword))
+                );
+            }
+            
             if (spell) {
                 exclusiveSpells.push(spell);
+                console.log(`  → Encontrada magia exclusiva: ${spell.name}`);
+            } else {
+                console.log(`  → Magia exclusiva não encontrada: ${spellName}`);
             }
         }
 
+        console.log(`Total de magias exclusivas encontradas: ${exclusiveSpells.length}`);
         return exclusiveSpells;
     }
 
