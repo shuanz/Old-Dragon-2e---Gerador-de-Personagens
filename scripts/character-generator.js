@@ -1548,7 +1548,7 @@ class OldDragon2eCharacterGenerator {
                 if (localRaceId === 'halfling' && className.includes('halfling aventureiro')) return true;
                 
                 // Classes genéricas (não específicas de raça)
-                const genericClasses = ['guerreiro', 'clérigo', 'ladino', 'ladrão', 'mago', 'druida', 'paladino', 'ranger', 'bárbaro', 'bardo', 'bruxo', 'acadêmico', 'arqueiro', 'assassino', 'ilusionista', 'necromante'];
+                const genericClasses = ['guerreiro', 'clérigo', 'ladino', 'ladrão', 'mago', 'druida', 'paladino', 'ranger', 'bárbaro', 'bardo', 'bruxo', 'acadêmico', 'arqueiro', 'assassino', 'ilusionista', 'necromante', 'proscrito', 'xamã'];
                 if (genericClasses.some(gc => className.includes(gc))) return true;
                 
                 return false;
