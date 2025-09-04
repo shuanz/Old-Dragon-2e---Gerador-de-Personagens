@@ -347,9 +347,19 @@ class OldDragon2eCharacterGenerator {
             const allSpells = await spellPack.getDocuments();
             console.log('Total de magias encontradas:', allSpells.length);
             
+            // Debug: mostra algumas magias para entender o formato
+            console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 5).map(s => ({ 
+                name: s.name, 
+                circle: s.system?.circle, 
+                system: s.system,
+                type: s.type
+            })));
+            
             const firstCircleSpells = allSpells.filter(spell => {
                 // Tenta diferentes formatos de círculo
                 const circle = spell.system?.circle;
+                console.log(`Verificando magia ${spell.name}:`, { circle, type: typeof circle });
+                
                 if (typeof circle === 'number') return circle === 1;
                 if (typeof circle === 'string') {
                     const parsed = parseInt(circle, 10);
@@ -360,12 +370,10 @@ class OldDragon2eCharacterGenerator {
             });
 
             console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
-            console.log('Exemplos de magias:', firstCircleSpells.slice(0, 3).map(s => ({ name: s.name, circle: s.system?.circle })));
+            console.log('Exemplos de magias de 1º círculo:', firstCircleSpells.slice(0, 3).map(s => ({ name: s.name, circle: s.system?.circle })));
 
             if (firstCircleSpells.length === 0) {
                 console.warn('Nenhuma magia de 1º círculo encontrada');
-                // Debug: mostra algumas magias para entender o formato
-                console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 5).map(s => ({ name: s.name, circle: s.system?.circle, system: s.system })));
                 return [];
             }
 
