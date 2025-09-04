@@ -1524,29 +1524,44 @@ class OldDragon2eCharacterGenerator {
             const localRaceId = raceIdMapping[selectedRace.id] || selectedRace.id;
             console.log('Raça do SRD:', selectedRace.id, 'Mapeada para:', localRaceId);
             
-            // Filtra classes disponíveis baseado na raça
-            const availableClasses = this.classes.filter(cls => {
-                if (cls.raceRestriction) {
-                    return cls.raceRestriction === localRaceId;
-                }
-                return true;
+            // Carrega todas as classes do SRD
+            let classPack = game.packs.get('olddragon2e.classes');
+            if (!classPack) {
+                classPack = Array.from(game.packs).find(p => {
+                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                    const label = (p.metadata.label || '').toLowerCase();
+                    return key.includes('classes') || label.includes('classe') || label.includes('classes');
+                });
+            }
+            
+            const classesAll = await classPack.getDocuments();
+            const srdClasses = classesAll.filter(doc => doc.type === 'class');
+            console.log('Todas as classes do SRD:', srdClasses.map(c => c.name));
+            
+            // Filtra classes do SRD baseado na raça
+            const availableClasses = srdClasses.filter(srdClass => {
+                const className = srdClass.name.toLowerCase();
+                
+                // Classes específicas de raça
+                if (localRaceId === 'dwarf' && className.includes('anão aventureiro')) return true;
+                if (localRaceId === 'elf' && className.includes('elfo aventureiro')) return true;
+                if (localRaceId === 'halfling' && className.includes('halfling aventureiro')) return true;
+                
+                // Classes genéricas (não específicas de raça)
+                const genericClasses = ['guerreiro', 'clérigo', 'ladino', 'ladrão', 'mago', 'druida', 'paladino', 'ranger', 'bárbaro', 'bardo', 'bruxo', 'acadêmico', 'arqueiro', 'assassino', 'ilusionista', 'necromante'];
+                if (genericClasses.some(gc => className.includes(gc))) return true;
+                
+                return false;
             });
             
-            console.log('Todas as classes locais:', this.classes.map(c => c.name));
             console.log('Classes disponíveis para', localRaceId + ':', availableClasses.map(c => c.name));
-            console.log('Classes com restrição de raça:', this.classes.filter(c => c.raceRestriction).map(c => c.name + ' (' + c.raceRestriction + ')'));
             
             // Seleciona uma classe aleatória das disponíveis
-            const randomClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
-            
-            // Busca a classe correspondente no SRD
-            selectedClass = await this.loadClassByName(randomClass.name);
-            
-            console.log('Classe selecionada:', randomClass.name, 'SRD:', selectedClass);
-            
-            // Se não encontrou a classe específica no SRD, usa uma classe genérica
-            if (!selectedClass) {
-                console.log('Classe específica não encontrada no SRD, usando classe genérica');
+            if (availableClasses.length > 0) {
+                selectedClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
+                console.log('Classe selecionada do SRD:', selectedClass.name);
+            } else {
+                console.log('Nenhuma classe disponível para a raça, usando classe aleatória');
                 selectedClass = await this.loadRandomClass();
             }
         } else {
