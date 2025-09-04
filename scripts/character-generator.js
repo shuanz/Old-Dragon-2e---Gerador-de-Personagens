@@ -345,9 +345,10 @@ class OldDragon2eCharacterGenerator {
             }
 
             const allSpells = await spellPack.getDocuments();
-            const firstCircleSpells = allSpells.filter(spell => 
-                spell.system && spell.system.circle === 1
-            );
+            const firstCircleSpells = allSpells.filter(spell => {
+                const circle = parseInt(spell.system?.circle, 10);
+                return !isNaN(circle) && circle === 1;
+            });
 
             if (firstCircleSpells.length === 0) {
                 console.warn('Nenhuma magia de 1º círculo encontrada');
@@ -388,8 +389,18 @@ class OldDragon2eCharacterGenerator {
             const exclusiveSpells = this.getExclusiveSpells(characterClass, firstCircleSpells);
             initialSpells.push(...exclusiveSpells);
 
-            console.log(`Magias iniciais para ${characterClass}:`, initialSpells.map(s => s.name));
-            return initialSpells;
+            // Remove duplicatas pelo nome da magia
+            const seen = new Set();
+            const uniqueSpells = [];
+            for (const spell of initialSpells) {
+                if (!seen.has(spell.name)) {
+                    seen.add(spell.name);
+                    uniqueSpells.push(spell);
+                }
+            }
+
+            console.log(`Magias iniciais para ${characterClass}:`, uniqueSpells.map(s => s.name));
+            return uniqueSpells;
 
         } catch (error) {
             console.error('Erro ao gerar magias iniciais:', error);
@@ -1029,6 +1040,7 @@ class OldDragon2eCharacterGenerator {
                                 const obj = s.toObject();
                                 delete obj._id;
                                 toCreate.push(obj);
+                                existing.add(s.name);
                             }
                         }
                         if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
@@ -1173,15 +1185,19 @@ class OldDragon2eCharacterGenerator {
             // Adiciona magias iniciais se for classe que usa magias
             if (characterData.initialSpells && characterData.initialSpells.length > 0) {
                 try {
-                    const spellData = characterData.initialSpells.map(spell => ({
+                    const existingNames = new Set(actor.items.filter(i => i.type === 'spell').map(i => i.name));
+                    const spellsToAdd = characterData.initialSpells.filter(spell => !existingNames.has(spell.name));
+                    const spellData = spellsToAdd.map(spell => ({
                         name: spell.name,
                         type: 'spell',
                         img: spell.img || 'icons/svg/magic-swirl.svg',
                         system: spell.system
                     }));
-                    
-                    await actor.createEmbeddedDocuments('Item', spellData);
-                    console.log('Magias iniciais adicionadas:', characterData.initialSpells.map(s => s.name));
+
+                    if (spellData.length) {
+                        await actor.createEmbeddedDocuments('Item', spellData);
+                        console.log('Magias iniciais adicionadas:', spellsToAdd.map(s => s.name));
+                    }
                 } catch (error) {
                     console.error('Erro ao adicionar magias iniciais:', error);
                 }
