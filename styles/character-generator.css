@@ -200,17 +200,18 @@
 }
 
 .old-dragon-generator-modal .class-abilities {
-    background: #ece9d5; /* Cor de fundo das seções do sistema Old Dragon 2e */
+    background: #f7f6ef; /* Cor dourado-50 do sistema Old Dragon 2e */
     padding: 10px;
     border-radius: 4px;
-    border: 1px solid #ffc107;
+    border: 1px solid #d3d3d3;
     margin: 0;
 }
 
 .old-dragon-generator-modal .class-abilities h4 {
-    color: #856404;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 8px;
     font-size: 1em;
+    font-weight: bold;
 }
 
 .old-dragon-generator-modal .class-abilities ul {
@@ -231,17 +232,18 @@
 }
 
 .old-dragon-generator-modal .equipment-list {
-    background: #ece9d5; /* Cor de fundo das seções do sistema Old Dragon 2e */
+    background: #f7f6ef; /* Cor dourado-50 do sistema Old Dragon 2e */
     padding: 10px;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 1px solid #d3d3d3;
     margin: 0;
 }
 
 .old-dragon-generator-modal .equipment-list h4 {
-    color: #8B4513;
+    color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 8px;
     font-size: 1em;
+    font-weight: bold;
 }
 
 .old-dragon-generator-modal .equipment-list ul {
