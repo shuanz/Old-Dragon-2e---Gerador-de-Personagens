@@ -83,7 +83,7 @@
     border-bottom: 1px solid #d3d3d3;
     padding-bottom: 8px;
     font-weight: bold;
-    font-size: 1.4em; /* Fonte maior para o título */
+    font-size: 1.6em; /* Fonte ainda maior para o título */
 }
 
 /* Layout principal de duas colunas */
@@ -113,7 +113,7 @@
 .old-dragon-generator-modal .character-basic-info h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .old-dragon-generator-modal .info-item {
-    font-size: 1.1em; /* Fonte maior */
+    font-size: 1.3em; /* Fonte ainda maior */
     padding: 4px 0; /* Mais espaçamento */
     line-height: 1.4; /* Melhor legibilidade */
 }
@@ -140,7 +140,7 @@
     grid-column: 1 / -1;
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -155,17 +155,17 @@
 .old-dragon-generator-modal .attribute-name {
     font-weight: bold;
     color: #333; /* Texto escuro como na ficha */
-    font-size: 1.1em; /* Fonte maior */
+    font-size: 1.3em; /* Fonte ainda maior */
 }
 
 .old-dragon-generator-modal .attribute-value {
-    font-size: 1.4em; /* Fonte maior */
+    font-size: 1.6em; /* Fonte ainda maior */
     font-weight: bold;
     color: #333;
 }
 
 .old-dragon-generator-modal .attribute-modifier {
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
     color: #666;
 }
 
@@ -180,7 +180,7 @@
 .old-dragon-generator-modal .race-abilities h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -193,7 +193,7 @@
 .old-dragon-generator-modal .race-abilities li {
     padding: 4px 0; /* Mais espaçamento */
     border-bottom: 1px solid #ddd;
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
     line-height: 1.4; /* Melhor legibilidade */
 }
 
@@ -212,7 +212,7 @@
 .old-dragon-generator-modal .class-abilities h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -225,7 +225,7 @@
 .old-dragon-generator-modal .class-abilities li {
     padding: 4px 0; /* Mais espaçamento */
     border-bottom: 1px solid #ddd;
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
     line-height: 1.4; /* Melhor legibilidade */
 }
 
@@ -244,7 +244,7 @@
 .old-dragon-generator-modal .equipment-list h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -257,7 +257,7 @@
 .old-dragon-generator-modal .equipment-list li {
     padding: 4px 0; /* Mais espaçamento */
     border-bottom: 1px solid #eee;
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
     line-height: 1.4; /* Melhor legibilidade */
 }
 
@@ -276,7 +276,7 @@
 .old-dragon-generator-modal .saving-throws h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -297,11 +297,11 @@
 .old-dragon-generator-modal .saving-throw-name {
     font-weight: bold;
     color: #333; /* Texto escuro como na ficha */
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
 }
 
 .old-dragon-generator-modal .saving-throw-value {
-    font-size: 1.4em; /* Fonte maior */
+    font-size: 1.6em; /* Fonte ainda maior */
     font-weight: bold;
     color: #333;
 }
@@ -317,7 +317,7 @@
 .old-dragon-generator-modal .character-details h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
     margin-bottom: 12px;
-    font-size: 1.2em; /* Fonte maior */
+    font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
@@ -328,13 +328,13 @@
 .old-dragon-generator-modal .detail-section h5 {
     color: #333; /* Texto escuro como na ficha */
     margin-bottom: 6px;
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
 .old-dragon-generator-modal .detail-section p {
     margin: 0;
-    font-size: 1em; /* Fonte maior */
+    font-size: 1.2em; /* Fonte ainda maior */
     line-height: 1.4; /* Melhor legibilidade */
 }
 
