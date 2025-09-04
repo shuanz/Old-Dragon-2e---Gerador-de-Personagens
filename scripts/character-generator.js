@@ -345,13 +345,27 @@ class OldDragon2eCharacterGenerator {
             }
 
             const allSpells = await spellPack.getDocuments();
+            console.log('Total de magias encontradas:', allSpells.length);
+            
             const firstCircleSpells = allSpells.filter(spell => {
-                const circle = parseInt(spell.system?.circle, 10);
-                return !isNaN(circle) && circle === 1;
+                // Tenta diferentes formatos de círculo
+                const circle = spell.system?.circle;
+                if (typeof circle === 'number') return circle === 1;
+                if (typeof circle === 'string') {
+                    const parsed = parseInt(circle, 10);
+                    return !isNaN(parsed) && parsed === 1;
+                }
+                // Fallback: verifica se contém "1" no círculo
+                return circle && circle.toString().includes('1');
             });
+
+            console.log('Magias de 1º círculo encontradas:', firstCircleSpells.length);
+            console.log('Exemplos de magias:', firstCircleSpells.slice(0, 3).map(s => ({ name: s.name, circle: s.system?.circle })));
 
             if (firstCircleSpells.length === 0) {
                 console.warn('Nenhuma magia de 1º círculo encontrada');
+                // Debug: mostra algumas magias para entender o formato
+                console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 5).map(s => ({ name: s.name, circle: s.system?.circle, system: s.system })));
                 return [];
             }
 
