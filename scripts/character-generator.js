@@ -1514,6 +1514,25 @@ class OldDragon2eCharacterGenerator {
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="character-details">
+                                <h4><i class="fas fa-user"></i> Detalhes</h4>
+                                
+                                <div class="detail-section">
+                                    <h5>Aparência:</h5>
+                                    <p>${character.appearance.body}, ${character.appearance.hair}, ${character.appearance.general}</p>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h5>Personalidade:</h5>
+                                    <p>${character.personality.self}, ${character.personality.others}, ${character.personality.world}</p>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h5>Histórico:</h5>
+                                    <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="right-column">
@@ -1536,25 +1555,6 @@ class OldDragon2eCharacterGenerator {
                         <ul>
                             ${character.equipment.map(item => `<li>${item}</li>`).join('')}
                         </ul>
-                            </div>
-                            
-                            <div class="character-details">
-                                <h4><i class="fas fa-user"></i> Detalhes</h4>
-                                
-                                <div class="detail-section">
-                                    <h5>Aparência:</h5>
-                                    <p>${character.appearance.body}, ${character.appearance.hair}, ${character.appearance.general}</p>
-                                </div>
-                                
-                                <div class="detail-section">
-                                    <h5>Personalidade:</h5>
-                                    <p>${character.personality.self}, ${character.personality.others}, ${character.personality.world}</p>
-                                </div>
-                                
-                                <div class="detail-section">
-                                    <h5>Histórico:</h5>
-                                    <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
-                                </div>
                             </div>
                         </div>
                     </div>
