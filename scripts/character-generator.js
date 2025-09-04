@@ -105,9 +105,9 @@ class OldDragon2eCharacterGenerator {
                 baseAttack: 1,
                 savingThrow: 5
             },
-            { 
-                id: 'mage', 
-                name: 'Mago', 
+            {
+                id: 'mage',
+                name: 'Mago',
                 namePlural: 'Magos',
                 abilities: [
                     'Armas: Apenas pequenas',
@@ -118,6 +118,44 @@ class OldDragon2eCharacterGenerator {
                 ],
                 hitDie: 4,
                 baseAttack: 0,
+                savingThrow: 5
+            },
+            {
+                id: 'druid',
+                name: 'Druida',
+                namePlural: 'Druidas',
+                abilities: [
+                    'Especialização de Clérigo',
+                    'Herbalismo e Transformação em animais'
+                ],
+                hitDie: 8,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'paladin',
+                name: 'Paladino',
+                namePlural: 'Paladinos',
+                abilities: [
+                    'Especialização de Guerreiro',
+                    'Imunidade a doenças',
+                    'Cura pelas mãos'
+                ],
+                hitDie: 10,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'ranger',
+                name: 'Ranger',
+                namePlural: 'Rangers',
+                abilities: [
+                    'Especialização de Ladrão',
+                    'Inimigo Mortal',
+                    'Combativo'
+                ],
+                hitDie: 6,
+                baseAttack: 1,
                 savingThrow: 5
             }
         ];
@@ -214,6 +252,10 @@ class OldDragon2eCharacterGenerator {
             total += Math.floor(Math.random() * 6) + 1;
         }
         return total;
+    }
+
+    rollDie(sides) {
+        return Math.floor(Math.random() * sides) + 1;
     }
 
     /**
@@ -565,10 +607,8 @@ class OldDragon2eCharacterGenerator {
         const n = (className || '').toLowerCase();
         if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'mage';
         if (/clerigo|cl[eê]rigo|druida|xam[aã]|acad[eê]mico/.test(n)) return 'cleric';
+        if (/paladino|b[aá]rbaro/.test(n)) return 'fighter';
         if (/ladr[aã]o|ladino|thief|bardo|ranger/.test(n)) return 'thief';
-        if (/paladino/.test(n)) return 'paladin';
-        if (/ranger/.test(n)) return 'ranger';
-        if (/b[aá]rbaro/.test(n)) return 'fighter';
         return 'fighter';
     }
 
@@ -614,15 +654,11 @@ class OldDragon2eCharacterGenerator {
      * Calcula pontos de vida baseado na classe e constituição
      */
     calculateHitPoints(characterClass, constitution) {
-        const hitDie = {
-            fighter: 10,
-            cleric: 8,
-            thief: 6,
-            mage: 4
-        };
-
+        const archetype = this.mapClassToArchetype(characterClass);
+        const hitDie = { fighter: 10, cleric: 8, thief: 6, mage: 4 };
+        const die = hitDie[archetype] || 6;
         const modifier = this.calculateModifiers({ constitution }).constitution;
-        return Math.max(1, hitDie[characterClass] + modifier);
+        return Math.max(1, this.rollDie(die) + modifier);
     }
 
     /**
@@ -652,38 +688,36 @@ class OldDragon2eCharacterGenerator {
      * Calcula Base de Ataque
      */
     calculateBaseAttack(characterClass, level) {
-        const baseAttack = {
-            fighter: level,
-            cleric: Math.floor(level * 0.75),
-            thief: Math.floor(level * 0.75),
-            mage: Math.floor(level * 0.5)
+        const archetype = this.mapClassToArchetype(characterClass);
+        const tables = {
+            fighter: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            cleric: [1, 1, 1, 3, 3, 3, 5, 5, 5, 7],
+            thief: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
+            mage: [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
         };
-
-        return baseAttack[characterClass] || 0;
+        const table = tables[archetype] || tables.fighter;
+        return table[level - 1] || table[0];
     }
 
     /**
      * Calcula Jogadas de Proteção
      */
     calculateSavingThrows(characterClass, level) {
-        // Tabela base de JP por classe (Old Dragon 2e)
-        const baseJP = {
-            fighter: { JPD: 5, JPC: 5, JPS: 5 },  // Guerreiro: todas iguais
-            cleric: { JPD: 5, JPC: 5, JPS: 3 },   // Clérigo: JPS melhor
-            thief: { JPD: 3, JPC: 5, JPS: 5 },    // Ladino: JPD e JPS melhores
-            mage: { JPD: 5, JPC: 5, JPS: 3 }      // Mago: JPS melhor
+        const archetype = this.mapClassToArchetype(characterClass);
+        const baseTable = {
+            fighter: [5, 5, 6, 6, 8, 8, 10, 10, 11, 11],
+            cleric: [5, 5, 5, 7, 7, 7, 9, 9, 9, 11],
+            thief: [5, 5, 5, 5, 8, 8, 8, 8, 11, 11],
+            mage: [5, 5, 5, 5, 7, 7, 7, 7, 7, 10]
         };
-
-        // JP melhora a cada 3 níveis
-        const improvement = Math.floor((level - 1) / 3) * 2;
-        
-        const classJP = baseJP[characterClass] || baseJP.fighter;
-        
-        return {
-            JPD: classJP.JPD + improvement, // Destreza
-            JPC: classJP.JPC + improvement, // Constituição
-            JPS: classJP.JPS + improvement  // Sabedoria
-        };
+        const value = (baseTable[archetype] || baseTable.fighter)[level - 1] || 5;
+        let JPD = value;
+        let JPC = value;
+        let JPS = value;
+        if (archetype === 'cleric') JPS = value - 2;
+        if (archetype === 'thief') { JPD = value - 2; JPS = value - 2; }
+        if (archetype === 'mage') JPS = value - 2;
+        return { JPD, JPC, JPS };
     }
 
     /**
