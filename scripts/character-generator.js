@@ -1587,7 +1587,9 @@ class OldDragon2eCharacterGenerator {
             
             // Filtra classes do SRD baseado na raça
             const availableClasses = srdClasses.filter(srdClass => {
+                // Normaliza o nome da classe para comparação (remove acentos)
                 const className = srdClass.name.toLowerCase();
+                const normalizedClassName = className.normalize('NFD').replace(/\p{Diacritic}/gu, '');
                 
                 // Debug: mostra classes específicas de raça
                 if (srdClass.name.includes('Aventureiro')) {
@@ -1596,15 +1598,15 @@ class OldDragon2eCharacterGenerator {
                     console.log('  - localRaceId === "dwarf":', localRaceId === 'dwarf');
                     console.log('  - localRaceId === "elf":', localRaceId === 'elf');
                     console.log('  - localRaceId === "halfling":', localRaceId === 'halfling');
-                    console.log('  - className.includes("anao aventureiro"):', className.includes('anao aventureiro'));
-                    console.log('  - className.includes("elfo aventureiro"):', className.includes('elfo aventureiro'));
-                    console.log('  - className.includes("halfling aventureiro"):', className.includes('halfling aventureiro'));
+                    console.log('  - normalizedClassName.includes("anao aventureiro"):', normalizedClassName.includes('anao aventureiro'));
+                    console.log('  - normalizedClassName.includes("elfo aventureiro"):', normalizedClassName.includes('elfo aventureiro'));
+                    console.log('  - normalizedClassName.includes("halfling aventureiro"):', normalizedClassName.includes('halfling aventureiro'));
                 }
-                
+
                 // Classes específicas de raça
-                if (localRaceId === 'dwarf' && className.includes('anao aventureiro')) return true;
-                if (localRaceId === 'elf' && className.includes('elfo aventureiro')) return true;
-                if (localRaceId === 'halfling' && className.includes('halfling aventureiro')) return true;
+                if (localRaceId === 'dwarf' && normalizedClassName.includes('anao aventureiro')) return true;
+                if (localRaceId === 'elf' && normalizedClassName.includes('elfo aventureiro')) return true;
+                if (localRaceId === 'halfling' && normalizedClassName.includes('halfling aventureiro')) return true;
                 
                             // Classes de combate (Guerreiro e especializações)
             const combatClasses = ['guerreiro', 'bárbaro', 'paladino', 'arqueiro'];
