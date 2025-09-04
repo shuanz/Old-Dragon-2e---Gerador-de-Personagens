@@ -356,14 +356,14 @@ class OldDragon2eCharacterGenerator {
 
             const initialSpells = [];
 
-            // 1. Adiciona magias básicas de Mago (3 escolhidas + 1 aleatória)
+            // 1. Adiciona 3 magias escolhidas pelo Mago (conforme documentação oficial)
             const recommendedSpells = [
                 'Mísseis Mágicos',
                 'Escudo Arcano', 
                 'Luz'
             ];
 
-            // Adiciona as 3 magias recomendadas se existirem
+            // Adiciona as 3 magias escolhidas se existirem
             for (const spellName of recommendedSpells) {
                 const spell = firstCircleSpells.find(s => 
                     s.name.toLowerCase().includes(spellName.toLowerCase())
@@ -373,7 +373,7 @@ class OldDragon2eCharacterGenerator {
                 }
             }
 
-            // Adiciona 1 magia aleatória das restantes (não exclusivas)
+            // 2. Adiciona 1 magia aleatória da lista de 1º círculo (conforme documentação oficial)
             const remainingSpells = firstCircleSpells.filter(spell => 
                 !initialSpells.some(initial => initial.id === spell.id) &&
                 !this.isExclusiveSpell(spell.name, characterClass)
@@ -384,7 +384,7 @@ class OldDragon2eCharacterGenerator {
                 initialSpells.push(randomSpell);
             }
 
-            // 2. Adiciona magias exclusivas da especialização
+            // 3. Adiciona magias exclusivas da especialização (se aplicável)
             const exclusiveSpells = this.getExclusiveSpells(characterClass, firstCircleSpells);
             initialSpells.push(...exclusiveSpells);
 
@@ -1005,6 +1005,20 @@ class OldDragon2eCharacterGenerator {
                             const v = parseInt(s.system?.[school]);
                             if (!isNaN(v) && v > 0 && v <= maxCircle) {
                                 if (existing.has(s.name)) continue;
+                                
+                                // Evita duplicação de magias que são tanto arcanas quanto divinas
+                                // Se a magia já existe com outro tipo, não adiciona novamente
+                                const isDualType = s.system?.arcane && s.system?.divine;
+                                if (isDualType && school === 'divine') {
+                                    // Para classes divinas, só adiciona se não for uma magia que já existe como arcana
+                                    const existingArcane = actor.items.find(i => 
+                                        i.type === 'spell' && 
+                                        i.name === s.name && 
+                                        i.system?.arcane
+                                    );
+                                    if (existingArcane) continue;
+                                }
+                                
                                 const obj = s.toObject();
                                 delete obj._id;
                                 toCreate.push(obj);
