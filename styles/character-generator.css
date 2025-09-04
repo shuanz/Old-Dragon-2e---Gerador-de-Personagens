@@ -1,0 +1,401 @@
+/* Old Dragon 2e - Gerador de Personagens - Estilos */
+
+/* Evita seleção de texto ao arrastar a janela */
+.od2e-no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Janela do gerador: usa classes da Dialog, sem mexer em transform/pointer-events */
+.window-app.od2e-generator {
+    width: 1000px;
+    min-height: 600px;
+}
+
+.window-app.od2e-generator .window-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.old-dragon-generator-btn {
+    background: linear-gradient(135deg, #8B4513, #A0522D) !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    margin-left: 10px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+.old-dragon-generator-btn:hover {
+    background: linear-gradient(135deg, #A0522D, #CD853F) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+
+.old-dragon-generator-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+.old-dragon-generator-btn i {
+    margin-right: 5px !important;
+}
+
+/* Modal de geração de personagem */
+.old-dragon-generator-modal {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 20px auto;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.old-dragon-generator-modal h2 {
+    color: #8B4513;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.old-dragon-generator-modal .character-preview {
+    background: white;
+    border: 2px solid #8B4513;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.old-dragon-generator-modal .character-preview h3 {
+    color: #A0522D;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+/* Layout principal de duas colunas */
+.old-dragon-generator-modal .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.old-dragon-generator-modal .left-column,
+.old-dragon-generator-modal .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Informações básicas compactas */
+.old-dragon-generator-modal .character-basic-info {
+    background: white;
+    border: 2px solid #8B4513;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .character-basic-info h4 {
+    color: #A0522D;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.old-dragon-generator-modal .info-item {
+    font-size: 0.9em;
+    padding: 2px 0;
+}
+
+.old-dragon-generator-modal .attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .attributes-grid h4 {
+    grid-column: 1 / -1;
+    color: #A0522D;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .attribute-item {
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.old-dragon-generator-modal .attribute-name {
+    font-weight: bold;
+    color: #8B4513;
+    font-size: 0.9em;
+}
+
+.old-dragon-generator-modal .attribute-value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.old-dragon-generator-modal .attribute-modifier {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.old-dragon-generator-modal .race-abilities {
+    background: #f0f8ff;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #4a90e2;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .race-abilities h4 {
+    color: #2c5aa0;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .race-abilities ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .race-abilities li {
+    padding: 2px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.8em;
+    line-height: 1.3;
+}
+
+.old-dragon-generator-modal .race-abilities li:last-child {
+    border-bottom: none;
+}
+
+.old-dragon-generator-modal .class-abilities {
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ffc107;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .class-abilities h4 {
+    color: #856404;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .class-abilities ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .class-abilities li {
+    padding: 2px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.8em;
+    line-height: 1.3;
+}
+
+.old-dragon-generator-modal .class-abilities li:last-child {
+    border-bottom: none;
+}
+
+.old-dragon-generator-modal .equipment-list {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .equipment-list h4 {
+    color: #8B4513;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .equipment-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .equipment-list li {
+    padding: 2px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.8em;
+    line-height: 1.3;
+}
+
+.old-dragon-generator-modal .equipment-list li:last-child {
+    border-bottom: none;
+}
+
+.old-dragon-generator-modal .saving-throws {
+    background: #e8f5e8;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #28a745;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .saving-throws h4 {
+    color: #155724;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .saving-throws-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.old-dragon-generator-modal .saving-throw-item {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.old-dragon-generator-modal .saving-throw-name {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 0.8em;
+}
+
+.old-dragon-generator-modal .saving-throw-value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.old-dragon-generator-modal .character-details {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #6c757d;
+    margin: 0;
+}
+
+.old-dragon-generator-modal .character-details h4 {
+    color: #495057;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.old-dragon-generator-modal .detail-section {
+    margin-bottom: 8px;
+}
+
+.old-dragon-generator-modal .detail-section h5 {
+    color: #6c757d;
+    margin-bottom: 3px;
+    font-size: 0.8em;
+}
+
+.old-dragon-generator-modal .detail-section p {
+    margin: 0;
+    font-size: 0.8em;
+    line-height: 1.3;
+}
+
+.old-dragon-generator-modal .buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.old-dragon-generator-modal .btn {
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.old-dragon-generator-modal .btn-primary {
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    color: white;
+}
+
+.old-dragon-generator-modal .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.old-dragon-generator-modal .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.old-dragon-generator-modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .old-dragon-generator-modal {
+        margin: 10px;
+        padding: 15px;
+        max-width: 95vw;
+    }
+    
+    .old-dragon-generator-modal .main-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .old-dragon-generator-modal .attributes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .old-dragon-generator-modal .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .old-dragon-generator-modal .saving-throws-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .old-dragon-generator-modal .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .old-dragon-generator-modal .btn {
+        margin: 0;
+    }
+}

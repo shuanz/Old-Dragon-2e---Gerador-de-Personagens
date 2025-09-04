@@ -1,0 +1,70 @@
+<!-- Modal de Geração de Personagem - Old Dragon 2e -->
+<div class="old-dragon-generator-modal">
+    <h2><i class="fas fa-dice-d20"></i> Gerador de Personagem - Old Dragon 2e</h2>
+    
+    <div class="character-preview">
+        <h3>Prévia do Personagem</h3>
+        
+        <div class="character-basic-info">
+            <p><strong>Nome:</strong> <span id="character-name">{{name}}</span></p>
+            <p><strong>Raça:</strong> <span id="character-race">{{race}}</span></p>
+            <p><strong>Classe:</strong> <span id="character-class">{{class}}</span></p>
+            <p><strong>Nível:</strong> <span id="character-level">{{level}}</span></p>
+            <p><strong>Pontos de Vida:</strong> <span id="character-hp">{{hitPoints}}</span></p>
+        </div>
+        
+        <div class="attributes-grid">
+            <div class="attribute-item">
+                <div class="attribute-name">Força</div>
+                <div class="attribute-value" id="attr-strength">{{attributes.strength}}</div>
+                <div class="attribute-modifier" id="mod-strength">{{modifiers.strength}}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-name">Destreza</div>
+                <div class="attribute-value" id="attr-dexterity">{{attributes.dexterity}}</div>
+                <div class="attribute-modifier" id="mod-dexterity">{{modifiers.dexterity}}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-name">Constituição</div>
+                <div class="attribute-value" id="attr-constitution">{{attributes.constitution}}</div>
+                <div class="attribute-modifier" id="mod-constitution">{{modifiers.constitution}}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-name">Inteligência</div>
+                <div class="attribute-value" id="attr-intelligence">{{attributes.intelligence}}</div>
+                <div class="attribute-modifier" id="mod-intelligence">{{modifiers.intelligence}}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-name">Sabedoria</div>
+                <div class="attribute-value" id="attr-wisdom">{{attributes.wisdom}}</div>
+                <div class="attribute-modifier" id="mod-wisdom">{{modifiers.wisdom}}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-name">Carisma</div>
+                <div class="attribute-value" id="attr-charisma">{{attributes.charisma}}</div>
+                <div class="attribute-modifier" id="mod-charisma">{{modifiers.charisma}}</div>
+            </div>
+        </div>
+        
+        <div class="equipment-list">
+            <h4><i class="fas fa-sack"></i> Equipamento</h4>
+            <ul id="equipment-list">
+                {{#each equipment}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="buttons">
+        <button class="btn btn-primary" id="create-character">
+            <i class="fas fa-plus"></i> Criar Personagem
+        </button>
+        <button class="btn btn-secondary" id="regenerate-character">
+            <i class="fas fa-redo"></i> Regenerar
+        </button>
+        <button class="btn btn-secondary" id="close-modal">
+            <i class="fas fa-times"></i> Cancelar
+        </button>
+    </div>
+</div>

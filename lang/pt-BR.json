@@ -1,0 +1,86 @@
+{
+  "OLD_DRAGON_2E_GENERATOR": {
+    "TITLE": "Old Dragon 2e - Gerador de Personagens",
+    "DESCRIPTION": "Um módulo para gerar personagens automaticamente para o sistema Old Dragon 2e",
+    "GENERATE_CHARACTER": "Gerar Personagem",
+    "CHARACTER_PREVIEW": "Prévia do Personagem",
+    "CREATE_CHARACTER": "Criar Personagem",
+    "REGENERATE": "Regenerar",
+    "CANCEL": "Cancelar",
+    "CLOSE": "Fechar",
+    
+    "ATTRIBUTES": {
+      "STRENGTH": "Força",
+      "DEXTERITY": "Destreza",
+      "CONSTITUTION": "Constituição",
+      "INTELLIGENCE": "Inteligência",
+      "WISDOM": "Sabedoria",
+      "CHARISMA": "Carisma"
+    },
+    
+    "RACES": {
+      "HUMAN": "Humano",
+      "ELF": "Elfo",
+      "DWARF": "Anão",
+      "HALFLING": "Halfling",
+      "ORC": "Orc",
+      "GOBLIN": "Goblin"
+    },
+    
+    "CLASSES": {
+      "FIGHTER": "Guerreiro",
+      "MAGE": "Mago",
+      "CLERIC": "Clérigo",
+      "THIEF": "Ladino",
+      "DRUID": "Druida",
+      "PALADIN": "Paladino",
+      "RANGER": "Ranger"
+    },
+    
+    "MESSAGES": {
+      "CHARACTER_CREATED": "Personagem {name} criado com sucesso!",
+      "ERROR_CREATING": "Erro ao criar personagem: {error}",
+      "GENERATING": "Gerando personagem...",
+      "LOADING": "Carregando..."
+    },
+    
+    "FIELDS": {
+      "NAME": "Nome",
+      "RACE": "Raça",
+      "CLASS": "Classe",
+      "LEVEL": "Nível",
+      "HIT_POINTS": "Pontos de Vida",
+      "EXPERIENCE": "Experiência",
+      "EQUIPMENT": "Equipamento"
+    },
+    
+    "EQUIPMENT": {
+      "SWORD": "Espada longa",
+      "SHIELD": "Escudo",
+      "LEATHER_ARMOR": "Armadura de couro",
+      "BACKPACK": "Mochila",
+      "RATIONS": "Rações",
+      "ROPE": "Corda",
+      "TORCHES": "Tochas",
+      "FLINT_STEEL": "Pederneira e aço",
+      "IRON_POT": "Pote de ferro",
+      "TENT": "Tenda",
+      "STAFF": "Cajado",
+      "TUNIC": "Túnica",
+      "SCROLLS": "Pergaminhos",
+      "INK_PEN": "Tinta e pena",
+      "CANDLE": "Vela",
+      "WATER_BOTTLE": "Garrafa de água",
+      "SLEEPING_BAG": "Saco de dormir",
+      "WAR_HAMMER": "Martelo de guerra",
+      "HOLY_SYMBOL": "Símbolo sagrado",
+      "DAGGER": "Adaga",
+      "SHORT_BOW": "Arco curto",
+      "ARROWS": "Flechas",
+      "CLIMBING_HOOK": "Gancho de escalada",
+      "NATURAL_SYMBOL": "Símbolo natural",
+      "SHORT_SWORD": "Espada curta",
+      "LONG_BOW": "Arco longo"
+    }
+  }
+}

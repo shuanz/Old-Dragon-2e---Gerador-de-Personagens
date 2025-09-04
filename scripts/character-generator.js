@@ -1,0 +1,1520 @@
+/**
+ * Old Dragon 2e - Gerador de Personagens
+ * Um módulo para gerar personagens automaticamente para o sistema Old Dragon 2e
+ */
+
+class OldDragon2eCharacterGenerator {
+    constructor() {
+        this.races = [
+            { 
+                id: 'human', 
+                name: 'Humano', 
+                namePlural: 'Humanos',
+                abilities: [
+                    'Aprendizado: +10% de XP em todas as experiências',
+                    'Adaptabilidade: +1 em uma JP à escolha',
+                    'Movimento: 9 metros',
+                    'Infravisão: Não possui'
+                ]
+            },
+            { 
+                id: 'elf', 
+                name: 'Elfo', 
+                namePlural: 'Elfos',
+                abilities: [
+                    'Percepção Natural: Detecta portas secretas (1 em 1d6)',
+                    'Graciosos: +1 em qualquer teste de JPD',
+                    'Arma Racial: +1 de dano com arcos',
+                    'Imunidades: Sono e paralisia de Ghoul',
+                    'Movimento: 9 metros',
+                    'Infravisão: 18 metros'
+                ]
+            },
+            { 
+                id: 'dwarf', 
+                name: 'Anão', 
+                namePlural: 'Anões',
+                abilities: [
+                    'Mineradores: Detecta armadilhas em pedras (1 em 1d6)',
+                    'Vigoroso: +1 em qualquer teste de JPC',
+                    'Armas Grandes: Usa armas grandes como médias',
+                    'Inimigos: Ataques fáceis contra orcs, ogros e hobgoblins',
+                    'Movimento: 6 metros',
+                    'Infravisão: 18 metros'
+                ]
+            },
+            { 
+                id: 'halfling', 
+                name: 'Halfling', 
+                namePlural: 'Halflings',
+                abilities: [
+                    'Furtivos: Esconde-se (1-2 em 1d6)',
+                    'Destemidos: +1 em qualquer teste de JPS',
+                    'Bons de Mira: Ataques fáceis com armas de arremesso',
+                    'Pequenos: Ataques de criaturas grandes são difíceis',
+                    'Restrições: Apenas armaduras de couro, armas pequenas/médias',
+                    'Movimento: 6 metros',
+                    'Infravisão: Não possui'
+                ]
+            }
+        ];
+
+        this.classes = [
+            { 
+                id: 'fighter', 
+                name: 'Guerreiro', 
+                namePlural: 'Guerreiros',
+                abilities: [
+                    'Armas: Pode usar todas as armas',
+                    'Armaduras: Pode usar todas as armaduras',
+                    'Aparar: Sacrifica escudo/arma para absorver dano',
+                    'Maestria em Arma: +1 de dano em uma arma escolhida',
+                    'Ataque Extra: Segundo ataque no 6º nível'
+                ],
+                hitDie: 10,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            { 
+                id: 'cleric', 
+                name: 'Clérigo', 
+                namePlural: 'Clérigos',
+                abilities: [
+                    'Armas: Apenas armas impactantes',
+                    'Armaduras: Pode usar todas as armaduras',
+                    'Magias Divinas: Conjura magias divinas diariamente',
+                    'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                    'Cura Milagrosa: Troca magia por Curar Ferimentos'
+                ],
+                hitDie: 8,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            { 
+                id: 'thief', 
+                name: 'Ladino', 
+                namePlural: 'Ladinos',
+                abilities: [
+                    'Armas: Apenas pequenas ou médias',
+                    'Armaduras: Apenas leves',
+                    'Ataque Furtivo: Dano x2 em ataques furtivos',
+                    'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
+                    'Talentos: Furtividade, Escalar, Arrombar, etc.'
+                ],
+                hitDie: 6,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            { 
+                id: 'mage', 
+                name: 'Mago', 
+                namePlural: 'Magos',
+                abilities: [
+                    'Armas: Apenas pequenas',
+                    'Armaduras: Nenhuma',
+                    'Magias Arcanas: Conjura magias arcanas diariamente',
+                    'Ler Magias: Decifra inscrições mágicas',
+                    'Detectar Magias: Percebe presença mágica'
+                ],
+                hitDie: 4,
+                baseAttack: 0,
+                savingThrow: 5
+            }
+        ];
+
+        this.attributes = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+        this.attributeNames = {
+            strength: 'Força',
+            dexterity: 'Destreza',
+            constitution: 'Constituição',
+            intelligence: 'Inteligência',
+            wisdom: 'Sabedoria',
+            charisma: 'Carisma'
+        };
+
+        // Tabelas para detalhes finais
+        this.appearance = {
+            body: ['Alto', 'Baixo', 'Musculoso', 'Franzino', 'Gordo', 'Especial'],
+            hair: ['Careca', 'Calvo', 'Cabelos Raspados', 'Cabelos Curtos', 'Cabelos Longos', 'Especial'],
+            general: ['Barba ou Bigode', 'Moreno', 'Pálido', 'Jovem', 'Velho', 'Especial'],
+            special: ['Horrível', 'Feio', 'Mais um na multidão', 'Bem Afeiçoado', 'Bonito', 'Lindo']
+        };
+
+        this.personality = {
+            self: ['Alerta', 'Distraído', 'Calmo', 'Agitado', 'Indeciso', 'Especial'],
+            others: ['Gentil', 'Grosso', 'Desconfiado', 'Tímido', 'Extrovertido', 'Especial'],
+            world: ['Otimista', 'Pessimista', 'Perfeccionista', 'Teimoso', 'Vaidoso', 'Especial'],
+            special: ['Modesto', 'Egoísta', 'Humilde', 'Galanteador', 'Idealista', 'Excêntrico']
+        };
+
+        this.background = {
+            place: ['numa fazenda nos campos', 'numa pequena e distante vila', 'numa grande e importante cidade', 'numa vila à beira do mar', 'numa aldeia nas montanhas', 'numa pequena cidade no meio da floresta'],
+            motive: ['ficar rico e poderoso', 'vingar seu passado', 'trazer glória e fama para você', 'matar a curiosidade sobre o mundo', 'tentar dar uma vida melhor aos seus descendentes', 'realizar seu sonho de ser um herói'],
+            family: ['família muito pobre de camponeses', 'família de comerciantes', 'família de fazendeiros', 'família disfuncional', 'família adotiva', 'família de nobres falidos'],
+            tragedy: ['de um ataque de orcs e goblins', 'de uma guerra sanguinária', 'de um erro judiciário', 'de um terremoto misterioso', 'de uma experiência mágica', 'de uma epidemia de peste']
+        };
+
+        this.alignments = ['Ordem', 'Neutralidade', 'Caos'];
+
+        // Conjunto offline de nomes por raça (estilo "fantasy-names")
+        this.fantasyNames = {
+            human: {
+                first: ['Alden','Bran','Cael','Dara','Ewan','Faye','Gwen','Hector','Isla','Joran','Kira','Lara','Mira','Nolan','Orin','Pietra','Quinn','Rurik','Selene','Talia','Ulric','Valen','Wren','Xara','Yara','Zara'],
+                last: ['Blackwood','Stormborn','Riverton','Hillcrest','Dawnbreaker','Stonefield','Oakenshield','Whitlock','Ravencrest','Ironwood','Silverhand','Windrider','Brightwater','Ashford','Hawkins']
+            },
+            elf: {
+                first: ['Aelar','Aerith','Belanor','Caladrel','Daenala','Elora','Faelar','Galan','Ilyana','Lethalia','Naeris','Rolen','Syllin','Theren','Vaelis'],
+                last: ['Amastacia','Galanodel','Holimion','Ilphelkiir','Liadon','Meliamne','Nailo','Siannodel','Xiloscient']
+            },
+            dwarf: {
+                first: ['Baern','Dain','Einkil','Fargrim','Hilda','Kathra','Mardin','Rurik','Torbera','Traubon','Ulfgar'],
+                last: ['Balderk','Dankil','Fireforge','Ironfist','Loderr','Lutgehr','Rumnaheim','Strakeln','Torunn','Ungart']
+            },
+            halfling: {
+                first: ['Alton','Andry','Cade','Cora','Eldon','Finnan','Garret','Jillian','Lidda','Milo','Rosie','Perrin','Tegan'],
+                last: ['Brushgather','Goodbarrel','Greenbottle','Highhill','Hilltopple','Leagallow','Tealeaf','Thorngage','Underbough']
+            },
+            gnome: {
+                first: ['Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna'],
+                last: ['Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen']
+            },
+            orc: {
+                first: ['Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog'],
+                last: ['Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang']
+            }
+        };
+
+        // Padrões para identificação simples por nome (pré-exibição do equipamento)
+        this.patterns = {
+            impactWeapons: /(ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|hammer|mace|club|flail)/i,
+            twoHandedHints: /(duas m[aã]os|two[- ]hand|alabarda|montante|espad[aã]o|glaive|halberd|lanca longa)/i,
+            leatherArmor: /(couro|leather)/i,
+            metalArmor: /(malha|escama|placa|cota|chain|scale|plate)/i,
+            smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o)/i
+        };
+    }
+
+    /**
+     * Gera atributos aleatórios usando 3d6
+     */
+    generateAttributes() {
+        const attributes = {};
+        this.attributes.forEach(attr => {
+            attributes[attr] = this.roll3d6();
+        });
+        return attributes;
+    }
+
+    /**
+     * Rola 3d6 (simula 3 dados de 6 faces)
+     */
+    roll3d6() {
+        let total = 0;
+        for (let i = 0; i < 3; i++) {
+            total += Math.floor(Math.random() * 6) + 1;
+        }
+        return total;
+    }
+
+    /**
+     * Calcula modificadores de atributos (seguindo tabela oficial do Old Dragon 2e)
+     */
+    calculateModifiers(attributes) {
+        const modifiers = {};
+        this.attributes.forEach(attr => {
+            const value = attributes[attr];
+            if (value >= 2 && value <= 3) modifiers[attr] = -3;
+            else if (value >= 4 && value <= 5) modifiers[attr] = -2;
+            else if (value >= 6 && value <= 8) modifiers[attr] = -1;
+            else if (value >= 9 && value <= 12) modifiers[attr] = 0;
+            else if (value >= 13 && value <= 14) modifiers[attr] = +1;
+            else if (value >= 15 && value <= 16) modifiers[attr] = +2;
+            else if (value >= 17 && value <= 18) modifiers[attr] = +3;
+            else if (value >= 19 && value <= 20) modifiers[attr] = +4;
+            else modifiers[attr] = 0; // Fallback para valores fora do range
+        });
+        return modifiers;
+    }
+
+    /**
+     * Gera um nome completo por raça (offline)
+     */
+    generateRaceName(raceId) {
+        const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const data = this.fantasyNames[raceId] || this.fantasyNames.human;
+        const first = pick(data.first);
+        const last = pick(data.last);
+        return `${first} ${last}`;
+    }
+
+    /**
+     * Define restrições de equipamento por classe (Old Dragon 2e)
+     */
+    getClassEquipmentRestrictions(characterClass) {
+        const restrictions = {
+            fighter: {
+                weapons: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'adaga', 'clava', 'maça'],
+                armor: ['couro', 'cota de malha', 'placa'],
+                forbidden: []
+            },
+            mage: {
+                weapons: ['cajado', 'adaga', 'clava', 'maça'],
+                armor: ['túnica', 'couro'],
+                forbidden: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'cota de malha', 'placa']
+            },
+            cleric: {
+                weapons: ['martelo', 'clava', 'maça', 'cajado'],
+                armor: ['couro', 'cota de malha', 'placa'],
+                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
+            },
+            thief: {
+                weapons: ['adaga', 'espada curta', 'arco curto', 'best'],
+                armor: ['couro'],
+                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'arco longo', 'cota de malha', 'placa']
+            },
+            druid: {
+                weapons: ['bastão', 'clava', 'maça', 'adaga'],
+                armor: ['couro'],
+                forbidden: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'cota de malha', 'placa']
+            },
+            paladin: {
+                weapons: ['espada', 'martelo', 'lança', 'arco'],
+                armor: ['couro', 'cota de malha', 'placa'],
+                forbidden: ['machado', 'adaga', 'best']
+            },
+            ranger: {
+                weapons: ['espada curta', 'arco longo', 'lança', 'adaga'],
+                armor: ['couro'],
+                forbidden: ['espada longa', 'machado', 'martelo', 'best', 'cota de malha', 'placa']
+            }
+        };
+
+        return restrictions[characterClass] || restrictions.fighter;
+    }
+
+    /**
+     * Verifica se um item é permitido para a classe
+     */
+    isItemAllowedForClass(itemName, characterClass) {
+        const restrictions = this.getClassEquipmentRestrictions(characterClass);
+        const itemLower = itemName.toLowerCase();
+        
+        // Verifica se o item contém alguma palavra proibida
+        for (const forbidden of restrictions.forbidden) {
+            if (itemLower.includes(forbidden)) {
+                return false;
+            }
+        }
+        
+        // Verifica se o item contém alguma palavra permitida
+        for (const allowed of restrictions.weapons.concat(restrictions.armor)) {
+            if (itemLower.includes(allowed)) {
+                return true;
+            }
+        }
+        
+        // Itens gerais (mochila, rações, etc.) são sempre permitidos
+        const generalItems = ['mochila', 'rações', 'corda', 'tocha', 'vela', 'garrafa', 'saco', 'pote', 'tenda', 'símbolo', 'pergaminho', 'tinta', 'pena', 'gancho'];
+        for (const general of generalItems) {
+            if (itemLower.includes(general)) {
+                return true;
+            }
+        }
+        
+        return true; // Por padrão, permite itens não categorizados
+    }
+
+    /**
+     * Gera magias iniciais para o Mago (3 escolhidas + 1 aleatória) + magias exclusivas se especializado
+     */
+    async generateInitialSpells(characterClass) {
+        // Verifica se é uma classe arcana (Mago e especializações)
+        const isMageClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(characterClass);
+        
+        // Classes divinas (Clérigo, Druida) recebem todas as magias via importação do SRD
+        // Apenas classes arcanas recebem magias iniciais limitadas
+        if (!isMageClass) {
+            return [];
+        }
+
+        try {
+            const spellPack = game.packs.get('olddragon2e.spells');
+            if (!spellPack) {
+                console.warn('Compêndio de magias não encontrado');
+                return [];
+            }
+
+            const allSpells = await spellPack.getDocuments();
+            const firstCircleSpells = allSpells.filter(spell => 
+                spell.system && spell.system.circle === 1
+            );
+
+            if (firstCircleSpells.length === 0) {
+                console.warn('Nenhuma magia de 1º círculo encontrada');
+                return [];
+            }
+
+            const initialSpells = [];
+
+            // 1. Adiciona magias básicas de Mago (3 escolhidas + 1 aleatória)
+            const recommendedSpells = [
+                'Mísseis Mágicos',
+                'Escudo Arcano', 
+                'Luz'
+            ];
+
+            // Adiciona as 3 magias recomendadas se existirem
+            for (const spellName of recommendedSpells) {
+                const spell = firstCircleSpells.find(s => 
+                    s.name.toLowerCase().includes(spellName.toLowerCase())
+                );
+                if (spell) {
+                    initialSpells.push(spell);
+                }
+            }
+
+            // Adiciona 1 magia aleatória das restantes (não exclusivas)
+            const remainingSpells = firstCircleSpells.filter(spell => 
+                !initialSpells.some(initial => initial.id === spell.id) &&
+                !this.isExclusiveSpell(spell.name, characterClass)
+            );
+
+            if (remainingSpells.length > 0) {
+                const randomSpell = remainingSpells[Math.floor(Math.random() * remainingSpells.length)];
+                initialSpells.push(randomSpell);
+            }
+
+            // 2. Adiciona magias exclusivas da especialização
+            const exclusiveSpells = this.getExclusiveSpells(characterClass, firstCircleSpells);
+            initialSpells.push(...exclusiveSpells);
+
+            console.log(`Magias iniciais para ${characterClass}:`, initialSpells.map(s => s.name));
+            return initialSpells;
+
+        } catch (error) {
+            console.error('Erro ao gerar magias iniciais:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Verifica se uma magia é exclusiva de uma especialização
+     */
+    isExclusiveSpell(spellName, characterClass) {
+        const exclusiveSpells = this.getExclusiveSpellNames(characterClass);
+        return exclusiveSpells.some(exclusive => 
+            spellName.toLowerCase().includes(exclusive.toLowerCase())
+        );
+    }
+
+    /**
+     * Retorna os nomes das magias exclusivas para cada especialização
+     */
+    getExclusiveSpellNames(characterClass) {
+        const exclusiveSpells = {
+            necromante: ['Toque Sombrio', 'Aterrorizar'],
+            necromancer: ['Toque Sombrio', 'Aterrorizar'],
+            ilusionista: ['Imagem Silenciosa', 'Desorientar'],
+            illusionist: ['Imagem Silenciosa', 'Desorientar']
+        };
+
+        for (const [key, spells] of Object.entries(exclusiveSpells)) {
+            if (characterClass.toLowerCase().includes(key)) {
+                return spells;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Busca e retorna as magias exclusivas da especialização
+     */
+    getExclusiveSpells(characterClass, firstCircleSpells) {
+        const exclusiveSpellNames = this.getExclusiveSpellNames(characterClass);
+        const exclusiveSpells = [];
+
+        for (const spellName of exclusiveSpellNames) {
+            const spell = firstCircleSpells.find(s => 
+                s.name.toLowerCase().includes(spellName.toLowerCase())
+            );
+            if (spell) {
+                exclusiveSpells.push(spell);
+            }
+        }
+
+        return exclusiveSpells;
+    }
+
+    /**
+     * Gera equipamento básico baseado na classe com restrições
+     */
+    generateEquipment(characterClass) {
+        const baseEquipment = {
+            fighter: [
+                'Espada longa', 'Escudo', 'Armadura de couro', 'Mochila', 'Rações (3 dias)',
+                'Corda (15m)', 'Tochas (6)', 'Pederneira e aço', 'Pote de ferro', 'Tenda'
+            ],
+            mage: [
+                'Cajado', 'Túnica', 'Mochila', 'Pergaminhos', 'Tinta e pena',
+                'Vela (3)', 'Rações (2 dias)', 'Garrafa de água', 'Saco de dormir'
+            ],
+            cleric: [
+                'Martelo de guerra', 'Escudo', 'Armadura de couro', 'Símbolo sagrado',
+                'Mochila', 'Rações (3 dias)', 'Garrafa de água', 'Vela (3)'
+            ],
+            thief: [
+                'Adaga (2)', 'Arco curto', 'Flechas (20)', 'Armadura de couro',
+                'Mochila', 'Corda (15m)', 'Gancho de escalada', 'Rações (2 dias)'
+            ],
+            druid: [
+                'Bastão', 'Armadura de couro', 'Mochila', 'Símbolo natural',
+                'Rações (3 dias)', 'Garrafa de água', 'Saco de dormir', 'Tochas (3)'
+            ],
+            paladin: [
+                'Espada longa', 'Escudo', 'Armadura de couro', 'Símbolo sagrado',
+                'Mochila', 'Rações (3 dias)', 'Garrafa de água', 'Tochas (3)'
+            ],
+            ranger: [
+                'Espada curta', 'Arco longo', 'Flechas (20)', 'Armadura de couro',
+                'Mochila', 'Rações (3 dias)', 'Corda (15m)', 'Tochas (3)'
+            ]
+        };
+
+        const equipment = baseEquipment[characterClass] || baseEquipment.fighter;
+        
+        // Filtra equipamento baseado nas restrições da classe
+        const filteredEquipment = equipment.filter(item => 
+            this.isItemAllowedForClass(item, characterClass)
+        );
+        
+        console.log(`Equipamento para ${characterClass}:`, filteredEquipment);
+        return filteredEquipment;
+    }
+
+    mapClassToArchetype(className) {
+        const n = (className || '').toLowerCase();
+        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'mage';
+        if (/clerigo|cl[eê]rigo|druida|xam[aã]|acad[eê]mico/.test(n)) return 'cleric';
+        if (/ladr[aã]o|ladino|thief|bardo|ranger/.test(n)) return 'thief';
+        if (/paladino/.test(n)) return 'paladin';
+        if (/ranger/.test(n)) return 'ranger';
+        if (/b[aá]rbaro/.test(n)) return 'fighter';
+        return 'fighter';
+    }
+
+    getClassRestrictions(className) {
+        const n = (className || '').toLowerCase();
+        const r = { armor: 'any', shield: true, onlyImpact: false, onlySmall: false, noLarge: false, leatherOnly: false };
+        if (/mago|bruxo|feiticeiro|wizard|warlock/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
+        else if (/necromante|ilusionista/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
+        else if (/ladr[aã]o|ladino|thief|bardo/.test(n)) { r.armor = 'light'; r.shield = false; r.noLarge = true; }
+        else if (/ranger/.test(n)) { r.armor = 'light'; r.shield = true; r.noLarge = false; }
+        else if (/druida/.test(n)) { r.armor = 'light'; r.leatherOnly = true; r.shield = false; r.noLarge = true; }
+        else if (/cl[eê]rigo|cleric/.test(n)) { r.onlyImpact = true; r.armor = 'any'; r.shield = true; }
+        else if (/b[aá]rbaro/.test(n)) { r.armor = 'light'; r.shield = true; }
+        return r;
+    }
+
+    filterEquipmentNamesByRestrictions(list, restrictions) {
+        const p = this.patterns;
+        return list.filter(name => {
+            const lower = (name || '').toLowerCase();
+            // armor
+            if (/armadura|armor/.test(lower)) {
+                if (restrictions.armor === 'none') return false;
+                if (restrictions.armor === 'light' && !p.leatherArmor.test(lower)) return false;
+                if (restrictions.leatherOnly && !p.leatherArmor.test(lower)) return false;
+                return true;
+            }
+            // shield
+            if (/escudo|shield/.test(lower)) return !!restrictions.shield;
+            // weapons (heurístico por nome)
+            if (/espada|lan[cç]a|adaga|punhal|faca|arco|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante/.test(lower)) {
+                if (restrictions.onlyImpact && !p.impactWeapons.test(lower)) return false;
+                if (restrictions.onlySmall && p.twoHandedHints.test(lower)) return false;
+                if (restrictions.noLarge && p.twoHandedHints.test(lower)) return false;
+                return true;
+            }
+            // outros itens são sempre permitidos
+            return true;
+        });
+    }
+
+    /**
+     * Calcula pontos de vida baseado na classe e constituição
+     */
+    calculateHitPoints(characterClass, constitution) {
+        const hitDie = {
+            fighter: 10,
+            cleric: 8,
+            thief: 6,
+            mage: 4
+        };
+
+        const modifier = this.calculateModifiers({ constitution }).constitution;
+        return Math.max(1, hitDie[characterClass] + modifier);
+    }
+
+    /**
+     * Calcula Classe de Armadura baseada na destreza e equipamento
+     */
+    calculateArmorClass(dexterity, equipment) {
+        const dexModifier = this.calculateModifiers({ dexterity }).dexterity;
+        let armorBonus = 0;
+        let shieldBonus = 0;
+
+        // Verifica se tem armadura no equipamento
+        if (equipment.some(item => item.includes('Armadura de couro'))) {
+            armorBonus = 2;
+        } else if (equipment.some(item => item.includes('Armadura'))) {
+            armorBonus = 3; // Assumindo armadura de metal
+        }
+
+        // Verifica se tem escudo
+        if (equipment.some(item => item.includes('Escudo'))) {
+            shieldBonus = 1;
+        }
+
+        return 10 + dexModifier + armorBonus + shieldBonus;
+    }
+
+    /**
+     * Calcula Base de Ataque
+     */
+    calculateBaseAttack(characterClass, level) {
+        const baseAttack = {
+            fighter: level,
+            cleric: Math.floor(level * 0.75),
+            thief: Math.floor(level * 0.75),
+            mage: Math.floor(level * 0.5)
+        };
+
+        return baseAttack[characterClass] || 0;
+    }
+
+    /**
+     * Calcula Jogadas de Proteção
+     */
+    calculateSavingThrows(characterClass, level) {
+        // Tabela base de JP por classe (Old Dragon 2e)
+        const baseJP = {
+            fighter: { JPD: 5, JPC: 5, JPS: 5 },  // Guerreiro: todas iguais
+            cleric: { JPD: 5, JPC: 5, JPS: 3 },   // Clérigo: JPS melhor
+            thief: { JPD: 3, JPC: 5, JPS: 5 },    // Ladino: JPD e JPS melhores
+            mage: { JPD: 5, JPC: 5, JPS: 3 }      // Mago: JPS melhor
+        };
+
+        // JP melhora a cada 3 níveis
+        const improvement = Math.floor((level - 1) / 3) * 2;
+        
+        const classJP = baseJP[characterClass] || baseJP.fighter;
+        
+        return {
+            JPD: classJP.JPD + improvement, // Destreza
+            JPC: classJP.JPC + improvement, // Constituição
+            JPS: classJP.JPS + improvement  // Sabedoria
+        };
+    }
+
+    /**
+     * Calcula movimento baseado na raça
+     */
+    calculateMovement(race) {
+        const movement = {
+            human: 9,
+            elf: 9,
+            dwarf: 6,
+            halfling: 6
+        };
+
+        return movement[race] || 9;
+    }
+
+    /**
+     * Calcula idiomas conhecidos baseado na inteligência e raça
+     */
+    calculateLanguages(intelligence, race) {
+        const intModifier = this.calculateModifiers({ intelligence }).intelligence;
+        const totalLanguages = Math.max(2, 2 + intModifier); // Mínimo 2 idiomas
+        
+        // Idiomas disponíveis no Old Dragon 2e
+        const availableLanguages = [
+            'Comum', 'Élfico', 'Anão', 'Halfling', 'Orc', 'Goblin', 
+            'Gigante', 'Dragão', 'Abissal', 'Infernal', 'Celestial',
+            'Druídico', 'Thieves\' Cant', 'Dracônico', 'Primordial'
+        ];
+        
+        // Idiomas base por raça
+        const raceLanguages = {
+            humano: ['Comum'],
+            elfo: ['Comum', 'Élfico'],
+            anao: ['Comum', 'Anão'],
+            halfling: ['Comum', 'Halfling'],
+            meio_elfo: ['Comum', 'Élfico'],
+            meio_orc: ['Comum', 'Orc']
+        };
+        
+        // Começa com idiomas da raça
+        let knownLanguages = [...(raceLanguages[race] || ['Comum'])];
+        
+        // Adiciona idiomas aleatórios se necessário
+        const remainingSlots = totalLanguages - knownLanguages.length;
+        if (remainingSlots > 0) {
+            const availableForRandom = availableLanguages.filter(lang => !knownLanguages.includes(lang));
+            
+            for (let i = 0; i < remainingSlots && availableForRandom.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * availableForRandom.length);
+                knownLanguages.push(availableForRandom[randomIndex]);
+                availableForRandom.splice(randomIndex, 1);
+            }
+        }
+        
+        return {
+            count: totalLanguages,
+            languages: knownLanguages
+        };
+    }
+
+    /**
+     * Gera aparência aleatória
+     */
+    generateAppearance() {
+        const roll = () => Math.floor(Math.random() * 6);
+        
+        let body = this.appearance.body[roll()];
+        let hair = this.appearance.hair[roll()];
+        let general = this.appearance.general[roll()];
+
+        // Se rolou "Especial", rola na coluna especial
+        if (body === 'Especial') body = this.appearance.special[roll()];
+        if (hair === 'Especial') hair = this.appearance.special[roll()];
+        if (general === 'Especial') general = this.appearance.special[roll()];
+
+        return { body, hair, general };
+    }
+
+    /**
+     * Gera personalidade aleatória
+     */
+    generatePersonality() {
+        const roll = () => Math.floor(Math.random() * 6);
+        
+        let self = this.personality.self[roll()];
+        let others = this.personality.others[roll()];
+        let world = this.personality.world[roll()];
+
+        // Se rolou "Especial", rola na coluna especial
+        if (self === 'Especial') self = this.personality.special[roll()];
+        if (others === 'Especial') others = this.personality.special[roll()];
+        if (world === 'Especial') world = this.personality.special[roll()];
+
+        return { self, others, world };
+    }
+
+    /**
+     * Gera histórico aleatório
+     */
+    generateBackground() {
+        const roll = () => Math.floor(Math.random() * 6);
+        
+        const place = this.background.place[roll()];
+        const motive = this.background.motive[roll()];
+        const family = this.background.family[roll()];
+        const tragedy = this.background.tragedy[roll()];
+
+        return { place, motive, family, tragedy };
+    }
+
+    /**
+     * Gera alinhamento aleatório
+     */
+    generateAlignment() {
+        return this.alignments[Math.floor(Math.random() * this.alignments.length)];
+    }
+
+    /**
+     * Gera um personagem completo
+     */
+    async generateCharacter() {
+        const attributes = this.generateAttributes();
+        const modifiers = this.calculateModifiers(attributes);
+        const race = this.races[Math.floor(Math.random() * this.races.length)];
+        const characterClass = this.classes[Math.floor(Math.random() * this.classes.length)];
+        const name = this.generateRaceName(race.id);
+        const equipment = this.generateEquipment(characterClass.id);
+        const hitPoints = this.calculateHitPoints(characterClass.id, attributes.constitution);
+        
+        // Novos cálculos
+        const armorClass = this.calculateArmorClass(attributes.dexterity, equipment);
+        const baseAttack = this.calculateBaseAttack(characterClass.id, 1);
+        const savingThrows = this.calculateSavingThrows(characterClass.id, 1);
+        const movement = this.calculateMovement(race.id);
+        const languages = this.calculateLanguages(attributes.intelligence, race.id);
+        const alignment = this.generateAlignment();
+        const appearance = this.generateAppearance();
+        const personality = this.generatePersonality();
+        const background = this.generateBackground();
+        
+        // Magias iniciais serão geradas em showGeneratorModal após carregar classe do SRD
+
+        // Debug: log dos atributos e modificadores
+        console.log('Atributos gerados:', attributes);
+        console.log('Modificadores calculados:', modifiers);
+
+        return {
+            name,
+            race: race.name,
+            raceAbilities: race.abilities,
+            class: characterClass.name,
+            classAbilities: characterClass.abilities,
+            attributes,
+            modifiers,
+            hitPoints,
+            armorClass,
+            baseAttack,
+            savingThrows,
+            movement,
+            languages,
+            alignment,
+            appearance,
+            personality,
+            background,
+            equipment,
+            level: 1,
+            experience: 0
+        };
+    }
+
+    /**
+     * Cria um personagem no Foundry VTT
+     */
+    async createCharacterInFoundry(characterData) {
+        try {
+            // Define bônus racial de JP (Humano aleatório; demais fixos)
+            const raceName = (characterData.race || '').toString().toLowerCase();
+            let jpRaceBonus = '';
+            const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            if (raceName.includes('humano')) jpRaceBonus = pick(['jpd','jpc','jps']);
+            else if (raceName.includes('elf')) jpRaceBonus = 'jpd';
+            else if (raceName.includes('anão') || raceName.includes('anao')) jpRaceBonus = 'jpc';
+            else if (raceName.includes('halfling')) jpRaceBonus = 'jps';
+
+            // Cria o personagem com estrutura do sistema Old Dragon 2e
+            const actorData = {
+                name: characterData.name,
+                type: 'character',
+                img: 'icons/svg/mystery-man.svg',
+                system: {
+                    // Atributos
+                    forca: characterData.attributes.strength,
+                    mod_forca: characterData.modifiers.strength,
+                    destreza: characterData.attributes.dexterity,
+                    mod_destreza: characterData.modifiers.dexterity,
+                    constituicao: characterData.attributes.constitution,
+                    mod_constituicao: characterData.modifiers.constitution,
+                    inteligencia: characterData.attributes.intelligence,
+                    mod_inteligencia: characterData.modifiers.intelligence,
+                    sabedoria: characterData.attributes.wisdom,
+                    mod_sabedoria: characterData.modifiers.wisdom,
+                    carisma: characterData.attributes.charisma,
+                    mod_carisma: characterData.modifiers.charisma,
+                    
+                    // Jogadas de Proteção
+                    jpd_total: characterData.savingThrows.JPD,
+                    jpc_total: characterData.savingThrows.JPC,
+                    jps_total: characterData.savingThrows.JPS,
+                    jp: characterData.savingThrows.JPD, // Base da classe
+                    jpd_race_bonus: 0,
+                    jpc_race_bonus: 0,
+                    jps_race_bonus: 0,
+                    jpd_mod: characterData.modifiers.dexterity,
+                    jpc_mod: characterData.modifiers.constitution,
+                    jps_mod: characterData.modifiers.wisdom,
+                    
+                    // Combate
+                    ca: characterData.armorClass,
+                    bac: characterData.baseAttack,
+                    bad: characterData.baseAttack,
+                    
+                    // Vida e Movimento
+                    pv: characterData.hitPoints,
+                    pv_max: characterData.hitPoints,
+                    movimento: characterData.movement,
+                    
+                    // Informações básicas
+                    nivel: characterData.level,
+                    experiencia: characterData.experience,
+
+                    // Detalhes (aba Detalhes da ficha)
+                    details: {
+                        alignment: (characterData.alignment || 'Neutralidade')
+                            .toString().toLowerCase().includes('ord') ? 'ordeiro'
+                            : (characterData.alignment || '').toString().toLowerCase().includes('caos') ? 'caotico'
+                            : 'neutro',
+                        languages: Array.isArray(characterData.languages?.languages)
+                            ? characterData.languages.languages.join(', ')
+                            : (characterData.languages || ''),
+                        reputation: 0,
+                        appearance: characterData.appearance
+                            ? `${characterData.appearance.body}; ${characterData.appearance.hair}; ${characterData.appearance.general}`
+                            : '',
+                        personality: characterData.personality
+                            ? `${characterData.personality.self}; ${characterData.personality.others}; ${characterData.personality.world}`
+                            : '',
+                        background: characterData.background
+                            ? `Nascido ${characterData.background.place} em uma ${characterData.background.family}, ficou órfão após ${characterData.background.tragedy}. Tornou-se aventureiro para ${characterData.background.motive}.`
+                            : '',
+                        notes: ''
+                    },
+
+                    // Bônus racial escolhido para JP
+                    jp_race_bonus: jpRaceBonus,
+                    
+                    // Raça e Classe (referências amigáveis)
+                    raca: characterData.race,
+                    classe: characterData.class,
+
+                    // Dados da raça e classe do SRD
+                    raceData: characterData.raceData,
+                    classData: characterData.classData,
+                    
+                }
+            };
+
+            const actor = await Actor.create(actorData);
+            
+            // Importa Raça e Classe do SRD como Itens do Ator
+            try {
+                const abilityUUIDs = [];
+                // Raça
+                if (characterData.raceUUID || characterData.raceId || characterData.race) {
+                    let raceDoc = null;
+                    if (characterData.raceUUID) {
+                        raceDoc = await fromUuid(characterData.raceUUID).catch(() => null);
+                    }
+                    if (!raceDoc) {
+                        const racePack = game.packs.get('olddragon2e.races');
+                        if (racePack) {
+                            if (characterData.raceId) {
+                                raceDoc = await racePack.getDocument(characterData.raceId).catch(() => null);
+                            }
+                            if (!raceDoc && characterData.race) {
+                                const index = await racePack.getIndex({ fields: ['name','type'] });
+                                const match = index.find(e => e.name === characterData.race && e.type === 'race');
+                                if (match) raceDoc = await racePack.getDocument(match._id).catch(() => null);
+                            }
+                        }
+                    }
+                    if (raceDoc) {
+                        const raceData = raceDoc.toObject();
+                        delete raceData._id;
+                        await actor.createEmbeddedDocuments('Item', [raceData]);
+                        // Coleta habilidades de raça vinculadas (UUIDs)
+                        if (Array.isArray(raceDoc.system?.race_abilities)) {
+                            abilityUUIDs.push(...raceDoc.system.race_abilities);
+                        }
+                    } else {
+                        console.warn('Não foi possível importar a Raça do compêndio.');
+                    }
+                }
+
+                // Classe
+                if (characterData.classUUID || characterData.classId || characterData.class) {
+                    let classDoc = null;
+                    if (characterData.classUUID) {
+                        classDoc = await fromUuid(characterData.classUUID).catch(() => null);
+                    }
+                    if (!classDoc) {
+                        const classPack = game.packs.get('olddragon2e.classes');
+                        if (classPack) {
+                            if (characterData.classId) {
+                                classDoc = await classPack.getDocument(characterData.classId).catch(() => null);
+                            }
+                            if (!classDoc && characterData.class) {
+                                const index = await classPack.getIndex({ fields: ['name','type'] });
+                                const match = index.find(e => e.name === characterData.class && e.type === 'class');
+                                if (match) classDoc = await classPack.getDocument(match._id).catch(() => null);
+                            }
+                        }
+                    }
+                    if (classDoc) {
+                        const classData = classDoc.toObject();
+                        delete classData._id;
+                        await actor.createEmbeddedDocuments('Item', [classData]);
+                        // Coleta habilidades de classe vinculadas (UUIDs)
+                        if (Array.isArray(classDoc.system?.class_abilities)) {
+                            abilityUUIDs.push(...classDoc.system.class_abilities);
+                        }
+                    } else {
+                        console.warn('Não foi possível importar a Classe do compêndio.');
+                    }
+                }
+                // Resolve UUIDs e adiciona habilidades (raça e classe)
+                if (abilityUUIDs.length) {
+                    const abilityItems = [];
+                    for (const uuid of abilityUUIDs) {
+                        try {
+                            const doc = await fromUuid(uuid);
+                            if (doc) {
+                                const obj = doc.toObject();
+                                delete obj._id;
+                                abilityItems.push(obj);
+                            }
+                        } catch (e) {
+                            console.warn('Não foi possível resolver habilidade por UUID:', uuid, e);
+                        }
+                    }
+                    if (abilityItems.length) {
+                        await actor.createEmbeddedDocuments('Item', abilityItems);
+                    }
+                }
+            } catch (importErr) {
+                console.warn('Falha ao importar Raça/Classe do SRD:', importErr);
+            }
+
+            // Importa Magias do SRD conforme classe e nível
+            try {
+                const className = (characterData.class || '').toString().toLowerCase();
+                const level = characterData.level || 1;
+                // Mapeia classe -> escola de magia
+                let school = null;
+                if (/mago|bruxo|feiticeiro|sorcerer|wizard|warlock/.test(className)) school = 'arcane';
+                else if (/clérigo|clerigo|cleric|druida|xam[aã]/.test(className)) school = 'divine';
+                else if (/necromante|necromancer/.test(className)) school = 'necromancer';
+                else if (/ilusionista|illusionist/.test(className)) school = 'illusionist';
+
+                if (school) {
+                    const maxCircle = Math.max(1, Math.ceil(level / 2));
+
+                    let spellPack = game.packs.get('olddragon2e.spells');
+                    if (!spellPack) {
+                        spellPack = Array.from(game.packs).find(p => {
+                            const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                            const label = (p.metadata.label || '').toLowerCase();
+                            return p.documentName === 'Item' && (key.includes('spells') || label.includes('magia'));
+                        });
+                    }
+
+                    if (spellPack) {
+                        const allSpells = await spellPack.getDocuments();
+                        const toCreate = [];
+                        const existing = new Set(actor.items.filter(i => i.type === 'spell').map(i => i.name));
+                        for (const s of allSpells) {
+                            if (s.type !== 'spell') continue;
+                            const v = parseInt(s.system?.[school]);
+                            if (!isNaN(v) && v > 0 && v <= maxCircle) {
+                                if (existing.has(s.name)) continue;
+                                const obj = s.toObject();
+                                delete obj._id;
+                                toCreate.push(obj);
+                            }
+                        }
+                        if (toCreate.length) await actor.createEmbeddedDocuments('Item', toCreate);
+                    } else {
+                        console.warn('Compêndio de magias não encontrado.');
+                    }
+                }
+            } catch (spellsErr) {
+                console.warn('Falha ao importar Magias do SRD:', spellsErr);
+            }
+
+            // Importa Itens de Equipamento do SRD como Itens do Ator
+            try {
+                const itemsToCreate = [];
+
+                // Helpers
+                const normalize = (s) => (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, ' ').trim();
+                const parseEntry = (entry) => {
+                    const m = entry.match(/\((\d+)\)$/); // quantidade somente se termina com número
+                    const quantity = m ? parseInt(m[1]) : 1;
+                    const baseName = m ? entry.replace(/\s*\((\d+)\)$/, '').trim() : entry.trim();
+                    return { baseName, quantity };
+                };
+
+                // Restrições por classe (básico + algumas especializações comuns)
+                const className = (characterData.class || '').toString().toLowerCase();
+                const restrictions = (() => {
+                    const r = { armor: 'any', shield: true, onlyImpact: false, onlySmall: false, noLarge: false, leatherOnly: false };
+                    if (/mago|bruxo|feiticeiro|wizard|warlock/.test(className)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
+                    else if (/necromante|ilusionista/.test(className)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
+                    else if (/ladr[aã]o|ladino|thief|bardo/.test(className)) { r.armor = 'light'; r.shield = false; r.noLarge = true; }
+                    else if (/ranger/.test(className)) { r.armor = 'light'; r.shield = true; r.noLarge = false; /* pode grandes conforme doc futuro */ }
+                    else if (/druida/.test(className)) { r.armor = 'light'; r.leatherOnly = true; r.shield = false; r.noLarge = true; }
+                    else if (/cl[eê]rigo|cleric/.test(className)) { r.onlyImpact = true; r.armor = 'any'; r.shield = true; }
+                    else if (/b[aá]rbaro/.test(className)) { r.armor = 'light'; r.shield = true; }
+                    // Guerreiro e outros: sem restrições
+                    return r;
+                })();
+
+                const isImpactWeapon = (name, sys) => {
+                    const n = normalize(name);
+                    const dt = (sys?.damage_type || '').toLowerCase();
+                    return dt.includes('impact') || dt.includes('bludge') || /ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o/.test(n);
+                };
+                const isTwoHanded = (sys) => !!(sys?.two_handed || sys?.polearm);
+                const isLeatherArmor = (name) => /couro|leather/.test(normalize(name));
+                const isSmallWeaponByName = (name) => /adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o/.test(normalize(name));
+
+                // Packs candidatos (preferir o padrão do sistema)
+                const candidatePacks = [];
+                const preferKeys = ['olddragon2e.equipment'];
+                for (const key of preferKeys) {
+                    const pack = game.packs.get(key);
+                    if (pack) candidatePacks.push(pack);
+                }
+                if (candidatePacks.length === 0) {
+                    for (const p of game.packs) {
+                        if (p.metadata?.package === 'olddragon2e') candidatePacks.push(p);
+                    }
+                }
+
+                // Índices por pack
+                const packIndexes = new Map();
+                for (const pack of candidatePacks) {
+                    try {
+                        const index = await pack.getIndex({ fields: ['name','type'] });
+                        packIndexes.set(pack, index);
+                    } catch {}
+                }
+
+                const allowedTypes = new Set(['weapon','armor','shield','misc','container']);
+
+                for (const raw of characterData.equipment) {
+                    const { baseName, quantity } = parseEntry(raw);
+                    const norm = normalize(baseName);
+                    let foundDoc = null;
+                    
+                    // Busca exata por nome
+                    for (const [pack, index] of packIndexes.entries()) {
+                        const match = index.find(e => allowedTypes.has(e.type) && normalize(e.name) === norm);
+                        if (match) { foundDoc = await pack.getDocument(match._id).catch(()=>null); if (foundDoc) break; }
+                    }
+                    // Fallback: começa com
+                    if (!foundDoc) {
+                        for (const [pack, index] of packIndexes.entries()) {
+                            const match = index.find(e => allowedTypes.has(e.type) && normalize(e.name).startsWith(norm));
+                            if (match) { foundDoc = await pack.getDocument(match._id).catch(()=>null); if (foundDoc) break; }
+                        }
+                    }
+
+                    if (foundDoc) {
+                        const itemData = foundDoc.toObject();
+                        delete itemData._id;
+                        itemData.system = itemData.system || {};
+                        if (quantity > 1) itemData.system.quantity = quantity;
+
+                        // Aplica restrições de classe
+                        let allow = true;
+                        if (itemData.type === 'armor') {
+                            if (restrictions.armor === 'none') allow = false;
+                            else if (restrictions.armor === 'light' && !isLeatherArmor(itemData.name)) allow = false;
+                            if (restrictions.leatherOnly && !isLeatherArmor(itemData.name)) allow = false;
+                            if (allow) itemData.system.is_equipped = true;
+                        } else if (itemData.type === 'shield') {
+                            allow = !!restrictions.shield;
+                            if (allow) itemData.system.is_equipped = true;
+                        } else if (itemData.type === 'weapon') {
+                            if (restrictions.onlyImpact && !isImpactWeapon(itemData.name, itemData.system)) allow = false;
+                            if (restrictions.onlySmall && !isSmallWeaponByName(itemData.name)) allow = false;
+                            if (restrictions.noLarge && isTwoHanded(itemData.system)) allow = false;
+                        }
+
+                        if (allow) itemsToCreate.push(itemData);
+                    } else {
+                        // Sem documento no compêndio: aplica heurísticas de restrição antes de criar genérico
+                        const lower = baseName.toLowerCase();
+                        let allow = true;
+                        if (/escudo|shield/.test(lower) && !restrictions.shield) allow = false;
+                        if (/armadura|armor/.test(lower)) {
+                            if (restrictions.armor === 'none') allow = false;
+                            if (restrictions.armor === 'light' && !this.patterns.leatherArmor.test(lower)) allow = false;
+                            if (restrictions.leatherOnly && !this.patterns.leatherArmor.test(lower)) allow = false;
+                        }
+                        if (/espada|lan[cç]a|adaga|punhal|faca|arco|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante/.test(lower)) {
+                            if (restrictions.onlyImpact && !this.patterns.impactWeapons.test(lower)) allow = false;
+                            if (restrictions.onlySmall && !this.patterns.smallWeapons.test(lower)) allow = false;
+                            if (restrictions.noLarge && this.patterns.twoHandedHints.test(lower)) allow = false;
+                        }
+                        if (allow) {
+                            itemsToCreate.push({ name: baseName, type: 'misc', system: { quantity } });
+                        }
+                    }
+                }
+
+                if (itemsToCreate.length) {
+                    await actor.createEmbeddedDocuments('Item', itemsToCreate);
+                }
+            } catch (equipErr) {
+                console.warn('Falha ao importar itens de equipamento:', equipErr);
+            }
+
+            // Adiciona magias iniciais se for classe que usa magias
+            if (characterData.initialSpells && characterData.initialSpells.length > 0) {
+                try {
+                    const spellData = characterData.initialSpells.map(spell => ({
+                        name: spell.name,
+                        type: 'spell',
+                        img: spell.img || 'icons/svg/magic-swirl.svg',
+                        system: spell.system
+                    }));
+                    
+                    await actor.createEmbeddedDocuments('Item', spellData);
+                    console.log('Magias iniciais adicionadas:', characterData.initialSpells.map(s => s.name));
+                } catch (error) {
+                    console.error('Erro ao adicionar magias iniciais:', error);
+                }
+            }
+
+            // Adiciona equipamento na descrição (texto)
+            await actor.update({
+                'description.value': `<h3>Equipamento Inicial</h3><ul>${characterData.equipment.map(item => `<li>${item}</li>`).join('')}</ul>`
+            });
+
+            console.log('Personagem criado com sucesso:', characterData.name);
+            console.log('Dados do sistema:', actor.system);
+
+            return actor;
+        } catch (error) {
+            console.error('Erro ao criar personagem:', error);
+            throw error;
+        }
+    }
+
+
+    /**
+     * Carrega uma raça aleatória do compêndio SRD
+     */
+    async loadRandomRace() {
+        try {
+            let racePack = game.packs.get('olddragon2e.races');
+            if (!racePack) {
+                // Fallback: tenta localizar um compêndio de raças pelo nome
+                racePack = Array.from(game.packs).find(p => {
+                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                    const label = (p.metadata.label || '').toLowerCase();
+                    return key.includes('races') || label.includes('raça') || label.includes('raças') || label.includes('races');
+                });
+            }
+            if (!racePack) {
+                console.warn('Compêndio de raças não encontrado');
+                return null;
+            }
+            
+            const racesAll = await racePack.getDocuments();
+            const races = racesAll.filter(doc => doc.type === 'race');
+            if (races.length === 0) {
+                console.warn('Nenhuma raça encontrada no compêndio');
+                return null;
+            }
+            
+            const randomRace = races[Math.floor(Math.random() * races.length)];
+            return randomRace;
+        } catch (error) {
+            console.error('Erro ao carregar raça:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * Carrega uma classe aleatória do compêndio SRD
+     */
+    async loadRandomClass() {
+        try {
+            let classPack = game.packs.get('olddragon2e.classes');
+            if (!classPack) {
+                // Fallback: tenta localizar um compêndio de classes pelo nome
+                classPack = Array.from(game.packs).find(p => {
+                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                    const label = (p.metadata.label || '').toLowerCase();
+                    return key.includes('classes') || label.includes('classe') || label.includes('classes');
+                });
+            }
+            if (!classPack) {
+                console.warn('Compêndio de classes não encontrado');
+                return null;
+            }
+            
+            const classesAll = await classPack.getDocuments();
+            const classes = classesAll.filter(doc => doc.type === 'class');
+            if (classes.length === 0) {
+                console.warn('Nenhuma classe encontrada no compêndio');
+                return null;
+            }
+            
+            const randomClass = classes[Math.floor(Math.random() * classes.length)];
+            return randomClass;
+        } catch (error) {
+            console.error('Erro ao carregar classe:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Mostra o modal de geração de personagem
+     */
+    async showGeneratorModal() {
+        const character = await this.generateCharacter();
+        
+        // Carrega raça e classe aleatórias do SRD
+        console.log('Carregando raça e classe do SRD...');
+        const selectedRace = await this.loadRandomRace();
+        const selectedClass = await this.loadRandomClass();
+        
+        console.log('Raça selecionada:', selectedRace);
+        console.log('Classe selecionada:', selectedClass);
+        
+        // Atualiza dados do personagem com raça e classe selecionadas
+        if (selectedRace) {
+            character.race = selectedRace.name;
+            character.raceId = selectedRace.id;
+            character.raceUUID = selectedRace.uuid;
+            character.raceData = selectedRace.system;
+            // Gera o nome compatível com a raça selecionada
+            character.name = this.generateRaceName(selectedRace.id);
+            console.log('Raça aplicada:', character.race);
+        }
+        if (selectedClass) {
+            character.class = selectedClass.name;
+            character.classId = selectedClass.id;
+            character.classUUID = selectedClass.uuid;
+            character.classData = selectedClass.system;
+            console.log('Classe aplicada:', character.class);
+
+            // Ajusta equipamento para respeitar restrições da classe selecionada
+            const archetype = this.mapClassToArchetype(selectedClass.name);
+            const baseEquip = this.generateEquipment(archetype);
+            const restrictions = this.getClassRestrictions(selectedClass.name);
+            character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+            
+            // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
+            const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
+            if (isArcaneClass) {
+                character.initialSpells = await this.generateInitialSpells(selectedClass.name);
+                console.log('Magias iniciais geradas:', character.initialSpells?.map(s => s.name) || 'Nenhuma');
+            } else {
+                console.log('Classe divina detectada, magias serão importadas do SRD');
+            }
+        }
+        
+        const modalContent = `
+            <div class="old-dragon-generator-modal">
+                <h2><i class="fas fa-dice-d20"></i> Gerador de Personagem - Old Dragon 2e</h2>
+                
+                <div class="character-preview">
+                    <h3>Prévia do Personagem</h3>
+                    
+                    <div class="main-layout">
+                        <div class="left-column">
+                    <div class="character-basic-info">
+                                <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
+                                <div class="info-grid">
+                                    <div class="info-item"><strong>Nome:</strong> ${character.name}</div>
+                                    <div class="info-item"><strong>Raça:</strong> ${character.race || 'Carregando...'}</div>
+                                    <div class="info-item"><strong>Classe:</strong> ${character.class || 'Carregando...'}</div>
+                                    <div class="info-item"><strong>Nível:</strong> ${character.level}</div>
+                                    <div class="info-item"><strong>PV:</strong> ${character.hitPoints}</div>
+                                    <div class="info-item"><strong>CA:</strong> ${character.armorClass}</div>
+                                    <div class="info-item"><strong>BA:</strong> ${character.baseAttack}</div>
+                                    <div class="info-item"><strong>MV:</strong> ${character.movement}m</div>
+                                    <div class="info-item"><strong>Idiomas:</strong> ${character.languages.languages.join(', ')}</div>
+                                    <div class="info-item"><strong>Alinhamento:</strong> ${character.alignment}</div>
+                                </div>
+                    </div>
+                    
+                    <div class="attributes-grid">
+                                <h4><i class="fas fa-dice"></i> Atributos</h4>
+                        ${this.attributes.map(attr => `
+                            <div class="attribute-item">
+                                <div class="attribute-name">${this.attributeNames[attr]}</div>
+                                <div class="attribute-value">${character.attributes[attr]}</div>
+                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                            
+                            <div class="saving-throws">
+                                <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
+                                <div class="saving-throws-grid">
+                                    <div class="saving-throw-item">
+                                        <div class="saving-throw-name">JPD</div>
+                                        <div class="saving-throw-value">${character.savingThrows.JPD}</div>
+                                    </div>
+                                    <div class="saving-throw-item">
+                                        <div class="saving-throw-name">JPC</div>
+                                        <div class="saving-throw-value">${character.savingThrows.JPC}</div>
+                                    </div>
+                                    <div class="saving-throw-item">
+                                        <div class="saving-throw-name">JPS</div>
+                                        <div class="saving-throw-value">${character.savingThrows.JPS}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="right-column">
+                            <div class="race-abilities">
+                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
+                                <ul>
+                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="class-abilities">
+                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
+                                <ul>
+                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                    </div>
+                    
+                    <div class="equipment-list">
+                        <h4><i class="fas fa-sack"></i> Equipamento</h4>
+                        <ul>
+                            ${character.equipment.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                            </div>
+                            
+                            <div class="character-details">
+                                <h4><i class="fas fa-user"></i> Detalhes</h4>
+                                
+                                <div class="detail-section">
+                                    <h5>Aparência:</h5>
+                                    <p>${character.appearance.body}, ${character.appearance.hair}, ${character.appearance.general}</p>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h5>Personalidade:</h5>
+                                    <p>${character.personality.self}, ${character.personality.others}, ${character.personality.world}</p>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h5>Histórico:</h5>
+                                    <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn btn-primary" id="create-character">
+                        <i class="fas fa-plus"></i> Criar Personagem
+                    </button>
+                    <button class="btn btn-secondary" id="regenerate-character">
+                        <i class="fas fa-redo"></i> Regenerar
+                    </button>
+                    <button class="btn btn-secondary" id="close-modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const dialog = new Dialog({
+            title: 'Gerador de Personagem - Old Dragon 2e',
+            content: modalContent,
+            buttons: {},
+            default: 'create-character',
+            render: (html) => {
+                // Usamos posicionamento/arraste nativos do Foundry; sem forçar transform/left/top
+                html.find('#create-character').click(async () => {
+                    try {
+                        const actor = await this.createCharacterInFoundry(character);
+                        ui.notifications.info(`Personagem ${character.name} criado com sucesso!`);
+                        actor.sheet.render(true);
+                        dialog.close();
+                    } catch (error) {
+                        ui.notifications.error('Erro ao criar personagem: ' + error.message);
+                    }
+                });
+
+                html.find('#regenerate-character').click(async () => {
+                    dialog.close();
+                    await this.showGeneratorModal();
+                });
+
+                html.find('#close-modal').click(() => {
+                    dialog.close();
+                });
+            }
+        }, {
+            classes: ['od2e-generator'],
+            width: 1000,
+            resizable: true
+        });
+
+        dialog.render(true);
+        // Removido hook de re-centralização forçada
+    }
+}
+
+// Hooks para inicialização do módulo
+Hooks.on('init', function() {
+    console.log('Old Dragon 2e - Gerador de Personagens | Inicializando...');
+});
+
+Hooks.on('ready', function() {
+    console.log('Old Dragon 2e - Gerador de Personagens | Pronto!');
+    
+    // Função para adicionar o botão
+    function addGeneratorButton() {
+        const actorDirectory = document.querySelector('#actors');
+        if (!actorDirectory) return;
+        
+        // Remove botão existente se houver
+        const existingBtn = actorDirectory.querySelector('.old-dragon-generator-btn');
+        if (existingBtn) {
+            existingBtn.remove();
+        }
+        
+        // Cria o botão
+        const button = document.createElement('button');
+        button.className = 'old-dragon-generator-btn';
+        button.type = 'button';
+        button.innerHTML = '<i class="fas fa-dice-d20"></i> Gerar Personagem';
+        
+        // Adiciona estilos
+        Object.assign(button.style, {
+        'background': 'linear-gradient(135deg, #8B4513, #A0522D)',
+        'color': 'white',
+        'border': 'none',
+        'padding': '8px 16px',
+        'border-radius': '4px',
+        'cursor': 'pointer',
+        'font-weight': 'bold',
+            'margin-left': '10px',
+            'display': 'inline-block'
+        });
+        
+        // Adiciona evento de clique
+        button.addEventListener('click', async () => {
+            console.log('Botão Gerar Personagem clicado!');
+            const generator = new OldDragon2eCharacterGenerator();
+            await generator.showGeneratorModal();
+        });
+        
+        // Tenta encontrar onde adicionar o botão
+        const header = actorDirectory.querySelector('.directory-header');
+        if (header) {
+            header.appendChild(button);
+        } else {
+            // Fallback: adiciona no topo
+            const firstChild = actorDirectory.firstElementChild;
+            if (firstChild) {
+                actorDirectory.insertBefore(button, firstChild);
+            } else {
+                actorDirectory.appendChild(button);
+            }
+        }
+        
+        console.log('Botão Gerar Personagem adicionado ao DOM');
+    }
+    
+    // Adiciona o botão quando a aba de atores é renderizada
+    Hooks.on('renderActorDirectory', (app, html) => {
+        setTimeout(addGeneratorButton, 100); // Pequeno delay para garantir que o DOM esteja pronto
+    });
+    
+    // Também tenta adicionar imediatamente se a aba já estiver aberta
+    setTimeout(addGeneratorButton, 1000);
+});
