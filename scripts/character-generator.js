@@ -1561,8 +1561,10 @@ class OldDragon2eCharacterGenerator {
                 'gnome': 'gnome',
                 'dwarf': 'dwarf', 
                 'elf': 'elf',
+                'elfo': 'elf',
                 'halfling': 'halfling',
                 'human': 'human',
+                'humano': 'human',
                 'orc': 'orc'
             };
             
