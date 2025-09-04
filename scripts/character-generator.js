@@ -157,6 +157,48 @@ class OldDragon2eCharacterGenerator {
                 hitDie: 6,
                 baseAttack: 1,
                 savingThrow: 5
+            },
+            {
+                id: 'dwarf_adventurer',
+                name: 'Anão Aventureiro',
+                namePlural: 'Anões Aventureiros',
+                raceRestriction: 'dwarf',
+                abilities: [
+                    'Especialização de Anão',
+                    'Resistência a venenos',
+                    'Conhecimento de pedras e metais'
+                ],
+                hitDie: 8,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'elf_adventurer',
+                name: 'Elfo Aventureiro',
+                namePlural: 'Elfos Aventureiros',
+                raceRestriction: 'elf',
+                abilities: [
+                    'Especialização de Elfo',
+                    'Imunidade a sono',
+                    'Visão noturna'
+                ],
+                hitDie: 6,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'halfling_adventurer',
+                name: 'Halfling Aventureiro',
+                namePlural: 'Halflings Aventureiros',
+                raceRestriction: 'halfling',
+                abilities: [
+                    'Especialização de Halfling',
+                    'Sorte natural',
+                    'Habilidade com fundas'
+                ],
+                hitDie: 6,
+                baseAttack: 1,
+                savingThrow: 5
             }
         ];
 
@@ -843,7 +885,18 @@ class OldDragon2eCharacterGenerator {
         const attributes = this.generateAttributes();
         const modifiers = this.calculateModifiers(attributes);
         const race = this.races[Math.floor(Math.random() * this.races.length)];
-        const characterClass = this.classes[Math.floor(Math.random() * this.classes.length)];
+        
+        // Filtra classes disponíveis baseado na raça
+        const availableClasses = this.classes.filter(cls => {
+            // Se a classe tem restrição de raça, só pode ser escolhida pela raça correta
+            if (cls.raceRestriction) {
+                return cls.raceRestriction === race.id;
+            }
+            // Classes sem restrição podem ser escolhidas por qualquer raça
+            return true;
+        });
+        
+        const characterClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
         const name = this.generateRaceName(race.id);
         const equipment = this.generateEquipment(characterClass.id);
         const hitPoints = this.calculateHitPoints(characterClass.id, attributes.constitution);
