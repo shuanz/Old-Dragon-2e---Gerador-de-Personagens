@@ -1458,7 +1458,7 @@ class OldDragon2eCharacterGenerator {
                         <i class="fas fa-plus"></i> Criar Personagem
                     </button>
                     <button class="btn btn-secondary" id="regenerate-character">
-                        <i class="fas fa-redo"></i> Regenerar
+                        <i class="fas fa-redo"></i> Gerar
                     </button>
                     <button class="btn btn-secondary" id="close-modal">
                         <i class="fas fa-times"></i> Cancelar
