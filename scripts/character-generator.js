@@ -348,17 +348,17 @@ class OldDragon2eCharacterGenerator {
             console.log('Total de magias encontradas:', allSpells.length);
             
             // Debug: mostra algumas magias para entender o formato
-            console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 5).map(s => ({ 
+            console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 3).map(s => ({ 
                 name: s.name, 
                 circle: s.system?.circle, 
                 system: s.system,
-                type: s.type
+                type: s.type,
+                systemKeys: Object.keys(s.system || {})
             })));
             
             const firstCircleSpells = allSpells.filter(spell => {
                 // Tenta diferentes formatos de círculo
                 const circle = spell.system?.circle;
-                console.log(`Verificando magia ${spell.name}:`, { circle, type: typeof circle });
                 
                 if (typeof circle === 'number') return circle === 1;
                 if (typeof circle === 'string') {
