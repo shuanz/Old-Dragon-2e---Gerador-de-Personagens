@@ -7,7 +7,7 @@ Um módulo para Foundry Virtual Tabletop que permite gerar personagens automatic
 - **Geração Automática**: Cria personagens com atributos aleatórios usando 3d6
 - **Múltiplas Raças**: Suporte para Humanos, Elfos, Anões, Halflings, Orcs e Goblins
 - **Todas as Classes**: Guerreiro, Mago, Clérigo, Ladino, Druida, Paladino e Ranger
-- **Equipamento Automático**: Cada classe recebe equipamento apropriado
+- **Equipamento Automático**: Cada classe recebe equipamento apropriado buscado exclusivamente no compêndio oficial do sistema
 - **Cálculo de HP**: Pontos de vida calculados automaticamente baseado na classe e constituição
 - **Interface Intuitiva**: Botão integrado no menu de atores do Foundry VTT
 
