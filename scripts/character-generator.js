@@ -1556,8 +1556,8 @@ class OldDragon2eCharacterGenerator {
         // Carrega classe respeitando restrições de raça
         let selectedClass = null;
         if (selectedRace) {
-            // Mapeia o ID da raça do SRD para o formato local
-            const raceIdMapping = {
+            // Mapeia o nome da raça do SRD para o formato local
+            const raceNameMapping = {
                 'gnome': 'gnome',
                 'dwarf': 'dwarf', 
                 'elf': 'elf',
@@ -1566,7 +1566,7 @@ class OldDragon2eCharacterGenerator {
                 'orc': 'orc'
             };
             
-            const localRaceId = raceIdMapping[selectedRace.id] || selectedRace.id;
+            const localRaceId = raceNameMapping[selectedRace.name.toLowerCase()] || selectedRace.name.toLowerCase();
             console.log('Raça do SRD:', selectedRace.id, 'Mapeada para:', localRaceId);
             
             // Carrega todas as classes do SRD
