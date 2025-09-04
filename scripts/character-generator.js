@@ -1488,6 +1488,8 @@ class OldDragon2eCharacterGenerator {
                 return null;
             }
             
+            console.log('Todas as classes disponíveis no SRD:', classes.map(c => c.name));
+            
             const randomClass = classes[Math.floor(Math.random() * classes.length)];
             return randomClass;
         } catch (error) {
@@ -1530,7 +1532,9 @@ class OldDragon2eCharacterGenerator {
                 return true;
             });
             
+            console.log('Todas as classes locais:', this.classes.map(c => c.name));
             console.log('Classes disponíveis para', localRaceId + ':', availableClasses.map(c => c.name));
+            console.log('Classes com restrição de raça:', this.classes.filter(c => c.raceRestriction).map(c => c.name + ' (' + c.raceRestriction + ')'));
             
             // Seleciona uma classe aleatória das disponíveis
             const randomClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
@@ -1539,6 +1543,12 @@ class OldDragon2eCharacterGenerator {
             selectedClass = await this.loadClassByName(randomClass.name);
             
             console.log('Classe selecionada:', randomClass.name, 'SRD:', selectedClass);
+            
+            // Se não encontrou a classe específica no SRD, usa uma classe genérica
+            if (!selectedClass) {
+                console.log('Classe específica não encontrada no SRD, usando classe genérica');
+                selectedClass = await this.loadRandomClass();
+            }
         } else {
             selectedClass = await this.loadRandomClass();
         }
