@@ -281,6 +281,9 @@ class OldDragon2eCharacterGenerator {
      * Carrega descrições de equipamentos do SRD de forma assíncrona
      */
     async loadEquipmentDescriptions(equipment, container) {
+        // Limpa o container primeiro
+        container.empty();
+        
         for (const item of equipment) {
             try {
                 const description = await this.getEquipmentDescription(item);
@@ -322,24 +325,35 @@ class OldDragon2eCharacterGenerator {
             
             for (const packName of equipmentPacks) {
                 const pack = game.packs.get(packName);
-                if (!pack) continue;
+                if (!pack) {
+                    console.log(`Pack ${packName} não encontrado`);
+                    continue;
+                }
                 
                 const items = await pack.getDocuments();
-                const item = items.find(i => 
-                    i.name.toLowerCase() === cleanName.toLowerCase() ||
-                    i.name.toLowerCase().includes(cleanName.toLowerCase())
-                );
+                console.log(`Buscando "${cleanName}" em ${packName} (${items.length} itens)`);
+                
+                // Busca exata primeiro
+                let item = items.find(i => i.name.toLowerCase() === cleanName.toLowerCase());
+                
+                // Se não encontrar, busca parcial
+                if (!item) {
+                    item = items.find(i => i.name.toLowerCase().includes(cleanName.toLowerCase()));
+                }
                 
                 if (item) {
-                    // Retorna a descrição do item do SRD
-                    return item.system?.description?.value || 
-                           item.system?.description || 
-                           item.description?.value || 
-                           item.description || 
-                           'Equipamento de aventura.';
+                    console.log(`Encontrado item: ${item.name}`);
+                    const description = item.system?.description?.value || 
+                                     item.system?.description || 
+                                     item.description?.value || 
+                                     item.description || 
+                                     'Equipamento de aventura.';
+                    console.log(`Descrição: ${description.substring(0, 50)}...`);
+                    return description;
                 }
             }
             
+            console.log(`Item "${cleanName}" não encontrado em nenhum pack`);
             return 'Equipamento de aventura.';
         } catch (error) {
             console.warn('Erro ao buscar descrição do equipamento:', error);
