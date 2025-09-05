@@ -1544,6 +1544,226 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Atualiza o conteúdo do modal com um novo personagem
+     */
+    async updateModalContent(dialog, html) {
+        try {
+            // Mostra indicador de carregamento
+            const regenerateBtn = html.find('#regenerate-character');
+            const originalText = regenerateBtn.html();
+            regenerateBtn.html('<i class="fas fa-spinner fa-spin"></i> Gerando...');
+            regenerateBtn.prop('disabled', true);
+
+            // Gera novo personagem
+            const character = await this.generateCharacter();
+            
+            // Carrega raça e classe aleatórias do SRD
+            console.log('Carregando raça e classe do SRD...');
+            const selectedRace = await this.loadRandomRace();
+            
+            // Carrega classe respeitando restrições de raça
+            let selectedClass = null;
+            if (selectedRace) {
+                // Mapeia o nome da raça do SRD para o formato local
+                const raceNameMapping = {
+                    'gnome': 'gnome',
+                    'dwarf': 'dwarf', 
+                    'elf': 'elf',
+                    'elfo': 'elf',
+                    'halfling': 'halfling',
+                    'human': 'human',
+                    'humano': 'human',
+                    'orc': 'orc'
+                };
+                
+                const localRaceId = raceNameMapping[selectedRace.name.toLowerCase()] || selectedRace.name.toLowerCase();
+                console.log('Raça do SRD:', selectedRace.id, 'Mapeada para:', localRaceId);
+                
+                // Carrega todas as classes do SRD
+                let classPack = game.packs.get('olddragon2e.classes');
+                if (!classPack) {
+                    classPack = Array.from(game.packs).find(p => {
+                        const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                        const label = (p.metadata.label || '').toLowerCase();
+                        return key.includes('classes') || label.includes('classe') || label.includes('classes');
+                    });
+                }
+                
+                const classesAll = await classPack.getDocuments();
+                const srdClasses = classesAll.filter(doc => doc.type === 'class');
+                console.log('Todas as classes do SRD:', srdClasses.map(c => c.name));
+                
+                // Filtra classes do SRD baseado na raça
+                const availableClasses = srdClasses.filter(srdClass => {
+                    // Normaliza o nome da classe para comparação (remove acentos)
+                    const className = srdClass.name.toLowerCase();
+                    const normalizedClassName = className.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+                    
+                    // Classes específicas de raça
+                    if (localRaceId === 'dwarf' && normalizedClassName.includes('anao aventureiro')) return true;
+                    if (localRaceId === 'elf' && normalizedClassName.includes('elfo aventureiro')) return true;
+                    if (localRaceId === 'halfling' && normalizedClassName.includes('halfling aventureiro')) return true;
+                    
+                    // Classes de combate (Guerreiro e especializações)
+                    const combatClasses = ['guerreiro', 'bárbaro', 'paladino', 'arqueiro'];
+                    if (combatClasses.some(gc => className.includes(gc))) return true;
+                    
+                    // Classes arcanas (Mago e especializações)
+                    const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bruxo'];
+                    if (arcaneClasses.some(gc => className.includes(gc))) return true;
+                    
+                    // Classes divinas (Clérigo e especializações)
+                    const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
+                    if (divineClasses.some(gc => className.includes(gc))) return true;
+                    
+                    // Classes de habilidade (Ladrão e especializações)
+                    const skillClasses = ['ladrão', 'ranger', 'bardo', 'assassino'];
+                    if (skillClasses.some(gc => className.includes(gc))) return true;
+                        
+                    return false;
+                });
+                
+                console.log('Classes disponíveis para', localRaceId + ':', availableClasses.map(c => c.name));
+                
+                // Seleciona uma classe aleatória das disponíveis
+                if (availableClasses.length > 0) {
+                    selectedClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
+                    console.log('Classe selecionada do SRD:', selectedClass.name);
+                } else {
+                    console.log('Nenhuma classe disponível para a raça, usando classe aleatória');
+                    selectedClass = await this.loadRandomClass();
+                }
+            } else {
+                selectedClass = await this.loadRandomClass();
+            }
+            
+            console.log('Raça selecionada:', selectedRace);
+            console.log('Classe selecionada:', selectedClass);
+            
+            // Atualiza dados do personagem com raça e classe selecionadas
+            if (selectedRace) {
+                character.race = selectedRace.name;
+                character.raceId = selectedRace.id;
+                character.raceUUID = selectedRace.uuid;
+                character.raceData = selectedRace.system;
+                // Gera o nome compatível com a raça selecionada
+                character.name = this.generateRaceName(selectedRace.id);
+                console.log('Raça aplicada:', character.race);
+            }
+            if (selectedClass) {
+                character.class = selectedClass.name;
+                character.classId = selectedClass.id;
+                character.classUUID = selectedClass.uuid;
+                character.classData = selectedClass.system;
+                console.log('Classe aplicada:', character.class);
+
+                // Ajusta equipamento para respeitar restrições da classe selecionada
+                const archetype = this.mapClassToArchetype(selectedClass.name);
+                const baseEquip = this.generateEquipment(archetype);
+                const restrictions = this.getClassRestrictions(selectedClass.name);
+                character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+                
+                // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
+                const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
+                const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(selectedClass.name);
+                const isSkillClassWithMagic = /bardo|bard/i.test(selectedClass.name);
+                
+                if (isArcaneClass || isSkillClassWithMagic) {
+                    character.initialSpells = await this.generateInitialSpells(selectedClass.name);
+                    console.log('Magias iniciais geradas:', character.initialSpells?.map(s => s.name) || 'Nenhuma');
+                } else if (isDivineClass) {
+                    console.log('Classe divina detectada, magias serão importadas do SRD');
+                }
+            }
+
+            // Atualiza a referência do personagem no dialog
+            dialog.currentCharacter = character;
+
+            // Atualiza o conteúdo do modal
+            this.updateModalHTML(html, character);
+
+            // Restaura o botão
+            regenerateBtn.html(originalText);
+            regenerateBtn.prop('disabled', false);
+
+        } catch (error) {
+            console.error('Erro ao atualizar modal:', error);
+            ui.notifications.error('Erro ao gerar novo personagem: ' + error.message);
+            
+            // Restaura o botão mesmo em caso de erro
+            const regenerateBtn = html.find('#regenerate-character');
+            regenerateBtn.html('<i class="fas fa-redo"></i> Gerar');
+            regenerateBtn.prop('disabled', false);
+        }
+    }
+
+    /**
+     * Atualiza o HTML do modal com os novos dados do personagem
+     */
+    updateModalHTML(html, character) {
+        // Atualiza informações básicas - usando os seletores corretos baseados no HTML atual
+        const infoItems = html.find('.info-item');
+        
+        // Atualiza cada informação básica na ordem correta
+        infoItems.eq(0).html(`<strong>Nome:</strong> ${character.name}`);
+        infoItems.eq(1).html(`<strong>Raça:</strong> ${character.race || 'Carregando...'}`);
+        infoItems.eq(2).html(`<strong>Classe:</strong> ${character.class || 'Carregando...'}`);
+        infoItems.eq(3).html(`<strong>Nível:</strong> ${character.level}`);
+        infoItems.eq(4).html(`<strong>PV:</strong> ${character.hitPoints}`);
+        infoItems.eq(5).html(`<strong>CA:</strong> ${character.armorClass}`);
+        infoItems.eq(6).html(`<strong>BA:</strong> ${character.baseAttack}`);
+        infoItems.eq(7).html(`<strong>MV:</strong> ${character.movement}m`);
+        infoItems.eq(8).html(`<strong>Idiomas:</strong> ${character.languages.languages.join(', ')}`);
+        infoItems.eq(9).html(`<strong>Alinhamento:</strong> ${character.alignment}`);
+
+        // Atualiza atributos - usando os seletores corretos baseados no HTML atual
+        const attributeItems = html.find('.attribute-item');
+        this.attributes.forEach((attr, index) => {
+            const attributeItem = attributeItems.eq(index);
+            attributeItem.find('.attribute-value').text(character.attributes[attr]);
+            const modifier = character.modifiers[attr];
+            attributeItem.find('.attribute-modifier').text(modifier >= 0 ? `+${modifier}` : modifier);
+        });
+
+        // Atualiza equipamento
+        const equipmentList = html.find('#equipment-list');
+        equipmentList.empty();
+        character.equipment.forEach(item => {
+            equipmentList.append(`<li>${item}</li>`);
+        });
+
+        // Atualiza habilidades de raça
+        const raceAbilities = html.find('.race-abilities ul');
+        raceAbilities.empty();
+        character.raceAbilities.forEach(ability => {
+            raceAbilities.append(`<li>${ability}</li>`);
+        });
+
+        // Atualiza habilidades de classe
+        const classAbilities = html.find('.class-abilities ul');
+        classAbilities.empty();
+        character.classAbilities.forEach(ability => {
+            classAbilities.append(`<li>${ability}</li>`);
+        });
+
+        // Atualiza jogadas de proteção
+        html.find('.saving-throw-item').eq(0).find('.saving-throw-value').text(character.savingThrows.JPD);
+        html.find('.saving-throw-item').eq(1).find('.saving-throw-value').text(character.savingThrows.JPC);
+        html.find('.saving-throw-item').eq(2).find('.saving-throw-value').text(character.savingThrows.JPS);
+
+        // Atualiza detalhes do personagem
+        html.find('.detail-section').eq(0).find('p').text(
+            `${character.appearance.body}, ${character.appearance.hair}, ${character.appearance.general}`
+        );
+        html.find('.detail-section').eq(1).find('p').text(
+            `${character.personality.self}, ${character.personality.others}, ${character.personality.world}`
+        );
+        html.find('.detail-section').eq(2).find('p').text(
+            `Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.`
+        );
+    }
+
+    /**
      * Mostra o modal de geração de personagem
      */
     async showGeneratorModal() {
@@ -1799,11 +2019,14 @@ class OldDragon2eCharacterGenerator {
             buttons: {},
             default: 'create-character',
             render: (html) => {
+                // Armazena a referência do personagem atual no dialog
+                dialog.currentCharacter = character;
+                
                 // Usamos posicionamento/arraste nativos do Foundry; sem forçar transform/left/top
                 html.find('#create-character').click(async () => {
                     try {
-                        const actor = await this.createCharacterInFoundry(character);
-                        ui.notifications.info(`Personagem ${character.name} criado com sucesso!`);
+                        const actor = await this.createCharacterInFoundry(dialog.currentCharacter);
+                        ui.notifications.info(`Personagem ${dialog.currentCharacter.name} criado com sucesso!`);
                         actor.sheet.render(true);
                         dialog.close();
                     } catch (error) {
@@ -1812,8 +2035,7 @@ class OldDragon2eCharacterGenerator {
                 });
 
                 html.find('#regenerate-character').click(async () => {
-                    dialog.close();
-                    await this.showGeneratorModal();
+                    await this.updateModalContent(dialog, html);
                 });
 
                 html.find('#close-modal').click(() => {
