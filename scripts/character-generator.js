@@ -274,6 +274,111 @@ class OldDragon2eCharacterGenerator {
             mediumWeapons: /(espada curta|espada longa|arco curto|arco longo|lança|lança montada|machado|machado de batalha|cimitarra|espada bastarda)/i,
             largeWeapons: /(montante|alabarda|pique|lança montada|glaive|halberd)/i
         };
+
+        // Descrições dos equipamentos do Old Dragon 2e
+        this.equipmentDescriptions = {
+            // Armaduras
+            'Armadura de Couro': 'Armadura leve feita de couro tratado. CA +2.',
+            'Armadura Acolchoada': 'Armadura leve feita de tecido acolchoado. CA +1.',
+            'Armadura de Couro Batido': 'Armadura leve de couro endurecido. CA +2.',
+            'Cota de Malha': 'Armadura média feita de anéis de metal entrelaçados. CA +3.',
+            'Armadura de Placas': 'Armadura pesada de placas de metal. CA +4.',
+            'Armadura Completa': 'Armadura pesada completa de metal. CA +5.',
+            
+            // Escudos
+            'Escudo': 'Escudo de madeira ou metal que oferece proteção adicional. CA +1.',
+            
+            // Armas
+            'Adaga': 'Arma pequena e afiada, ideal para combate corpo a corpo. Dano: 1d4.',
+            'Espada Curta': 'Espada de uma mão, versátil e ágil. Dano: 1d6.',
+            'Espada Longa': 'Espada de uma mão, balanceada para combate. Dano: 1d8.',
+            'Espada Bastarda': 'Espada de uma mão e meia, versátil. Dano: 1d8.',
+            'Montante': 'Espada de duas mãos, poderosa mas lenta. Dano: 1d10.',
+            'Maça': 'Arma de impacto de uma mão. Dano: 1d6.',
+            'Martelo de Batalha': 'Martelo de guerra de uma mão. Dano: 1d6.',
+            'Mangual': 'Arma de corrente com cabeça de metal. Dano: 1d6.',
+            'Porrete/Clava': 'Arma simples de madeira. Dano: 1d4.',
+            'Machado': 'Machado de uma mão para combate. Dano: 1d6.',
+            'Machado de Batalha': 'Machado de guerra de uma mão. Dano: 1d8.',
+            'Lança': 'Arma de haste de uma mão. Dano: 1d6.',
+            'Lança Montada': 'Lança longa para cavalaria. Dano: 1d8.',
+            'Alabarda': 'Arma de haste com lâmina e gancho. Dano: 1d10.',
+            'Pique': 'Lança longa de duas mãos. Dano: 1d8.',
+            'Arco Curto': 'Arco de tamanho médio para combate à distância. Dano: 1d6.',
+            'Arco Longo': 'Arco longo para combate à distância. Dano: 1d8.',
+            'Besta': 'Arma de disparo com mecanismo de corda. Dano: 1d8.',
+            'Besta de Mão': 'Besta pequena de uma mão. Dano: 1d4.',
+            'Funda': 'Arma de arremesso com bolsa de couro. Dano: 1d4.',
+            'Azagaia': 'Dardo de arremesso. Dano: 1d4.',
+            'Cimitarra': 'Espada curva de uma mão. Dano: 1d6.',
+            'Bordão/Cajado': 'Bastão de madeira simples. Dano: 1d4.',
+            'Virote': 'Dardo para besta. Dano: 1d4.',
+            'Virote pequeno': 'Dardo pequeno para besta de mão. Dano: 1d3.',
+            
+            // Equipamentos diversos
+            'Mochila': 'Saco resistente para carregar equipamentos.',
+            'Ração de viagem': 'Comida preservada para longas viagens.',
+            'Saco de Dormir': 'Saco de tecido para dormir ao ar livre.',
+            'Algema': 'Correntes para prender prisioneiros.',
+            'Arpéu': 'Gancho com corda para escalar ou agarrar.',
+            'Símbolo divino': 'Símbolo sagrado para clérigos e druidas.',
+            'Corda de Cânhamo': 'Corda resistente de 15 metros.',
+            'Tocha': 'Fonte de luz que queima por 1 hora.',
+            'Vela': 'Fonte de luz que queima por 4 horas.',
+            'Óleo': 'Óleo para lamparinas e tochas.',
+            'Pederneira': 'Pedra para acender fogo.',
+            'Tenda pequena': 'Abrigo portátil para 2 pessoas.',
+            'Cravos/Ganchos': 'Ganchos de ferro para escalar.',
+            'Ferramentas de Ladrão': 'Kit com ferramentas para abrir fechaduras.',
+            'Pena e Tinta': 'Material para escrever e desenhar.',
+            'Pergaminho': 'Papel resistente para magias e documentos.',
+            'Grimório': 'Livro para anotar magias.',
+            'Lamparina': 'Lâmpada a óleo portátil.',
+            'Lanterna furta-fogo': 'Lanterna que não apaga com vento.',
+            'Manto': 'Capa de tecido para proteção contra intempéries.',
+            'Traje de exploração': 'Roupas resistentes para aventuras.',
+            'Traje de inverno': 'Roupas quentes para climas frios.',
+            'Traje nobre': 'Roupas elegantes para ocasiões especiais.',
+            'Vara de exploração': 'Bastão de 3 metros para testar armadilhas.',
+            'Água Benta': 'Água abençoada que afeta mortos-vivos.',
+            'Apito': 'Apito para comunicação à distância.',
+            'Espelho': 'Espelho pequeno para sinais e reflexos.',
+            'Giz': 'Giz para marcar caminhos e desenhar.',
+            'Cadeado': 'Fechadura portátil para cofres e portas.',
+            'Corrente': 'Corrente de ferro de 3 metros.',
+            'Escada': 'Escada portátil de 3 metros.',
+            'Pé de Cabra': 'Ferramenta para forçar portas e baús.',
+            'Pá ou Picareta': 'Ferramenta para cavar e minerar.',
+            'Rede': 'Rede para capturar inimigos.',
+            'Saco de estopa': 'Saco de tecido grosso para carregar itens.',
+            'Porta Mapas': 'Tubo para guardar mapas e pergaminhos.',
+            'Coberta de Inverno': 'Cobertor quente para dormir.',
+            'Selas e Arreios': 'Equipamento para montarias.',
+            'Barril/Caixa grande': 'Container grande para armazenar itens.',
+            'Barril/Caixa pequena': 'Container pequeno para armazenar itens.',
+            'Algibeira': 'Bolsão pequeno para moedas e joias.',
+            'Aljava': 'Cilindro para carregar flechas.',
+            'Flecha de Caça': 'Flecha especial para caça. Dano: 1d6.',
+            'Flecha de Guerra': 'Flecha de combate. Dano: 1d6.',
+            'Giz': 'Giz para marcar e desenhar.',
+            'Jumento ou Mula': 'Animal de carga para transportar equipamentos.',
+            'Cavalo de Montaria': 'Cavalo para transporte pessoal.',
+            'Cavalo de Guerra': 'Cavalo treinado para combate.',
+            'Cavalo de Tração': 'Cavalo para puxar carroças.',
+            'Pônei': 'Cavalo pequeno para halflings.',
+            'Pônei de Guerra': 'Pônei treinado para combate.',
+            'Carroça': 'Veículo de transporte puxado por animais.',
+            'Carruagem': 'Veículo elegante para transporte nobre.'
+        };
+    }
+
+    /**
+     * Obtém a descrição de um equipamento
+     */
+    getEquipmentDescription(itemName) {
+        // Remove quantidade se houver (ex: "Ração de viagem (3)" -> "Ração de viagem")
+        const cleanName = itemName.replace(/\s*\(\d+\)$/, '').trim();
+        return this.equipmentDescriptions[cleanName] || 'Equipamento de aventura.';
     }
 
     /**
@@ -548,7 +653,7 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-    * Gera equipamento básico baseado na classe com restrições
+     * Gera equipamento básico baseado na classe com restrições
      */
     async generateEquipment(characterClass) {
         const cls = (characterClass || '').toLowerCase();
@@ -1697,10 +1802,16 @@ class OldDragon2eCharacterGenerator {
         });
 
         // Atualiza equipamento
-        const equipmentList = html.find('.equipment-list ul');
-        equipmentList.empty();
+        const equipmentItems = html.find('.equipment-items');
+        equipmentItems.empty();
         character.equipment.forEach(item => {
-            equipmentList.append(`<li>${item}</li>`);
+            const itemHtml = `
+                <div class="equipment-item">
+                    <div class="equipment-name">${item}</div>
+                    <div class="equipment-description">${this.getEquipmentDescription(item)}</div>
+                </div>
+            `;
+            equipmentItems.append(itemHtml);
         });
 
         // Atualiza habilidades de raça
@@ -1970,13 +2081,20 @@ class OldDragon2eCharacterGenerator {
                                 <ul>
                                     ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
                                 </ul>
+                            </div>
+                        </div>
                     </div>
                     
+                    <div class="equipment-section">
                     <div class="equipment-list">
                         <h4><i class="fas fa-sack"></i> Equipamento</h4>
-                        <ul>
-                            ${character.equipment.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
+                            <div class="equipment-items">
+                                ${character.equipment.map(item => `
+                                    <div class="equipment-item">
+                                        <div class="equipment-name">${item}</div>
+                                        <div class="equipment-description">${this.getEquipmentDescription(item)}</div>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
                     </div>

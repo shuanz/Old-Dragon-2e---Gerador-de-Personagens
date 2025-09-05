@@ -94,6 +94,19 @@
     margin-bottom: 25px; /* Mais espaço no final */
 }
 
+/* Layout com seção de equipamentos em largura total */
+.old-dragon-generator-modal .main-layout-with-equipment {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.old-dragon-generator-modal .equipment-section {
+    grid-column: 1 / -1;
+    margin-top: 20px;
+}
+
 .old-dragon-generator-modal .left-column,
 .old-dragon-generator-modal .right-column {
     display: flex;
@@ -235,34 +248,56 @@
 
 .old-dragon-generator-modal .equipment-list {
     background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 10px;
+    padding: 15px;
     border-radius: 4px;
     border: 1px solid #d3d3d3;
     margin: 0;
+    grid-column: 1 / -1; /* Ocupa toda a largura */
 }
 
 .old-dragon-generator-modal .equipment-list h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
 }
 
-.old-dragon-generator-modal .equipment-list ul {
-    list-style: none;
-    padding: 0;
+.old-dragon-generator-modal .equipment-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
     margin: 0;
 }
 
-.old-dragon-generator-modal .equipment-list li {
-    padding: 4px 0; /* Mais espaçamento */
-    border-bottom: 1px solid #eee;
-    font-size: 1.2em; /* Fonte ainda maior */
-    line-height: 1.4; /* Melhor legibilidade */
+.old-dragon-generator-modal .equipment-item {
+    background: #f5f5f0;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
 }
 
-.old-dragon-generator-modal .equipment-list li:last-child {
-    border-bottom: none;
+.old-dragon-generator-modal .equipment-item:hover {
+    background: #f0f0eb;
+    border-color: #8B0000;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.old-dragon-generator-modal .equipment-name {
+    font-weight: bold;
+    color: #8B0000;
+    font-size: 1.1em;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 4px;
+}
+
+.old-dragon-generator-modal .equipment-description {
+    color: #555;
+    font-size: 0.95em;
+    line-height: 1.3;
+    font-style: italic;
 }
 
 .old-dragon-generator-modal .saving-throws {
