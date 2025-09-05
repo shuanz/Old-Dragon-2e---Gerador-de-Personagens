@@ -266,11 +266,13 @@ class OldDragon2eCharacterGenerator {
 
         // Padrões para identificação simples por nome (pré-exibição do equipamento)
         this.patterns = {
-            impactWeapons: /(ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|hammer|mace|club|flail)/i,
-            twoHandedHints: /(duas m[aã]os|two[- ]hand|alabarda|montante|espad[aã]o|glaive|halberd|lanca longa)/i,
-            leatherArmor: /(couro|leather)/i,
-            metalArmor: /(malha|escama|placa|cota|chain|scale|plate)/i,
-            smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o)/i
+            impactWeapons: /(ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|hammer|mace|club|flail|martelo de batalha|maça|mangual)/i,
+            twoHandedHints: /(duas m[aã]os|two[- ]hand|alabarda|montante|espad[aã]o|glaive|halberd|lanca longa|lança montada|montante|alabarda|pique)/i,
+            leatherArmor: /(couro|leather|acolchoada|leve)/i,
+            metalArmor: /(malha|escama|placa|cota|chain|scale|plate|completa|pesada)/i,
+            smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o|azagaia|virote pequeno|besta de mão)/i,
+            mediumWeapons: /(espada curta|espada longa|arco curto|arco longo|lança|lança montada|machado|machado de batalha|cimitarra|espada bastarda)/i,
+            largeWeapons: /(montante|alabarda|pique|lança montada|glaive|halberd)/i
         };
     }
 
@@ -606,13 +608,65 @@ class OldDragon2eCharacterGenerator {
     getClassRestrictions(className) {
         const n = (className || '').toLowerCase();
         const r = { armor: 'any', shield: true, onlyImpact: false, onlySmall: false, noLarge: false, leatherOnly: false };
-        if (/mago|bruxo|feiticeiro|wizard|warlock/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
-        else if (/necromante|ilusionista/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
-        else if (/ladr[aã]o|ladino|thief|bardo/.test(n)) { r.armor = 'light'; r.shield = false; r.noLarge = true; }
-        else if (/ranger/.test(n)) { r.armor = 'light'; r.shield = true; r.noLarge = false; }
-        else if (/druida/.test(n)) { r.armor = 'light'; r.leatherOnly = true; r.shield = false; r.noLarge = true; }
-        else if (/cl[eê]rigo|cleric/.test(n)) { r.onlyImpact = true; r.armor = 'any'; r.shield = true; }
-        else if (/b[aá]rbaro/.test(n)) { r.armor = 'light'; r.shield = true; }
+        
+        // Classes Arcanas (Mago e especializações)
+        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/.test(n)) { 
+            r.armor = 'none'; 
+            r.shield = false; 
+            r.onlySmall = true; 
+        }
+        // Classes Divinas (Clérigo e especializações)
+        else if (/cl[eê]rigo|cleric|druida|druid|acad[eê]mico|academic|xam[aã]|shaman|proscrito|outcast/.test(n)) { 
+            r.onlyImpact = true; 
+            r.armor = 'any'; 
+            r.shield = true; 
+            if (/druida|druid/.test(n)) {
+                r.leatherOnly = true;
+                r.noLarge = true;
+            }
+        }
+        // Classes de Habilidade (Ladrão e especializações)
+        else if (/ladr[aã]o|ladino|thief|bardo|bard|assassino|assassin/.test(n)) { 
+            r.armor = 'light'; 
+            r.shield = false; 
+            r.noLarge = true; 
+        }
+        // Ranger (especialização de Ladrão com algumas diferenças)
+        else if (/ranger/.test(n)) { 
+            r.armor = 'light'; 
+            r.shield = true; 
+            r.noLarge = false; 
+        }
+        // Classes de Combate (Guerreiro e especializações)
+        else if (/guerreiro|fighter|b[aá]rbaro|barbarian|paladino|paladin|arqueiro|archer/.test(n)) { 
+            r.armor = 'any'; 
+            r.shield = true; 
+            if (/b[aá]rbaro|barbarian/.test(n)) {
+                r.armor = 'light';
+            }
+        }
+        // Classes específicas de raça (herdam restrições da classe base)
+        else if (/aventureiro|adventurer/.test(n)) {
+            // Anão Aventureiro - herda de Clérigo
+            if (/an[aã]o|dwarf/.test(n)) {
+                r.onlyImpact = true;
+                r.armor = 'any';
+                r.shield = true;
+            }
+            // Elfo Aventureiro - herda de Ladrão
+            else if (/elfo|elf/.test(n)) {
+                r.armor = 'light';
+                r.shield = false;
+                r.noLarge = true;
+            }
+            // Halfling Aventureiro - herda de Ladrão
+            else if (/halfling/.test(n)) {
+                r.armor = 'light';
+                r.shield = false;
+                r.noLarge = true;
+            }
+        }
+        
         return r;
     }
 
@@ -620,6 +674,7 @@ class OldDragon2eCharacterGenerator {
         const p = this.patterns;
         return list.filter(name => {
             const lower = (name || '').toLowerCase();
+            
             // armor
             if (/armadura|armor/.test(lower)) {
                 if (restrictions.armor === 'none') return false;
@@ -627,15 +682,27 @@ class OldDragon2eCharacterGenerator {
                 if (restrictions.leatherOnly && !p.leatherArmor.test(lower)) return false;
                 return true;
             }
+            
             // shield
             if (/escudo|shield/.test(lower)) return !!restrictions.shield;
+            
             // weapons (heurístico por nome)
-            if (/espada|lan[cç]a|adaga|punhal|faca|arco|besta|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante/.test(lower)) {
+            if (/espada|lan[cç]a|adaga|punhal|faca|arco|besta|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante|azagaia|virote|pique|cimitarra/.test(lower)) {
+                // Apenas armas de impacto (Clérigo e especializações)
                 if (restrictions.onlyImpact && !p.impactWeapons.test(lower)) return false;
+                
+                // Apenas armas pequenas (Mago e especializações)
                 if (restrictions.onlySmall && !p.smallWeapons.test(lower)) return false;
+                
+                // Não armas grandes (Ladrão, Druida, etc.)
+                if (restrictions.noLarge && p.largeWeapons.test(lower)) return false;
+                
+                // Não armas de duas mãos (Ladrão, Druida, etc.)
                 if (restrictions.noLarge && p.twoHandedHints.test(lower)) return false;
+                
                 return true;
             }
+            
             // outros itens são sempre permitidos
             return true;
         });
