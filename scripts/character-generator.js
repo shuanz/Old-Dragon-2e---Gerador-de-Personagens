@@ -159,6 +159,71 @@ class OldDragon2eCharacterGenerator {
                 savingThrow: 5
             },
             {
+                id: 'barbarian',
+                name: 'Bárbaro',
+                namePlural: 'Bárbaros',
+                abilities: [
+                    'Especialização de Guerreiro',
+                    'Vigor Bárbaro',
+                    'Talentos Selvagens'
+                ],
+                hitDie: 10,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'academic',
+                name: 'Acadêmico',
+                namePlural: 'Acadêmicos',
+                abilities: [
+                    'Especialização de Clérigo',
+                    'Conhecimento Acadêmico',
+                    'Decifrar Linguagens'
+                ],
+                hitDie: 8,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'bard',
+                name: 'Bardo',
+                namePlural: 'Bardos',
+                abilities: [
+                    'Especialização de Ladrão',
+                    'Influenciar',
+                    'Inspirar'
+                ],
+                hitDie: 6,
+                baseAttack: 1,
+                savingThrow: 5
+            },
+            {
+                id: 'illusionist',
+                name: 'Ilusionista',
+                namePlural: 'Ilusionistas',
+                abilities: [
+                    'Especialização de Mago',
+                    'Magias de Ilusão',
+                    'Ilusão Melhorada'
+                ],
+                hitDie: 4,
+                baseAttack: 0,
+                savingThrow: 5
+            },
+            {
+                id: 'necromancer',
+                name: 'Necromante',
+                namePlural: 'Necromantes',
+                abilities: [
+                    'Especialização de Mago',
+                    'Magias Necróticas',
+                    'Criar Mortos-Vivos'
+                ],
+                hitDie: 4,
+                baseAttack: 0,
+                savingThrow: 5
+            },
+            {
                 id: 'dwarf_adventurer',
                 name: 'Anão Aventureiro',
                 namePlural: 'Anões Aventureiros',
@@ -331,119 +396,20 @@ class OldDragon2eCharacterGenerator {
         return `${first} ${last}`;
     }
 
-    /**
-     * Define restrições de equipamento por classe (Old Dragon 2e)
-     */
-    getClassEquipmentRestrictions(characterClass) {
-        const restrictions = {
-            fighter: {
-                weapons: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'adaga', 'clava', 'maça'],
-                armor: ['couro', 'cota de malha', 'placa'],
-                forbidden: []
-            },
-            mage: {
-                weapons: ['cajado', 'adaga', 'clava', 'maça'],
-                armor: ['túnica', 'couro'],
-                forbidden: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'cota de malha', 'placa']
-            },
-            cleric: {
-                weapons: ['martelo', 'clava', 'maça', 'cajado'],
-                armor: ['couro', 'cota de malha', 'placa'],
-                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
-            },
-            thief: {
-                weapons: ['adaga', 'espada curta', 'arco curto', 'best'],
-                armor: ['couro'],
-                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'arco longo', 'cota de malha', 'placa']
-            },
-            druid: {
-                weapons: ['bastão', 'clava', 'maça', 'adaga'],
-                armor: ['couro'],
-                forbidden: ['espada', 'machado', 'martelo', 'lança', 'arco', 'best', 'cota de malha', 'placa']
-            },
-            // Especializações de Guerreiro
-            paladin: {
-                weapons: ['espada', 'martelo', 'lança', 'arco'],
-                armor: ['couro', 'cota de malha', 'placa'],
-                forbidden: ['machado', 'adaga', 'best']
-            },
-            bárbaro: {
-                weapons: ['machado', 'martelo', 'lança', 'arco'],
-                armor: ['couro'],
-                forbidden: ['espada longa', 'best', 'cota de malha', 'placa']
-            },
-            arqueiro: {
-                weapons: ['arco longo', 'arco curto', 'besta', 'adaga'],
-                armor: ['couro'],
-                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'cota de malha', 'placa']
-            },
-            // Especializações de Ladrão
-            ranger: {
-                weapons: ['espada curta', 'arco longo', 'lança', 'adaga'],
-                armor: ['couro'],
-                forbidden: ['espada longa', 'machado', 'martelo', 'best', 'cota de malha', 'placa']
-            },
-            bardo: {
-                weapons: ['espada curta', 'adaga', 'arco curto'],
-                armor: ['couro'],
-                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'arco longo', 'best', 'cota de malha', 'placa']
-            },
-            assassino: {
-                weapons: ['adaga', 'espada curta', 'besta'],
-                armor: ['couro'],
-                forbidden: ['espada longa', 'machado', 'martelo', 'lança', 'arco', 'cota de malha', 'placa']
-            },
-            // Especializações divinas (herdam restrições do Clérigo)
-            proscrito: {
-                weapons: ['martelo', 'clava', 'maça', 'cajado'],
-                armor: ['couro', 'cota de malha', 'placa'],
-                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
-            },
-            xamã: {
-                weapons: ['martelo', 'clava', 'maça', 'cajado'],
-                armor: ['couro', 'cota de malha', 'placa'],
-                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
-            },
-            acadêmico: {
-                weapons: ['martelo', 'clava', 'maça', 'cajado'],
-                armor: ['couro', 'cota de malha', 'placa'],
-                forbidden: ['espada', 'machado', 'lança', 'arco', 'best', 'adaga']
-            }
-        };
-
-        return restrictions[characterClass] || restrictions.fighter;
+    generateName(raceId) {
+        if (raceId) {
+            return this.generateRaceName(raceId);
+        }
+        const race = this.races[Math.floor(Math.random() * this.races.length)];
+        return this.generateRaceName(race.id);
     }
 
     /**
      * Verifica se um item é permitido para a classe
      */
     isItemAllowedForClass(itemName, characterClass) {
-        const restrictions = this.getClassEquipmentRestrictions(characterClass);
-        const itemLower = itemName.toLowerCase();
-        
-        // Verifica se o item contém alguma palavra proibida
-        for (const forbidden of restrictions.forbidden) {
-            if (itemLower.includes(forbidden)) {
-                return false;
-            }
-        }
-        
-        // Verifica se o item contém alguma palavra permitida
-        for (const allowed of restrictions.weapons.concat(restrictions.armor)) {
-            if (itemLower.includes(allowed)) {
-                return true;
-            }
-        }
-        
-        // Itens gerais (mochila, rações, etc.) são sempre permitidos
-        const generalItems = ['mochila', 'rações', 'corda', 'tocha', 'vela', 'garrafa', 'saco', 'pote', 'tenda', 'símbolo', 'pergaminho', 'tinta', 'pena', 'gancho'];
-        for (const general of generalItems) {
-            if (itemLower.includes(general)) {
-                return true;
-            }
-        }
-        
-        return true; // Por padrão, permite itens não categorizados
+        const restrictions = this.getClassRestrictions(characterClass);
+        return this.filterEquipmentNamesByRestrictions([itemName], restrictions).length > 0;
     }
 
     /**
@@ -644,71 +610,81 @@ class OldDragon2eCharacterGenerator {
         return exclusiveSpells;
     }
 
+    async loadSrdEquipment() {
+        if (!this.srdEquipment) {
+            const moduleData = await import('./srd-equipment.json', { assert: { type: 'json' } });
+            this.srdEquipment = moduleData.default;
+        }
+        return this.srdEquipment;
+    }
+
     /**
-     * Gera equipamento básico baseado na classe com restrições
+    * Gera equipamento básico baseado na classe com restrições
      */
-    generateEquipment(characterClass) {
-        const baseEquipment = {
-            fighter: [
-                'Espada Longa', 'Escudo', 'Armadura de Couro', 'Mochila', 'Ração de viagem (3)',
-                'Corda de Cânhamo', 'Tocha (6)', 'Pederneira', 'Tenda pequena', 'Saco de Dormir'
-            ],
-            mage: [
-                'Bordão/Cajado', 'Mochila', 'Pergaminho (3)', 'Pena e Tinta',
-                'Vela (3)', 'Ração de viagem (2)', 'Odre', 'Saco de Dormir'
-            ],
-            cleric: [
-                'Martelo de Batalha', 'Escudo', 'Armadura de Couro', 'Símbolo divino',
-                'Mochila', 'Ração de viagem (3)', 'Odre', 'Vela (3)'
-            ],
-            thief: [
-                'Adaga (2)', 'Arco Curto', 'Flecha de Guerra (20)', 'Armadura de Couro',
-                'Mochila', 'Corda de Cânhamo', 'Cravos/Ganchos', 'Ração de viagem (2)'
-            ],
-            druid: [
-                'Bordão/Cajado', 'Armadura de Couro', 'Mochila', 'Símbolo divino',
-                'Ração de viagem (3)', 'Odre', 'Saco de Dormir', 'Tocha (3)'
-            ],
-            paladin: [
-                'Espada Longa', 'Escudo', 'Armadura de Couro', 'Símbolo divino',
-                'Mochila', 'Ração de viagem (3)', 'Odre', 'Tocha (3)'
-            ],
-            ranger: [
-                'Espada Curta', 'Arco Longo', 'Flecha de Guerra (20)', 'Armadura de Couro',
-                'Mochila', 'Ração de viagem (3)', 'Corda de Cânhamo', 'Tocha (3)'
-            ]
+    async generateEquipment(characterClass) {
+        const cls = (characterClass || '').toLowerCase();
+        const data = await this.loadSrdEquipment();
+
+        const randSubset = (arr, count) => {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy.slice(0, count);
         };
 
-        const equipment = baseEquipment[characterClass] || baseEquipment.fighter;
-        
-        // Filtra equipamento baseado nas restrições da classe
-        const filteredEquipment = equipment.filter(item => 
-            this.isItemAllowedForClass(item, characterClass)
-        );
-        
-        console.log(`Equipamento para ${characterClass}:`, filteredEquipment);
-        return filteredEquipment;
+        const randAllowedItem = (pool) => {
+            const available = [...pool];
+            while (available.length) {
+                const idx = Math.floor(Math.random() * available.length);
+                const candidate = available.splice(idx, 1)[0];
+                if (this.isItemAllowedForClass(candidate, cls)) return candidate;
+            }
+            return null;
+        };
+
+        const equipment = [];
+
+        const weapon = randAllowedItem(data.weapons);
+        if (weapon) equipment.push(weapon);
+
+        const armor = randAllowedItem(data.armors);
+        if (armor) equipment.push(armor);
+
+        const shieldClasses = new Set(['fighter', 'cleric', 'paladin', 'ranger', 'barbarian', 'academic']);
+        if (shieldClasses.has(cls)) {
+            const shield = randAllowedItem(data.shields);
+            if (shield && Math.random() < 0.5) equipment.push(shield);
+        }
+
+        const baseItems = ['Mochila', 'Ração de viagem', 'Saco de Dormir'];
+        equipment.push(...baseItems);
+        const miscItems = randSubset(data.gear, 3).filter(item => this.isItemAllowedForClass(item, cls));
+        equipment.push(...miscItems);
+
+        console.log(`Equipamento para ${characterClass}:`, equipment);
+        return equipment;
     }
 
     mapClassToArchetype(className) {
         const n = (className || '').toLowerCase();
-        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'mage';
-        if (/clerigo|cl[eê]rigo|druida|xam[aã]|acad[eê]mico/.test(n)) return 'cleric';
-        if (/paladino|b[aá]rbaro/.test(n)) return 'fighter';
-        if (/ladr[aã]o|ladino|thief|bardo|ranger/.test(n)) return 'thief';
+        if (/^(mage|mago|bruxo|feiticeiro|wizard|warlock|necromante|necromancer|ilusionista|illusionist)$/.test(n)) return 'mage';
+        if (/^(cleric|cl[eê]rigo|druida|druid|xam[aã]|acad[eê]mico|academico|academic)$/.test(n)) return 'cleric';
+        if (/^(thief|ladr[aã]o|ladino|bardo|bard|ranger)$/.test(n)) return 'thief';
+        // Paladino, bárbaro e demais classes de combate caem no arquétipo guerreiro
         return 'fighter';
     }
 
     getClassRestrictions(className) {
         const n = (className || '').toLowerCase();
         const r = { armor: 'any', shield: true, onlyImpact: false, onlySmall: false, noLarge: false, leatherOnly: false };
-        if (/mago|bruxo|feiticeiro|wizard|warlock/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
-        else if (/necromante|ilusionista/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
-        else if (/ladr[aã]o|ladino|thief|bardo/.test(n)) { r.armor = 'light'; r.shield = false; r.noLarge = true; }
+        if (/mage|mago|bruxo|feiticeiro|wizard|warlock|necromante|necromancer|ilusionista|illusionist/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
+        else if (/ladr[aã]o|ladino|thief|bardo|bard/.test(n)) { r.armor = 'light'; r.shield = false; r.noLarge = true; }
         else if (/ranger/.test(n)) { r.armor = 'light'; r.shield = true; r.noLarge = false; }
-        else if (/druida/.test(n)) { r.armor = 'light'; r.leatherOnly = true; r.shield = false; r.noLarge = true; }
-        else if (/cl[eê]rigo|cleric/.test(n)) { r.onlyImpact = true; r.armor = 'any'; r.shield = true; }
-        else if (/b[aá]rbaro/.test(n)) { r.armor = 'light'; r.shield = true; }
+        else if (/druida|druid/.test(n)) { r.armor = 'light'; r.leatherOnly = true; r.shield = false; r.noLarge = true; }
+        else if (/cl[eê]rigo|cleric|acad[eê]mico|academico|academic/.test(n)) { r.onlyImpact = true; r.armor = 'any'; r.shield = true; }
+        else if (/b[aá]rbaro|barbarian/.test(n)) { r.armor = 'light'; r.leatherOnly = true; r.shield = true; }
         return r;
     }
 
@@ -717,7 +693,7 @@ class OldDragon2eCharacterGenerator {
         return list.filter(name => {
             const lower = (name || '').toLowerCase();
             // armor
-            if (/armadura|armor/.test(lower)) {
+            if (/armadura|armor|cota|malha|escama|placa/.test(lower)) {
                 if (restrictions.armor === 'none') return false;
                 if (restrictions.armor === 'light' && !p.leatherArmor.test(lower)) return false;
                 if (restrictions.leatherOnly && !p.leatherArmor.test(lower)) return false;
@@ -726,9 +702,9 @@ class OldDragon2eCharacterGenerator {
             // shield
             if (/escudo|shield/.test(lower)) return !!restrictions.shield;
             // weapons (heurístico por nome)
-            if (/espada|lan[cç]a|adaga|punhal|faca|arco|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante/.test(lower)) {
+            if (/espada|lan[cç]a|azagaia|adaga|punhal|faca|arco|besta|flecha|virote|cimitarra|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante|pique/.test(lower)) {
                 if (restrictions.onlyImpact && !p.impactWeapons.test(lower)) return false;
-                if (restrictions.onlySmall && p.twoHandedHints.test(lower)) return false;
+                if (restrictions.onlySmall && !p.smallWeapons.test(lower)) return false;
                 if (restrictions.noLarge && p.twoHandedHints.test(lower)) return false;
                 return true;
             }
@@ -948,7 +924,7 @@ class OldDragon2eCharacterGenerator {
         const characterClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
         console.log('Classe selecionada:', characterClass.name, 'ID:', characterClass.id);
         const name = this.generateRaceName(race.id);
-        const equipment = this.generateEquipment(characterClass.id);
+        const equipment = await this.generateEquipment(characterClass.id);
         const hitPoints = this.calculateHitPoints(characterClass.id, attributes.constitution);
         
         // Novos cálculos
@@ -2052,6 +2028,9 @@ class OldDragon2eCharacterGenerator {
         // Removido hook de re-centralização forçada
     }
 }
+
+globalThis.OldDragon2eCharacterGenerator = OldDragon2eCharacterGenerator;
+export default OldDragon2eCharacterGenerator;
 
 // Hooks para inicialização do módulo
 Hooks.on('init', function() {

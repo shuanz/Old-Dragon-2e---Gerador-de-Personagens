@@ -3,6 +3,16 @@
  * Execute este arquivo no console do navegador para testar o módulo
  */
 
+// Ajustes para execução em ambientes Node
+if (typeof window === 'undefined') {
+    global.window = global;
+}
+if (typeof Hooks === 'undefined') {
+    global.Hooks = { on() {}, once() {} };
+}
+
+let OldDragon2eCharacterGenerator;
+
 // Função para testar a geração de atributos
 function testAttributeGeneration() {
     console.log('=== Teste de Geração de Atributos ===');
@@ -44,8 +54,8 @@ function testModifierCalculation() {
         strength: -3,
         dexterity: -1,
         constitution: 0,
-        intelligence: +1,
-        wisdom: +2,
+        intelligence: +2,
+        wisdom: +3,
         charisma: +3
     };
     
@@ -57,14 +67,14 @@ function testModifierCalculation() {
 }
 
 // Função para testar a geração de personagens completos
-function testCharacterGeneration() {
+async function testCharacterGeneration() {
     console.log('=== Teste de Geração de Personagens ===');
     const generator = new OldDragon2eCharacterGenerator();
-    
+
     for (let i = 0; i < 3; i++) {
-        const character = generator.generateCharacter();
+        const character = await generator.generateCharacter();
         console.log(`Personagem ${i + 1}:`, character);
-        
+
         // Verifica se o personagem tem todas as propriedades necessárias
         const requiredProps = ['name', 'race', 'class', 'attributes', 'modifiers', 'hitPoints', 'equipment', 'level'];
         requiredProps.forEach(prop => {
@@ -72,7 +82,7 @@ function testCharacterGeneration() {
                 console.error(`Propriedade ausente: ${prop}`);
             }
         });
-        
+
         // Verifica se o HP está correto
         if (character.hitPoints < 1) {
             console.error(`HP inválido: ${character.hitPoints}`);
@@ -81,20 +91,27 @@ function testCharacterGeneration() {
 }
 
 // Função para testar a geração de equipamento
-function testEquipmentGeneration() {
+async function testEquipmentGeneration() {
     console.log('=== Teste de Geração de Equipamento ===');
     const generator = new OldDragon2eCharacterGenerator();
-    
-    const classes = ['fighter', 'mage', 'cleric', 'thief', 'druid', 'paladin', 'ranger'];
-    
-    classes.forEach(characterClass => {
-        const equipment = generator.generateEquipment(characterClass);
-        console.log(`${characterClass}:`, equipment);
-        
-        if (!Array.isArray(equipment) || equipment.length === 0) {
-            console.error(`Equipamento inválido para ${characterClass}`);
+
+    const classes = ['fighter', 'mage', 'cleric', 'thief', 'druid', 'paladin', 'ranger', 'barbarian', 'academic', 'bard', 'illusionist', 'necromancer'];
+
+    for (const characterClass of classes) {
+        for (let i = 0; i < 5; i++) {
+            const equipment = await generator.generateEquipment(characterClass);
+            console.log(`${characterClass} (${i + 1}):`, equipment);
+
+            if (!Array.isArray(equipment) || equipment.length === 0) {
+                console.error(`Equipamento inválido para ${characterClass}`);
+            }
+
+            const invalid = equipment.filter(item => !generator.isItemAllowedForClass(item, characterClass));
+            if (invalid.length > 0) {
+                console.error(`Itens não permitidos para ${characterClass}:`, invalid);
+            }
         }
-    });
+    }
 }
 
 // Função para testar a geração de nomes
@@ -117,42 +134,38 @@ function testNameGeneration() {
 }
 
 // Função para executar todos os testes
-function runAllTests() {
+async function runAllTests() {
     console.log('Iniciando testes do módulo Old Dragon 2e - Gerador de Personagens');
     console.log('==============================================================');
-    
+
     try {
         testAttributeGeneration();
         console.log('');
-        
+
         testModifierCalculation();
         console.log('');
-        
-        testCharacterGeneration();
+
+        await testCharacterGeneration();
         console.log('');
-        
-        testEquipmentGeneration();
+
+        await testEquipmentGeneration();
         console.log('');
-        
+
         testNameGeneration();
         console.log('');
-        
+
         console.log('Todos os testes concluídos!');
     } catch (error) {
         console.error('Erro durante os testes:', error);
     }
 }
 
-// Executa os testes se o módulo estiver carregado
-if (typeof OldDragon2eCharacterGenerator !== 'undefined') {
-    runAllTests();
-} else {
-    console.error('Módulo Old Dragon 2e - Gerador de Personagens não encontrado!');
-    console.log('Certifique-se de que o módulo está ativo no Foundry VTT');
+async function main() {
+    ({ default: OldDragon2eCharacterGenerator } = await import('../scripts/character-generator.js'));
+    await runAllTests();
 }
 
-// Exporta as funções de teste para uso manual
-window.OldDragon2eGeneratorTests = {
+const tests = {
     testAttributeGeneration,
     testModifierCalculation,
     testCharacterGeneration,
@@ -160,3 +173,11 @@ window.OldDragon2eGeneratorTests = {
     testNameGeneration,
     runAllTests
 };
+
+if (typeof window !== 'undefined') {
+    window.OldDragon2eGeneratorTests = tests;
+} else {
+    global.OldDragon2eGeneratorTests = tests;
+}
+
+main().catch(error => console.error('Erro durante os testes:', error));
