@@ -308,6 +308,100 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Obtém as habilidades de classe do SRD
+     */
+    getClassAbilitiesFromSRD(selectedClass) {
+        try {
+            // Tenta extrair habilidades do sistema da classe do SRD
+            const classData = selectedClass.system;
+            const abilities = [];
+            
+            // Busca por habilidades em diferentes campos do sistema
+            if (classData?.features) {
+                Object.values(classData.features).forEach(feature => {
+                    if (feature?.name && feature?.description) {
+                        abilities.push(`${feature.name}: ${feature.description}`);
+                    }
+                });
+            }
+            
+            // Busca por habilidades em outros campos comuns
+            if (classData?.abilities) {
+                Object.values(classData.abilities).forEach(ability => {
+                    if (ability?.name && ability?.description) {
+                        abilities.push(`${ability.name}: ${ability.description}`);
+                    }
+                });
+            }
+            
+            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
+            if (abilities.length === 0) {
+                const localClass = this.classes.find(c => 
+                    c.name.toLowerCase() === selectedClass.name.toLowerCase() ||
+                    c.id === selectedClass.id
+                );
+                if (localClass) {
+                    return localClass.abilities;
+                }
+            }
+            
+            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da classe
+            if (abilities.length === 0) {
+                return this.getBasicClassAbilities(selectedClass.name);
+            }
+            
+            return abilities;
+        } catch (error) {
+            console.warn('Erro ao extrair habilidades de classe do SRD:', error);
+            return this.getBasicClassAbilities(selectedClass.name);
+        }
+    }
+
+    /**
+     * Retorna habilidades básicas baseadas no nome da classe
+     */
+    getBasicClassAbilities(className) {
+        const classNameLower = className.toLowerCase();
+        
+        if (/clérigo|cleric/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/guerreiro|fighter/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Aparar: Sacrifica escudo/arma para absorver dano',
+                'Maestria em Arma: +1 de dano em uma arma escolhida',
+                'Ataque Extra: Segundo ataque no 6º nível'
+            ];
+        } else if (/ladino|thief|rogue/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias',
+                'Armaduras: Apenas leves',
+                'Ataque Furtivo: Dano x2 em ataques furtivos',
+                'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
+                'Talentos: Furtividade, Escalar, Arrombar, etc.'
+            ];
+        } else if (/mago|mage|wizard/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Ler Magias: Decifra inscrições mágicas',
+                'Detectar Magias: Percebe presença mágica'
+            ];
+        }
+        
+        // Fallback genérico
+        return ['Habilidades específicas da classe'];
+    }
+
+    /**
      * Obtém a descrição de um equipamento do SRD
      */
     async getEquipmentDescription(itemName) {
@@ -1937,6 +2031,9 @@ class OldDragon2eCharacterGenerator {
             character.classData = selectedClass.system;
             console.log('Classe aplicada:', character.class);
 
+            // Atualiza habilidades de classe com base na classe selecionada
+            character.classAbilities = this.getClassAbilitiesFromSRD(selectedClass);
+
             // Ajusta equipamento para respeitar restrições da classe selecionada
             const archetype = this.mapClassToArchetype(selectedClass.name);
             const baseEquip = await this.generateEquipment(archetype);
@@ -1978,7 +2075,7 @@ class OldDragon2eCharacterGenerator {
                     <div class="main-layout">
                         <!-- Coluna 1: Informações Básicas e Atributos -->
                         <div class="left-column">
-                            <div class="character-basic-info">
+                    <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
                                 <div class="info-grid">
                                     <div class="info-item"><strong>Nome:</strong> ${character.name}</div>
@@ -1992,18 +2089,18 @@ class OldDragon2eCharacterGenerator {
                                     <div class="info-item"><strong>Idiomas:</strong> ${character.languages.languages.join(', ')}</div>
                                     <div class="info-item"><strong>Alinhamento:</strong> ${character.alignment}</div>
                                 </div>
-                            </div>
-                            
-                            <div class="attributes-grid">
+                    </div>
+                    
+                    <div class="attributes-grid">
                                 <h4><i class="fas fa-dice"></i> Atributos</h4>
-                                ${this.attributes.map(attr => `
-                                    <div class="attribute-item">
-                                        <div class="attribute-name">${this.attributeNames[attr]}</div>
-                                        <div class="attribute-value">${character.attributes[attr]}</div>
-                                        <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
-                                    </div>
-                                `).join('')}
+                        ${this.attributes.map(attr => `
+                            <div class="attribute-item">
+                                <div class="attribute-name">${this.attributeNames[attr]}</div>
+                                <div class="attribute-value">${character.attributes[attr]}</div>
+                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
                             </div>
+                        `).join('')}
+                    </div>
                         </div>
                         
                         <!-- Coluna 2: Habilidades e Jogadas de Proteção -->
@@ -2020,7 +2117,7 @@ class OldDragon2eCharacterGenerator {
                                 <ul>
                                     ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
                                 </ul>
-                            </div>
+                    </div>
                             
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
@@ -2037,10 +2134,10 @@ class OldDragon2eCharacterGenerator {
                                         <div class="saving-throw-name">JPS</div>
                                         <div class="saving-throw-value">${character.savingThrows.JPS}</div>
                                     </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
+                            
                         <!-- Coluna 3: Detalhes do Personagem -->
                         <div class="right-column">
                             <div class="character-details">
@@ -2062,8 +2159,8 @@ class OldDragon2eCharacterGenerator {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
+                            </div>
+                            
                     <div class="equipment-section">
                     <div class="equipment-list">
                         <h4><i class="fas fa-sack"></i> Equipamento</h4>
