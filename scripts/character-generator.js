@@ -1630,7 +1630,7 @@ class OldDragon2eCharacterGenerator {
         });
 
         // Atualiza equipamento
-        const equipmentList = html.find('#equipment-list');
+        const equipmentList = html.find('.equipment-list ul');
         equipmentList.empty();
         character.equipment.forEach(item => {
             equipmentList.append(`<li>${item}</li>`);
