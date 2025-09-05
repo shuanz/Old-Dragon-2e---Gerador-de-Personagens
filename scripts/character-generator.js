@@ -1977,7 +1977,7 @@ class OldDragon2eCharacterGenerator {
                     
                     <div class="main-layout">
                         <div class="left-column">
-                    <div class="character-basic-info">
+                            <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
                                 <div class="info-grid">
                                     <div class="info-item"><strong>Nome:</strong> ${character.name}</div>
@@ -1991,18 +1991,18 @@ class OldDragon2eCharacterGenerator {
                                     <div class="info-item"><strong>Idiomas:</strong> ${character.languages.languages.join(', ')}</div>
                                     <div class="info-item"><strong>Alinhamento:</strong> ${character.alignment}</div>
                                 </div>
-                    </div>
-                    
-                    <div class="attributes-grid">
-                                <h4><i class="fas fa-dice"></i> Atributos</h4>
-                        ${this.attributes.map(attr => `
-                            <div class="attribute-item">
-                                <div class="attribute-name">${this.attributeNames[attr]}</div>
-                                <div class="attribute-value">${character.attributes[attr]}</div>
-                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
                             </div>
-                        `).join('')}
-                    </div>
+                            
+                            <div class="attributes-grid">
+                                <h4><i class="fas fa-dice"></i> Atributos</h4>
+                                ${this.attributes.map(attr => `
+                                    <div class="attribute-item">
+                                        <div class="attribute-name">${this.attributeNames[attr]}</div>
+                                        <div class="attribute-value">${character.attributes[attr]}</div>
+                                        <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
                             
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
@@ -2020,6 +2020,22 @@ class OldDragon2eCharacterGenerator {
                                         <div class="saving-throw-value">${character.savingThrows.JPS}</div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        <div class="right-column">
+                            <div class="race-abilities">
+                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
+                                <ul>
+                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="class-abilities">
+                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
+                                <ul>
+                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
                             </div>
                             
                             <div class="character-details">
@@ -2039,22 +2055,6 @@ class OldDragon2eCharacterGenerator {
                                     <h5>Histórico:</h5>
                                     <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="right-column">
-                            <div class="race-abilities">
-                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
-                                <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="class-abilities">
-                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
-                                <ul>
-                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
                             </div>
                         </div>
                     </div>

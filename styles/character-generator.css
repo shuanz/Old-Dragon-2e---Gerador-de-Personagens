@@ -104,7 +104,8 @@
 
 .old-dragon-generator-modal .equipment-section {
     grid-column: 1 / -1;
-    margin-top: 20px;
+    margin-top: 25px;
+    margin-bottom: 10px;
 }
 
 .old-dragon-generator-modal .left-column,
@@ -343,10 +344,11 @@
 
 .old-dragon-generator-modal .character-details {
     background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 10px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 6px;
     border: 1px solid #d3d3d3;
     margin: 0;
+    flex: 1; /* Ocupa espaço disponível na coluna direita */
 }
 
 .old-dragon-generator-modal .character-details h4 {
