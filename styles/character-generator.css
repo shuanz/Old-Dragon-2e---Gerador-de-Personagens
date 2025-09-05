@@ -89,8 +89,8 @@
 /* Layout principal de duas colunas */
 .old-dragon-generator-modal .main-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 25px; /* Mais espaço entre colunas */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px; /* Espaço entre colunas */
     margin-bottom: 25px; /* Mais espaço no final */
 }
 
@@ -109,10 +109,16 @@
 }
 
 .old-dragon-generator-modal .left-column,
+.old-dragon-generator-modal .middle-column,
 .old-dragon-generator-modal .right-column {
     display: flex;
     flex-direction: column;
     gap: 20px; /* Mais espaço entre seções */
+}
+
+/* Estilos específicos para a coluna do meio */
+.old-dragon-generator-modal .middle-column {
+    min-height: 400px; /* Altura mínima para equilibrar */
 }
 
 /* Informações básicas compactas */
@@ -423,6 +429,37 @@
     animation: fadeIn 0.3s ease-out;
 }
 
+
+/* Responsividade para layout de 3 colunas */
+@media (max-width: 1400px) {
+    .old-dragon-generator-modal .main-layout {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    
+    .old-dragon-generator-modal .middle-column {
+        grid-column: 1 / -1;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .old-dragon-generator-modal .main-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .old-dragon-generator-modal .left-column,
+    .old-dragon-generator-modal .middle-column,
+    .old-dragon-generator-modal .right-column {
+        gap: 15px;
+    }
+    
+    .old-dragon-generator-modal .middle-column {
+        grid-column: auto;
+        margin-top: 0;
+    }
+}
 
 /* Responsividade */
 @media (max-width: 768px) {

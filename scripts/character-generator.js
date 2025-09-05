@@ -1976,6 +1976,7 @@ class OldDragon2eCharacterGenerator {
                     <h3>Prévia do Personagem</h3>
                     
                     <div class="main-layout">
+                        <!-- Coluna 1: Informações Básicas e Atributos -->
                         <div class="left-column">
                             <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
@@ -2003,6 +2004,23 @@ class OldDragon2eCharacterGenerator {
                                     </div>
                                 `).join('')}
                             </div>
+                        </div>
+                        
+                        <!-- Coluna 2: Habilidades e Jogadas de Proteção -->
+                        <div class="middle-column">
+                            <div class="race-abilities">
+                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
+                                <ul>
+                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="class-abilities">
+                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
+                                <ul>
+                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                            </div>
                             
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
@@ -2023,21 +2041,8 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                         
+                        <!-- Coluna 3: Detalhes do Personagem -->
                         <div class="right-column">
-                            <div class="race-abilities">
-                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
-                                <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="class-abilities">
-                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
-                                <ul>
-                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
                             <div class="character-details">
                                 <h4><i class="fas fa-user"></i> Detalhes</h4>
                                 
