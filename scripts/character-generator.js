@@ -2326,6 +2326,7 @@ class OldDragon2eCharacterGenerator {
         }
     }
 
+
     /**
      * Atualiza o HTML do modal com os novos dados do personagem
      */
@@ -2361,19 +2362,6 @@ class OldDragon2eCharacterGenerator {
         // Carrega descrições de forma assíncrona
         this.loadEquipmentDescriptions(character.equipment, equipmentItems);
 
-        // Atualiza habilidades de raça
-        const raceAbilities = html.find('.race-abilities ul');
-        raceAbilities.empty();
-        character.raceAbilities.forEach(ability => {
-            raceAbilities.append(`<li>${ability}</li>`);
-        });
-
-        // Atualiza habilidades de classe
-        const classAbilities = html.find('.class-abilities ul');
-        classAbilities.empty();
-        character.classAbilities.forEach(ability => {
-            classAbilities.append(`<li>${ability}</li>`);
-        });
 
         // Atualiza jogadas de proteção
         html.find('.saving-throw-item').eq(0).find('.saving-throw-value').text(character.savingThrows.JPD);
@@ -2565,7 +2553,7 @@ class OldDragon2eCharacterGenerator {
                     <h3>Prévia do Personagem</h3>
                     
                     <div class="main-layout">
-                        <!-- Coluna 1: Informações Básicas e Atributos -->
+                        <!-- Coluna 1: Informações Básicas e Jogadas de Proteção -->
                         <div class="left-column">
                     <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
@@ -2583,34 +2571,6 @@ class OldDragon2eCharacterGenerator {
                                 </div>
                     </div>
                     
-                    <div class="attributes-grid">
-                                <h4><i class="fas fa-dice"></i> Atributos</h4>
-                        ${this.attributes.map(attr => `
-                            <div class="attribute-item">
-                                <div class="attribute-name">${this.attributeNames[attr]}</div>
-                                <div class="attribute-value">${character.attributes[attr]}</div>
-                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                        </div>
-                        
-                        <!-- Coluna 2: Habilidades e Jogadas de Proteção -->
-                        <div class="middle-column">
-                            <div class="race-abilities">
-                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
-                                <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="class-abilities">
-                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
-                                <ul>
-                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
-                    </div>
-                            
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
                                 <div class="saving-throws-grid">
@@ -2629,9 +2589,10 @@ class OldDragon2eCharacterGenerator {
                                     </div>
                                 </div>
                             </div>
-                            
-                        <!-- Coluna 3: Detalhes do Personagem -->
-                        <div class="right-column">
+                        </div>
+                        
+                        <!-- Coluna 2: Detalhes do Personagem -->
+                        <div class="middle-column">
                             <div class="character-details">
                                 <h4><i class="fas fa-user"></i> Detalhes</h4>
                                 
@@ -2651,7 +2612,21 @@ class OldDragon2eCharacterGenerator {
                                 </div>
                             </div>
                         </div>
+                            
+                        <!-- Coluna 3: Atributos -->
+                        <div class="right-column">
+                            <div class="attributes-grid">
+                                <h4><i class="fas fa-dice"></i> Atributos</h4>
+                        ${this.attributes.map(attr => `
+                            <div class="attribute-item">
+                                <div class="attribute-name">${this.attributeNames[attr]}</div>
+                                <div class="attribute-value">${character.attributes[attr]}</div>
+                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
                             </div>
+                        `).join('')}
+                            </div>
+                        </div>
+                    </div>
                             
                     <div class="equipment-section">
                     <div class="equipment-list">

@@ -86,12 +86,32 @@
     font-size: 1.6em; /* Fonte ainda maior para o título */
 }
 
-/* Layout principal de duas colunas */
+/* Layout principal reorganizado */
 .old-dragon-generator-modal .main-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px; /* Espaço entre colunas */
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* Sem gap, usando margins individuais */
     margin-bottom: 25px; /* Mais espaço no final */
+    position: relative;
+}
+
+
+/* Primeira linha: Informações Básicas e Atributos lado a lado */
+.old-dragon-generator-modal .top-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr; /* Informações Básicas maior, Atributos menor */
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 0px; /* Remove completamente o espaçamento */
+}
+
+/* Segunda linha: Jogadas de Proteção e Detalhes lado a lado */
+.old-dragon-generator-modal .bottom-row {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr; /* Jogadas de Proteção menor, Detalhes maior */
+    gap: 20px;
+    align-items: start;
+    margin-top: 0px; /* Remove completamente o espaçamento */
 }
 
 /* Layout com seção de equipamentos em largura total */
@@ -108,17 +128,15 @@
     margin-bottom: 10px;
 }
 
-.old-dragon-generator-modal .left-column,
-.old-dragon-generator-modal .middle-column,
-.old-dragon-generator-modal .right-column {
+/* Estilos para as seções individuais */
+.old-dragon-generator-modal .character-basic-info,
+.old-dragon-generator-modal .attributes-grid,
+.old-dragon-generator-modal .saving-throws,
+.old-dragon-generator-modal .character-details {
     display: flex;
     flex-direction: column;
     gap: 20px; /* Mais espaço entre seções */
-}
-
-/* Estilos específicos para a coluna do meio */
-.old-dragon-generator-modal .middle-column {
-    min-height: 400px; /* Altura mínima para equilibrar */
+    align-items: stretch; /* Estica elementos para ocupar largura */
 }
 
 /* Informações básicas compactas */
@@ -128,6 +146,14 @@
     border-radius: 6px;
     padding: 12px;
     margin: 0;
+    min-height: fit-content; /* Altura baseada no conteúdo */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.old-dragon-generator-modal .character-basic-info:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 
 .old-dragon-generator-modal .character-basic-info h4 {
@@ -135,6 +161,11 @@
     margin-bottom: 12px;
     font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .old-dragon-generator-modal .info-grid {
@@ -150,10 +181,22 @@
 }
 
 .old-dragon-generator-modal .attributes-grid {
+    background: #ede9d5; /* Cor de fundo solicitada */
+    border: 1px solid #d3d3d3;
+    border-radius: 6px;
+    padding: 12px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin: 0;
+    min-height: fit-content; /* Altura baseada no conteúdo */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.old-dragon-generator-modal .attributes-grid:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 
 .old-dragon-generator-modal .attributes-grid h4 {
@@ -162,14 +205,27 @@
     margin-bottom: 12px;
     font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .old-dragon-generator-modal .attribute-item {
-    background: #ede9d5; /* Cor de fundo solicitada */
+    background: #f5f5f0; /* Fundo ligeiramente mais claro para contraste */
     padding: 8px;
     border-radius: 4px;
     text-align: center;
     border: 1px solid #d3d3d3;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.old-dragon-generator-modal .attribute-item:hover {
+    background: #e8e8e0;
+    border-color: #8B0000;
+    transform: scale(1.02);
 }
 
 .old-dragon-generator-modal .attribute-name {
@@ -189,69 +245,6 @@
     color: #666;
 }
 
-.old-dragon-generator-modal .race-abilities {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #d3d3d3;
-    margin: 0;
-}
-
-.old-dragon-generator-modal .race-abilities h4 {
-    color: #8B0000; /* Vermelho escuro como na ficha */
-    margin-bottom: 12px;
-    font-size: 1.4em; /* Fonte ainda maior */
-    font-weight: bold;
-}
-
-.old-dragon-generator-modal .race-abilities ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.old-dragon-generator-modal .race-abilities li {
-    padding: 4px 0; /* Mais espaçamento */
-    border-bottom: 1px solid #ddd;
-    font-size: 1.2em; /* Fonte ainda maior */
-    line-height: 1.4; /* Melhor legibilidade */
-}
-
-.old-dragon-generator-modal .race-abilities li:last-child {
-    border-bottom: none;
-}
-
-.old-dragon-generator-modal .class-abilities {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #d3d3d3;
-    margin: 0;
-}
-
-.old-dragon-generator-modal .class-abilities h4 {
-    color: #8B0000; /* Vermelho escuro como na ficha */
-    margin-bottom: 12px;
-    font-size: 1.4em; /* Fonte ainda maior */
-    font-weight: bold;
-}
-
-.old-dragon-generator-modal .class-abilities ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.old-dragon-generator-modal .class-abilities li {
-    padding: 4px 0; /* Mais espaçamento */
-    border-bottom: 1px solid #ddd;
-    font-size: 1.2em; /* Fonte ainda maior */
-    line-height: 1.4; /* Melhor legibilidade */
-}
-
-.old-dragon-generator-modal .class-abilities li:last-child {
-    border-bottom: none;
-}
 
 .old-dragon-generator-modal .equipment-list {
     background: #ede9d5; /* Cor de fundo solicitada */
@@ -309,10 +302,18 @@
 
 .old-dragon-generator-modal .saving-throws {
     background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 10px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 6px;
     border: 1px solid #d3d3d3;
-    margin: 0;
+    margin: 60px 0 0 0; /* Espaçamento abaixo da linha divisória */
+    min-height: fit-content; /* Altura baseada no conteúdo */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.old-dragon-generator-modal .saving-throws:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 
 .old-dragon-generator-modal .saving-throws h4 {
@@ -320,6 +321,11 @@
     margin-bottom: 12px;
     font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .old-dragon-generator-modal .saving-throws-grid {
@@ -329,11 +335,19 @@
 }
 
 .old-dragon-generator-modal .saving-throw-item {
-    background: #ede9d5; /* Cor de fundo solicitada */
+    background: #f5f5f0; /* Fundo ligeiramente mais claro para contraste */
     padding: 8px;
     border-radius: 4px;
     text-align: center;
     border: 1px solid #d3d3d3;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.old-dragon-generator-modal .saving-throw-item:hover {
+    background: #e8e8e0;
+    border-color: #8B0000;
+    transform: scale(1.02);
 }
 
 .old-dragon-generator-modal .saving-throw-name {
@@ -353,8 +367,16 @@
     padding: 12px;
     border-radius: 6px;
     border: 1px solid #d3d3d3;
-    margin: 0;
-    flex: 1; /* Ocupa espaço disponível na coluna direita */
+    margin: 60px 0 0 0; /* Espaçamento abaixo da linha divisória */
+    /* Remove flex: 1 para não esticar desnecessariamente */
+    min-height: fit-content; /* Altura baseada no conteúdo */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.old-dragon-generator-modal .character-details:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 
 .old-dragon-generator-modal .character-details h4 {
@@ -362,6 +384,11 @@
     margin-bottom: 12px;
     font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .old-dragon-generator-modal .detail-section {
@@ -430,34 +457,24 @@
 }
 
 
-/* Responsividade para layout de 3 colunas */
+/* Responsividade para o novo layout */
 @media (max-width: 1400px) {
-    .old-dragon-generator-modal .main-layout {
-        grid-template-columns: 1fr 1fr;
+    .old-dragon-generator-modal .top-row {
+        grid-template-columns: 1fr 1fr; /* Mantém duas colunas */
         gap: 15px;
     }
     
-    .old-dragon-generator-modal .middle-column {
-        grid-column: 1 / -1;
-        margin-top: 10px;
+    .old-dragon-generator-modal .bottom-row {
+        grid-template-columns: 1fr 1fr; /* Mantém duas colunas */
+        gap: 15px;
     }
 }
 
 @media (max-width: 1000px) {
-    .old-dragon-generator-modal .main-layout {
-        grid-template-columns: 1fr;
+    .old-dragon-generator-modal .top-row,
+    .old-dragon-generator-modal .bottom-row {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
         gap: 15px;
-    }
-    
-    .old-dragon-generator-modal .left-column,
-    .old-dragon-generator-modal .middle-column,
-    .old-dragon-generator-modal .right-column {
-        gap: 15px;
-    }
-    
-    .old-dragon-generator-modal .middle-column {
-        grid-column: auto;
-        margin-top: 0;
     }
 }
 
@@ -469,7 +486,8 @@
         max-width: 95vw;
     }
     
-    .old-dragon-generator-modal .main-layout {
+    .old-dragon-generator-modal .top-row,
+    .old-dragon-generator-modal .bottom-row {
         grid-template-columns: 1fr;
         gap: 15px;
     }
