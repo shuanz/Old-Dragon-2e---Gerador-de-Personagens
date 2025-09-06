@@ -86,12 +86,13 @@
     font-size: 1.6em; /* Fonte ainda maior para o título */
 }
 
-/* Layout principal de duas colunas */
+/* Layout principal de três colunas otimizado */
 .old-dragon-generator-modal .main-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1.2fr 0.8fr 1fr; /* Coluna esquerda maior, meio menor, direita média */
     gap: 20px; /* Espaço entre colunas */
     margin-bottom: 25px; /* Mais espaço no final */
+    align-items: start; /* Alinha no topo para evitar esticamento */
 }
 
 /* Layout com seção de equipamentos em largura total */
@@ -114,11 +115,13 @@
     display: flex;
     flex-direction: column;
     gap: 20px; /* Mais espaço entre seções */
+    align-items: stretch; /* Estica elementos para ocupar largura */
 }
 
-/* Estilos específicos para a coluna do meio */
+/* Estilos específicos para a coluna do meio - mais compacta */
 .old-dragon-generator-modal .middle-column {
-    min-height: 400px; /* Altura mínima para equilibrar */
+    min-height: auto; /* Remove altura mínima fixa */
+    justify-content: flex-start; /* Alinha no topo */
 }
 
 /* Informações básicas compactas */
@@ -128,6 +131,7 @@
     border-radius: 6px;
     padding: 12px;
     margin: 0;
+    min-height: fit-content; /* Altura baseada no conteúdo */
 }
 
 .old-dragon-generator-modal .character-basic-info h4 {
@@ -154,6 +158,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin: 0;
+    min-height: fit-content; /* Altura baseada no conteúdo */
 }
 
 .old-dragon-generator-modal .attributes-grid h4 {
@@ -246,10 +251,11 @@
 
 .old-dragon-generator-modal .saving-throws {
     background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 10px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 6px;
     border: 1px solid #d3d3d3;
     margin: 0;
+    min-height: fit-content; /* Altura baseada no conteúdo */
 }
 
 .old-dragon-generator-modal .saving-throws h4 {
@@ -291,7 +297,8 @@
     border-radius: 6px;
     border: 1px solid #d3d3d3;
     margin: 0;
-    flex: 1; /* Ocupa espaço disponível na coluna direita */
+    /* Remove flex: 1 para não esticar desnecessariamente */
+    min-height: fit-content; /* Altura baseada no conteúdo */
 }
 
 .old-dragon-generator-modal .character-details h4 {
