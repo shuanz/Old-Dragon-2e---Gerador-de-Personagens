@@ -2591,13 +2591,8 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                         
-                        <!-- Coluna 2: Vazia (pode ser removida no futuro) -->
+                        <!-- Coluna 2: Atributos e Detalhes do Personagem -->
                         <div class="middle-column">
-                            <!-- Espaço reservado para futuras funcionalidades -->
-                        </div>
-                            
-                        <!-- Coluna 3: Atributos e Detalhes do Personagem -->
-                        <div class="right-column">
                             <div class="attributes-grid">
                                 <h4><i class="fas fa-dice"></i> Atributos</h4>
                         ${this.attributes.map(attr => `
@@ -2627,6 +2622,11 @@ class OldDragon2eCharacterGenerator {
                                     <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
                                 </div>
                             </div>
+                        </div>
+                            
+                        <!-- Coluna 3: Vazia (pode ser removida no futuro) -->
+                        <div class="right-column">
+                            <!-- Espaço reservado para futuras funcionalidades -->
                         </div>
                             </div>
                             
