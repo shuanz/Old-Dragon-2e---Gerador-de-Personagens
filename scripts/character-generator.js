@@ -647,16 +647,16 @@ class OldDragon2eCharacterGenerator {
         // Xamã (Clérigo)
         else if (/xamã|shaman/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Comunhão Espiritual: Contato com espíritos');
+                abilities.push('Animal Sagrado: Seleciona animal/criatura como símbolo divino, seguidores fazem ataques fáceis durante canções sagradas');
             }
             if (level >= 3) {
-                abilities.push('Visões: Recebe visões proféticas');
+                abilities.push('Cura Totêmica: Troca magia preparada por Curar Ferimentos 1º círculo (1d8 PV)');
             }
             if (level >= 6) {
-                abilities.push('Possessão: Espíritos podem possuir aliados');
+                abilities.push('Fúria: Cantoria sagrada estimula aliado a entrar em fúria (dado de dano superior, ataques muito fáceis, alvo fácil para inimigos)');
             }
             if (level >= 10) {
-                abilities.push('Ascensão: Transforma-se em espírito');
+                abilities.push('Fúria da Natureza: Troca magia 5º círculo por Controlar o Clima 7º círculo (mesmo sem acesso a magias 7º círculo)');
             }
         }
         
