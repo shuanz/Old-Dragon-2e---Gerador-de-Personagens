@@ -759,16 +759,16 @@ class OldDragon2eCharacterGenerator {
         // Bruxo (Mago)
         else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Pacto Mágico: Poderes através de pactos');
+                abilities.push('Iniciado: Conjura magias 1º círculo, pode usar armas médias e armaduras leves (mesmo metal) sem prejudicar rituais');
             }
             if (level >= 3) {
-                abilities.push('Invocação: Conjura magias através de invocações');
+                abilities.push('Médium: Conjura magias 2º círculo, pode usar armas grandes (mesmo metal) sem prejudicar rituais');
             }
             if (level >= 6) {
-                abilities.push('Magias Proibidas: Acesso a magias sombrias');
+                abilities.push('Conjurador: Conjura magias 3º círculo, pode usar armaduras médias (mesmo metal) sem prejudicar rituais');
             }
             if (level >= 10) {
-                abilities.push('Apoteose: Transforma-se em demônio');
+                abilities.push('Entidade: Conjura magias 4º-6º círculos, pode usar todas armaduras/armas (mesmo metal) sem prejudicar rituais');
             }
         }
         
