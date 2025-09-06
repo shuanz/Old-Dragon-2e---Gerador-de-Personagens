@@ -1797,6 +1797,12 @@ class OldDragon2eCharacterGenerator {
      */
     async updateEquipmentInModal(html, character) {
         const equipmentItems = html.find('.equipment-items');
+        
+        // Preserva a posição da rolagem antes da atualização
+        const scrollContainer = html.find('.old-dragon-generator-modal').closest('.window-app');
+        const scrollTop = scrollContainer.scrollTop();
+        
+        // Limpa o conteúdo atual
         equipmentItems.empty();
         
         // Adiciona os novos itens de equipamento
@@ -1809,6 +1815,11 @@ class OldDragon2eCharacterGenerator {
             `;
             equipmentItems.append(itemHtml);
         });
+        
+        // Restaura a posição da rolagem após um pequeno delay
+        setTimeout(() => {
+            scrollContainer.scrollTop(scrollTop);
+        }, 10);
         
         // Carrega descrições de forma assíncrona
         await this.loadEquipmentDescriptions(character.equipment, equipmentItems);
