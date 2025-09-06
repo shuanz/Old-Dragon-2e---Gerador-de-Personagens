@@ -191,12 +191,13 @@
 
 .old-dragon-generator-modal .race-abilities {
     background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 8px;
+    padding: 12px;
     border-radius: 4px;
     border: 1px solid #d3d3d3;
     margin: 0;
-    max-height: 300px; /* Altura máxima aumentada para mostrar mais conteúdo */
+    max-height: 250px; /* Altura otimizada para layout vertical */
     overflow-y: auto; /* Scroll se necessário */
+    width: 100%; /* Ocupa toda a largura disponível */
 }
 
 .old-dragon-generator-modal .race-abilities h4 {
@@ -227,12 +228,13 @@
 
 .old-dragon-generator-modal .class-abilities {
     background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 8px;
+    padding: 12px;
     border-radius: 4px;
     border: 1px solid #d3d3d3;
     margin: 0;
-    max-height: 300px; /* Altura máxima aumentada para mostrar mais conteúdo */
+    max-height: 250px; /* Altura otimizada para layout vertical */
     overflow-y: auto; /* Scroll se necessário */
+    width: 100%; /* Ocupa toda a largura disponível */
 }
 
 .old-dragon-generator-modal .class-abilities h4 {
@@ -268,10 +270,11 @@
 }
 
 .old-dragon-generator-modal .abilities-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Duas colunas lado a lado */
+    display: flex;
+    flex-direction: column; /* Layout vertical - uma coluna */
     gap: 15px;
     margin: 0;
+    max-width: 100%; /* Ocupa toda a largura disponível */
 }
 
 /* Estilos para scrollbars personalizadas nas seções de habilidades */
