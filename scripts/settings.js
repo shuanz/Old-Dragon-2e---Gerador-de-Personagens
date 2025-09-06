@@ -108,5 +108,4 @@ Hooks.on('init', function() {
         }
     });
 
-    console.log('Old Dragon 2e - Gerador de Personagens | Configurações registradas');
 });
