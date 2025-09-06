@@ -56,6 +56,19 @@ class OldDragon2eCharacterGenerator {
                     'Movimento: 6 metros',
                     'Infravisão: Não possui'
                 ]
+            },
+            { 
+                id: 'half-elf', 
+                name: 'Meio-Elfo', 
+                namePlural: 'Meio-Elfos',
+                abilities: [
+                    'Herança Dupla: Combina características de humanos e elfos',
+                    'Escolha Estratégica: +1 em JPC ou JPD à escolha',
+                    'Resistência Élfica: Imunidade parcial ao sono',
+                    'Percepção Natural: Detecta portas secretas (1 em 1d6)',
+                    'Movimento: 9 metros',
+                    'Infravisão: 9 metros'
+                ]
             }
         ];
 
@@ -845,6 +858,15 @@ class OldDragon2eCharacterGenerator {
                 'Movimento: 9 metros',
                 'Infravisão: Não possui'
             ];
+        } else if (raceNameLower.includes('meio') && raceNameLower.includes('elf')) {
+            return [
+                'Herança Dupla: Combina características de humanos e elfos',
+                'Escolha Estratégica: +1 em JPC ou JPD à escolha',
+                'Resistência Élfica: Imunidade parcial ao sono',
+                'Percepção Natural: Detecta portas secretas (1 em 1d6)',
+                'Movimento: 9 metros',
+                'Infravisão: 9 metros'
+            ];
         } else if (raceNameLower.includes('elfo') || raceNameLower.includes('elf')) {
             return [
                 'Percepção Natural: Detecta portas secretas (1 em 1d6)',
@@ -1475,8 +1497,13 @@ class OldDragon2eCharacterGenerator {
             if (randomBonus === 0) raceBonusJPD = 1;
             else if (randomBonus === 1) raceBonusJPC = 1;
             else raceBonusJPS = 1;
-        } else if (raceName.includes('elf')) {
+        } else if (raceName.includes('elf') && !raceName.includes('meio')) {
             raceBonusJPD = 1; // Elfo: +1 JPD
+        } else if (raceName.includes('meio') && raceName.includes('elf')) {
+            // Meio-Elfo: escolhe entre JPC ou JPD
+            const randomChoice = Math.floor(Math.random() * 2); // 0 ou 1
+            if (randomChoice === 0) raceBonusJPC = 1; // Escolhe JPC
+            else raceBonusJPD = 1; // Escolhe JPD
         } else if (raceName.includes('anão') || raceName.includes('anao')) {
             raceBonusJPC = 1; // Anão: +1 JPC
         } else if (raceName.includes('halfling')) {
@@ -1517,6 +1544,7 @@ class OldDragon2eCharacterGenerator {
         const movement = {
             human: 9,
             elf: 9,
+            'half-elf': 9,
             dwarf: 6,
             halfling: 6
         };
@@ -1542,6 +1570,7 @@ class OldDragon2eCharacterGenerator {
         const raceLanguages = {
             humano: ['Comum'],
             elfo: ['Comum', 'Élfico'],
+            'half-elf': ['Comum', 'Élfico'],
             anao: ['Comum', 'Anão'],
             halfling: ['Comum', 'Halfling'],
             meio_elfo: ['Comum', 'Élfico'],

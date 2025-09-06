@@ -67,8 +67,13 @@ class TestCharacterGenerator {
             if (randomBonus === 0) raceBonusJPD = 1;
             else if (randomBonus === 1) raceBonusJPC = 1;
             else raceBonusJPS = 1;
-        } else if (raceName.includes('elf')) {
+        } else if (raceName.includes('elf') && !raceName.includes('meio')) {
             raceBonusJPD = 1; // Elfo: +1 JPD
+        } else if (raceName.includes('meio') && raceName.includes('elf')) {
+            // Meio-Elfo: escolhe entre JPC ou JPD
+            const randomChoice = Math.floor(Math.random() * 2); // 0 ou 1
+            if (randomChoice === 0) raceBonusJPC = 1; // Escolhe JPC
+            else raceBonusJPD = 1; // Escolhe JPD
         } else if (raceName.includes('anão') || raceName.includes('anao')) {
             raceBonusJPC = 1; // Anão: +1 JPC
         } else if (raceName.includes('halfling')) {
@@ -143,6 +148,16 @@ function testProtectionRolls() {
     console.log(`   JPD: ${result4.JPD} (Base: ${result4.base.JPD}, Mod: ${result4.modifiers.JPD}, Raça: ${result4.raceBonus.JPD})`);
     console.log(`   JPC: ${result4.JPC} (Base: ${result4.base.JPC}, Mod: ${result4.modifiers.JPC}, Raça: ${result4.raceBonus.JPC})`);
     console.log(`   JPS: ${result4.JPS} (Base: ${result4.base.JPS}, Mod: ${result4.modifiers.JPS}, Raça: ${result4.raceBonus.JPS})`);
+    console.log('');
+    
+    // Teste 5: Meio-Elfo Clérigo nível 4
+    console.log('5. Meio-Elfo Clérigo nível 4:');
+    const attributes5 = { strength: 12, dexterity: 14, constitution: 13, intelligence: 11, wisdom: 15, charisma: 12 };
+    const result5 = generator.calculateFinalSavingThrows('clerigo', 4, attributes5, 'Meio-Elfo');
+    console.log(`   JPD: ${result5.JPD} (Base: ${result5.base.JPD}, Mod: ${result5.modifiers.JPD}, Raça: ${result5.raceBonus.JPD})`);
+    console.log(`   JPC: ${result5.JPC} (Base: ${result5.base.JPC}, Mod: ${result5.modifiers.JPC}, Raça: ${result5.raceBonus.JPC})`);
+    console.log(`   JPS: ${result5.JPS} (Base: ${result5.base.JPS}, Mod: ${result5.modifiers.JPS}, Raça: ${result5.raceBonus.JPS})`);
+    console.log(`   Escolha do Meio-Elfo: ${result5.raceBonus.JPC > 0 ? 'JPC' : 'JPD'}`);
     console.log('');
     
     console.log('=== VERIFICAÇÕES ===');
