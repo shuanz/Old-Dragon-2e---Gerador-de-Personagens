@@ -714,18 +714,41 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-     * Calcula Base de Ataque
+     * Calcula Bases de Ataque (BAC e BAD) conforme fórmulas do Old Dragon 2e
+     * BAC = BASE DE ATAQUE + MOD. FOR + OUTROS
+     * BAD = BASE DE ATAQUE + MOD. DES + OUTROS
      */
-    calculateBaseAttack(characterClass, level) {
+    calculateBaseAttack(characterClass, level, attributes) {
         const archetype = this.mapClassToArchetype(characterClass);
-        const tables = {
+        
+        // Tabela base de ataque por classe e nível
+        const baseAttackTable = {
             fighter: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             cleric: [1, 1, 1, 3, 3, 3, 5, 5, 5, 7],
             thief: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
             mage: [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
         };
-        const table = tables[archetype] || tables.fighter;
-        return table[level - 1] || table[0];
+        
+        const baseAttack = (baseAttackTable[archetype] || baseAttackTable.fighter)[level - 1] || 1;
+        
+        // Calcula modificadores de atributos
+        const modifiers = this.calculateModifiers(attributes);
+        
+        // BAC = Base de Ataque + Modificador de Força
+        const bac = baseAttack + modifiers.strength;
+        
+        // BAD = Base de Ataque + Modificador de Destreza
+        const bad = baseAttack + modifiers.dexterity;
+        
+        return {
+            base: baseAttack,
+            bac: bac,
+            bad: bad,
+            modifiers: {
+                strength: modifiers.strength,
+                dexterity: modifiers.dexterity
+            }
+        };
     }
 
     /**
@@ -977,8 +1000,8 @@ class OldDragon2eCharacterGenerator {
                     
                     // Combate
                     ca: characterData.armorClass,
-                    bac: characterData.baseAttack,
-                    bad: characterData.baseAttack,
+                    bac: characterData.baseAttack.bac,
+                    bad: characterData.baseAttack.bad,
                     
                     // Vida e Movimento
                     pv: characterData.hitPoints,
@@ -1589,7 +1612,7 @@ class OldDragon2eCharacterGenerator {
             if (selectedRace && selectedClass) {
                 character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
                 character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
-                character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
+                character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes);
                 character.movement = this.calculateMovement(selectedRace.id);
                 character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
                 
@@ -1633,7 +1656,7 @@ class OldDragon2eCharacterGenerator {
         infoItems.eq(3).html(`<strong>Nível:</strong> ${character.level}`);
         infoItems.eq(4).html(`<strong>PV:</strong> ${character.hitPoints}`);
         infoItems.eq(5).html(`<strong>CA:</strong> ${character.armorClass}`);
-        infoItems.eq(6).html(`<strong>BA:</strong> ${character.baseAttack}`);
+        infoItems.eq(6).html(`<strong>BAC:</strong> ${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
         infoItems.eq(7).html(`<strong>MV:</strong> ${character.movement}m`);
         infoItems.eq(8).html(`<strong>Idiomas:</strong> ${character.languages.languages.join(', ')}`);
         infoItems.eq(9).html(`<strong>Alinhamento:</strong> ${character.alignment}`);
@@ -1842,7 +1865,7 @@ class OldDragon2eCharacterGenerator {
                                     <div class="info-item"><strong>Nível:</strong> ${character.level}</div>
                                     <div class="info-item"><strong>PV:</strong> ${character.hitPoints}</div>
                                     <div class="info-item"><strong>CA:</strong> ${character.armorClass}</div>
-                                    <div class="info-item"><strong>BA:</strong> ${character.baseAttack}</div>
+                                    <div class="info-item"><strong>BAC:</strong> ${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}</div>
                                     <div class="info-item"><strong>MV:</strong> ${character.movement}m</div>
                                     <div class="info-item"><strong>Idiomas:</strong> ${character.languages.languages.join(', ')}</div>
                                     <div class="info-item"><strong>Alinhamento:</strong> ${character.alignment}</div>
