@@ -310,54 +310,54 @@ class OldDragon2eCharacterGenerator {
     /**
      * Obtém as habilidades de classe do SRD
      */
-    getClassAbilitiesFromSRD(selectedClass, level = 1) {
+    async getClassAbilitiesFromSRD(selectedClass, level = 1) {
         try {
-            // Tenta extrair habilidades do sistema da classe do SRD
+            // Extrai habilidades exclusivamente do sistema da classe do SRD
             const classData = selectedClass.system;
             const abilities = [];
             
-            // Busca por habilidades em diferentes campos do sistema
-            if (classData?.features) {
-                Object.values(classData.features).forEach(feature => {
-                    if (feature?.name && feature?.description) {
-                        abilities.push(`${feature.name}: ${feature.description}`);
+            // Debug: mostra a estrutura completa dos dados do SRD
+            console.log('Dados da classe do SRD:', selectedClass.name, classData);
+            
+            // Busca habilidades usando as referências do compendium
+            if (classData?.class_abilities && Array.isArray(classData.class_abilities)) {
+                console.log('Class abilities encontradas:', classData.class_abilities);
+                
+                for (const abilityRef of classData.class_abilities) {
+                    try {
+                        // Busca o item no compendium usando a referência
+                        const abilityItem = await fromUuid(abilityRef);
+                        if (abilityItem) {
+                            console.log('Habilidade encontrada:', abilityItem.name, abilityItem.system);
+                            
+                            // Extrai nome e descrição da habilidade
+                            const name = abilityItem.name || 'Habilidade';
+                            const description = abilityItem.system?.description || 
+                                              abilityItem.system?.description?.value || 
+                                              abilityItem.system?.description?.text ||
+                                              'Descrição não disponível';
+                            
+                            // Remove tags HTML da descrição se necessário
+                            const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
+                            
+                            abilities.push(`${name}: ${cleanDescription}`);
+                        } else {
+                            console.warn('Não foi possível encontrar habilidade:', abilityRef);
+                        }
+                    } catch (error) {
+                        console.warn('Erro ao carregar habilidade:', abilityRef, error);
                     }
-                });
-            }
-            
-            // Busca por habilidades em outros campos comuns
-            if (classData?.abilities) {
-                Object.values(classData.abilities).forEach(ability => {
-                    if (ability?.name && ability?.description) {
-                        abilities.push(`${ability.name}: ${ability.description}`);
-                    }
-                });
-            }
-            
-            // Adiciona habilidades específicas de especializações por nível
-            const specializationAbilities = this.getSpecializationAbilities(selectedClass.name, level);
-            abilities.push(...specializationAbilities);
-            
-            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
-            if (abilities.length === 0) {
-                const localClass = this.classes.find(c => 
-                    c.name.toLowerCase() === selectedClass.name.toLowerCase() ||
-                    c.id === selectedClass.id
-                );
-                if (localClass) {
-                    return localClass.abilities;
                 }
             }
             
-            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da classe
-            if (abilities.length === 0) {
-                return this.getBasicClassAbilities(selectedClass.name);
-            }
+            console.log('Habilidades extraídas do SRD:', abilities);
             
+            // Retorna apenas as habilidades encontradas no SRD
             return abilities;
+            
         } catch (error) {
             console.warn('Erro ao extrair habilidades de classe do SRD:', error);
-            return this.getBasicClassAbilities(selectedClass.name);
+            return [];
         }
     }
 
@@ -759,17 +759,19 @@ class OldDragon2eCharacterGenerator {
         // Bruxo (Mago)
         else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Iniciado: Conjura magias 1º círculo, pode usar armas médias e armaduras leves (mesmo metal) sem prejudicar rituais');
-                abilities.push('Metal: Objetos de metal atrapalham canalização do ritual, impedindo conjuração das magias (1-2 em 1d6 chance de perder ritual sem efeito)');
+                abilities.push('Rituais: Canaliza poder extraplanar através de rituais de palavras e gestos. Ritual leva 1 rodada para executar, efeito inicia na próxima rodada');
+                abilities.push('Lista de Rituais: Pode escolher livremente suas magias dentre todas as magias dos círculos disponíveis para seu nível');
+                abilities.push('Metal: Objetos de metal atrapalham canalização do ritual (1-2 em 1d6 chance de perder ritual sem efeito)');
+                abilities.push('Iniciado: Conjura magias 1º círculo, pode usar armas médias e armaduras leves sem prejudicar rituais');
             }
             if (level >= 3) {
-                abilities.push('Médium: Conjura magias 2º círculo, pode usar armas grandes (mesmo metal) sem prejudicar rituais');
+                abilities.push('Médium: Conjura magias 2º círculo, pode usar armas grandes sem prejudicar rituais');
             }
             if (level >= 6) {
-                abilities.push('Conjurador: Conjura magias 3º círculo, pode usar armaduras médias (mesmo metal) sem prejudicar rituais');
+                abilities.push('Conjurador: Conjura magias 3º círculo, pode usar armaduras médias sem prejudicar rituais');
             }
             if (level >= 10) {
-                abilities.push('Entidade: Conjura magias 4º-6º círculos, pode usar todas armaduras e armas (mesmo metal) sem prejudicar rituais');
+                abilities.push('Entidade: Conjura magias 4º-6º círculos (conforme nível), pode usar todas armaduras e armas sem prejudicar rituais');
             }
         }
         
@@ -779,50 +781,54 @@ class OldDragon2eCharacterGenerator {
     /**
      * Obtém as habilidades de raça do SRD
      */
-    getRaceAbilitiesFromSRD(selectedRace) {
+    async getRaceAbilitiesFromSRD(selectedRace) {
         try {
-            // Tenta extrair habilidades do sistema da raça do SRD
+            // Extrai habilidades exclusivamente do sistema da raça do SRD
             const raceData = selectedRace.system;
             const abilities = [];
             
-            // Busca por habilidades em diferentes campos do sistema
-            if (raceData?.features) {
-                Object.values(raceData.features).forEach(feature => {
-                    if (feature?.name && feature?.description) {
-                        abilities.push(`${feature.name}: ${feature.description}`);
-                    }
-                });
-            }
+            // Debug: mostra a estrutura completa dos dados do SRD
+            console.log('Dados da raça do SRD:', selectedRace.name, raceData);
             
-            // Busca por habilidades em outros campos comuns
-            if (raceData?.abilities) {
-                Object.values(raceData.abilities).forEach(ability => {
-                    if (ability?.name && ability?.description) {
-                        abilities.push(`${ability.name}: ${ability.description}`);
+            // Busca habilidades usando as referências do compendium
+            if (raceData?.race_abilities && Array.isArray(raceData.race_abilities)) {
+                console.log('Race abilities encontradas:', raceData.race_abilities);
+                
+                for (const abilityRef of raceData.race_abilities) {
+                    try {
+                        // Busca o item no compendium usando a referência
+                        const abilityItem = await fromUuid(abilityRef);
+                        if (abilityItem) {
+                            console.log('Habilidade encontrada:', abilityItem.name, abilityItem.system);
+                            
+                            // Extrai nome e descrição da habilidade
+                            const name = abilityItem.name || 'Habilidade';
+                            const description = abilityItem.system?.description || 
+                                              abilityItem.system?.description?.value || 
+                                              abilityItem.system?.description?.text ||
+                                              'Descrição não disponível';
+                            
+                            // Remove tags HTML da descrição se necessário
+                            const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
+                            
+                            abilities.push(`${name}: ${cleanDescription}`);
+                        } else {
+                            console.warn('Não foi possível encontrar habilidade:', abilityRef);
+                        }
+                    } catch (error) {
+                        console.warn('Erro ao carregar habilidade:', abilityRef, error);
                     }
-                });
-            }
-            
-            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
-            if (abilities.length === 0) {
-                const localRace = this.races.find(r => 
-                    r.name.toLowerCase() === selectedRace.name.toLowerCase() ||
-                    r.id === selectedRace.id
-                );
-                if (localRace) {
-                    return localRace.abilities;
                 }
             }
             
-            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da raça
-            if (abilities.length === 0) {
-                return this.getBasicRaceAbilities(selectedRace.name);
-            }
+            console.log('Habilidades extraídas do SRD:', abilities);
             
+            // Retorna apenas as habilidades encontradas no SRD
             return abilities;
+            
         } catch (error) {
             console.warn('Erro ao extrair habilidades de raça do SRD:', error);
-            return this.getBasicRaceAbilities(selectedRace.name);
+            return [];
         }
     }
 
@@ -1569,66 +1575,33 @@ class OldDragon2eCharacterGenerator {
     async generateCharacter() {
         const attributes = this.generateAttributes();
         const modifiers = this.calculateModifiers(attributes);
-        const race = this.races[Math.floor(Math.random() * this.races.length)];
         
-        // Filtra classes disponíveis baseado na raça
-        const availableClasses = this.classes.filter(cls => {
-            // Se a classe tem restrição de raça, só pode ser escolhida pela raça correta
-            if (cls.raceRestriction) {
-                return cls.raceRestriction === race.id;
-            }
-            // Classes sem restrição podem ser escolhidas por qualquer raça
-            return true;
-        });
-        
-        console.log('Raça selecionada:', race.id, race.name);
-        console.log('Classes disponíveis:', availableClasses.map(c => c.name));
-        console.log('Total de classes disponíveis:', availableClasses.length);
-        
-        const characterClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
-        console.log('Classe selecionada:', characterClass.name, 'ID:', characterClass.id);
-        const name = this.generateRaceName(race.id);
-        const equipment = await this.generateEquipment(characterClass.id);
-        const hitPoints = this.calculateHitPoints(characterClass.id, attributes.constitution);
-        
-        // Novos cálculos
-        const armorClass = this.calculateArmorClass(attributes.dexterity, equipment);
-        const baseAttack = this.calculateBaseAttack(characterClass.id, 1);
-        const savingThrows = this.calculateSavingThrows(characterClass.id, 1);
-        const movement = this.calculateMovement(race.id);
-        const languages = this.calculateLanguages(attributes.intelligence, race.id);
-        const alignment = this.generateAlignment();
-        const appearance = this.generateAppearance();
-        const personality = this.generatePersonality();
-        const background = this.generateBackground();
-        
-        // Magias iniciais serão geradas em showGeneratorModal após carregar classe do SRD
-
         // Debug: log dos atributos e modificadores
         console.log('Atributos gerados:', attributes);
         console.log('Modificadores calculados:', modifiers);
 
         return {
-            name,
-            race: race.name,
-            raceAbilities: race.abilities,
-            class: characterClass.name,
-            classAbilities: characterClass.abilities,
+            name: '', // Será preenchido depois com dados do SRD
+            race: '', // Será preenchido depois com dados do SRD
+            raceAbilities: [], // Será preenchido depois com dados do SRD
+            class: '', // Será preenchido depois com dados do SRD
+            classAbilities: [], // Será preenchido depois com dados do SRD
             attributes,
             modifiers,
-            hitPoints,
-            armorClass,
-            baseAttack,
-            savingThrows,
-            movement,
-            languages,
-            alignment,
-            appearance,
-            personality,
-            background,
-            equipment,
+            equipment: [], // Será preenchido depois com dados do SRD
+            hitPoints: 0, // Será calculado depois com dados do SRD
+            armorClass: 0, // Será calculado depois com dados do SRD
+            baseAttack: 0, // Será calculado depois com dados do SRD
+            savingThrows: {}, // Será calculado depois com dados do SRD
+            movement: 0, // Será calculado depois com dados do SRD
+            languages: { count: 0, languages: [] }, // Será calculado depois com dados do SRD
+            alignment: this.generateAlignment(),
+            appearance: this.generateAppearance(),
+            personality: this.generatePersonality(),
+            background: this.generateBackground(),
             level: 1,
-            experience: 0
+            experience: 0,
+            initialSpells: [] // Será preenchido depois com dados do SRD
         };
     }
 
@@ -2287,7 +2260,7 @@ class OldDragon2eCharacterGenerator {
                 character.raceUUID = selectedRace.uuid;
                 character.raceData = selectedRace.system;
                 // Atualiza habilidades de raça com base na raça selecionada
-                character.raceAbilities = this.getRaceAbilitiesFromSRD(selectedRace);
+                character.raceAbilities = await this.getRaceAbilitiesFromSRD(selectedRace);
                 // Gera o nome compatível com a raça selecionada
                 character.name = this.generateRaceName(selectedRace.id);
                 console.log('Raça aplicada:', character.race);
@@ -2299,6 +2272,9 @@ class OldDragon2eCharacterGenerator {
                 character.classUUID = selectedClass.uuid;
                 character.classData = selectedClass.system;
                 console.log('Classe aplicada:', character.class);
+
+                // Atualiza habilidades de classe com base na classe selecionada
+                character.classAbilities = await this.getClassAbilitiesFromSRD(selectedClass);
 
                 // Ajusta equipamento para respeitar restrições da classe selecionada
                 const archetype = this.mapClassToArchetype(selectedClass.name);
@@ -2317,6 +2293,16 @@ class OldDragon2eCharacterGenerator {
                 } else if (isDivineClass) {
                     console.log('Classe divina detectada, magias serão importadas do SRD');
                 }
+            }
+
+            // Recalcula valores que dependem de raça e classe
+            if (selectedRace && selectedClass) {
+                character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
+                character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
+                character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
+                character.savingThrows = this.calculateSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level);
+                character.movement = this.calculateMovement(selectedRace.id);
+                character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
             }
 
             // Atualiza a referência do personagem no dialog
@@ -2514,7 +2500,7 @@ class OldDragon2eCharacterGenerator {
             character.raceUUID = selectedRace.uuid;
             character.raceData = selectedRace.system;
             // Atualiza habilidades de raça com base na raça selecionada
-            character.raceAbilities = this.getRaceAbilitiesFromSRD(selectedRace);
+            character.raceAbilities = await this.getRaceAbilitiesFromSRD(selectedRace);
             // Gera o nome compatível com a raça selecionada
             character.name = this.generateRaceName(selectedRace.id);
             console.log('Raça aplicada:', character.race);
@@ -2528,7 +2514,7 @@ class OldDragon2eCharacterGenerator {
             console.log('Classe aplicada:', character.class);
 
             // Atualiza habilidades de classe com base na classe selecionada
-            character.classAbilities = this.getClassAbilitiesFromSRD(selectedClass);
+            character.classAbilities = await this.getClassAbilitiesFromSRD(selectedClass);
 
             // Ajusta equipamento para respeitar restrições da classe selecionada
             const archetype = this.mapClassToArchetype(selectedClass.name);
@@ -2547,6 +2533,16 @@ class OldDragon2eCharacterGenerator {
             } else if (isDivineClass) {
                 console.log('Classe divina detectada, magias serão importadas do SRD');
             }
+        }
+
+        // Recalcula valores que dependem de raça e classe
+        if (selectedRace && selectedClass) {
+            character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
+            character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
+            character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
+            character.savingThrows = this.calculateSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level);
+            character.movement = this.calculateMovement(selectedRace.id);
+            character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
         }
         
         const modalContent = `
