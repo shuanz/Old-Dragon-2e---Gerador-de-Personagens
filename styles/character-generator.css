@@ -261,6 +261,19 @@
     border-bottom: none;
 }
 
+/* Nova seção de habilidades com largura completa */
+.old-dragon-generator-modal .abilities-section {
+    margin: 15px 0;
+    grid-column: 1 / -1; /* Ocupa toda a largura */
+}
+
+.old-dragon-generator-modal .abilities-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas lado a lado */
+    gap: 15px;
+    margin: 0;
+}
+
 /* Estilos para scrollbars personalizadas nas seções de habilidades */
 .old-dragon-generator-modal .race-abilities::-webkit-scrollbar,
 .old-dragon-generator-modal .class-abilities::-webkit-scrollbar {

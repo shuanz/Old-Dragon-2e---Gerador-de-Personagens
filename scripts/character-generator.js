@@ -2624,22 +2624,8 @@ class OldDragon2eCharacterGenerator {
                     </div>
                         </div>
                         
-                        <!-- Coluna 2: Habilidades e Jogadas de Proteção -->
+                        <!-- Coluna 2: Jogadas de Proteção -->
                         <div class="middle-column">
-                            <div class="race-abilities">
-                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
-                                <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="class-abilities">
-                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
-                                <ul>
-                                    ${character.classAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
                                 <div class="saving-throws-grid">
@@ -2681,6 +2667,25 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                             </div>
+                            
+                    <!-- Seção de Habilidades - Largura Completa -->
+                    <div class="abilities-section">
+                        <div class="abilities-container">
+                            <div class="race-abilities">
+                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
+                                <ul>
+                                    ${character.raceAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="class-abilities">
+                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
+                                <ul>
+                                    ${character.classAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                             
                     <div class="equipment-section">
                     <div class="equipment-list">
