@@ -1607,8 +1607,7 @@ class OldDragon2eCharacterGenerator {
         
         // Atualiza cada informação básica na ordem correta
         infoItems.eq(0).html(`<strong>Nome:</strong> ${character.name}`);
-        infoItems.eq(1).html(`<strong>Raça:</strong> ${character.race || 'Carregando...'}`);
-        infoItems.eq(2).html(`<strong>Classe:</strong> ${character.class || 'Carregando...'}`);
+        // Os dropdowns de raça e classe são atualizados pelos event listeners
         infoItems.eq(3).html(`<strong>Nível:</strong> ${character.level}`);
         infoItems.eq(4).html(`<strong>PV:</strong> ${character.hitPoints}`);
         infoItems.eq(5).html(`<strong>CA:</strong> ${character.armorClass}`);
@@ -1669,23 +1668,6 @@ class OldDragon2eCharacterGenerator {
             <div class="old-dragon-generator-modal">
                 <h2><i class="fas fa-dice-d20"></i> Gerador de Personagem - Old Dragon 2e</h2>
                 
-                <div class="selection-controls">
-                    <div class="selection-group">
-                        <label for="race-select"><i class="fas fa-users"></i> Raça:</label>
-                        <select id="race-select" class="race-select">
-                            <option value="">Selecione uma raça...</option>
-                            ${allRaces.map(race => `<option value="${race.id}" ${selectedRace && selectedRace.id === race.id ? 'selected' : ''}>${race.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    
-                    <div class="selection-group">
-                        <label for="class-select"><i class="fas fa-sword"></i> Classe:</label>
-                        <select id="class-select" class="class-select">
-                            <option value="">Selecione uma classe...</option>
-                            ${availableClasses.map(cls => `<option value="${cls.id}" ${selectedClass && selectedClass.id === cls.id ? 'selected' : ''}>${cls.name}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>
                 
                 <div class="buttons">
                     <button class="btn btn-primary" id="create-character">
@@ -1709,8 +1691,20 @@ class OldDragon2eCharacterGenerator {
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
                                 <div class="info-grid">
                                     <div class="info-item"><strong>Nome:</strong> ${character.name}</div>
-                                    <div class="info-item"><strong>Raça:</strong> ${character.race || 'Carregando...'}</div>
-                                    <div class="info-item"><strong>Classe:</strong> ${character.class || 'Carregando...'}</div>
+                                    <div class="info-item selection-item">
+                                        <strong>Raça:</strong> 
+                                        <select id="race-select" class="inline-select race-select">
+                                            <option value="">Selecione uma raça...</option>
+                                            ${allRaces.map(race => `<option value="${race.id}" ${selectedRace && selectedRace.id === race.id ? 'selected' : ''}>${race.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div class="info-item selection-item">
+                                        <strong>Classe:</strong> 
+                                        <select id="class-select" class="inline-select class-select">
+                                            <option value="">Selecione uma classe...</option>
+                                            ${availableClasses.map(cls => `<option value="${cls.id}" ${selectedClass && selectedClass.id === cls.id ? 'selected' : ''}>${cls.name}</option>`).join('')}
+                                        </select>
+                                    </div>
                                     <div class="info-item"><strong>Nível:</strong> ${character.level}</div>
                                     <div class="info-item"><strong>PV:</strong> ${character.hitPoints}</div>
                                     <div class="info-item"><strong>CA:</strong> ${character.armorClass}</div>
