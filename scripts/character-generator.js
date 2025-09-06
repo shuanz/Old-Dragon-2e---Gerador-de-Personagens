@@ -1686,6 +1686,65 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Re-rola apenas os detalhes do personagem atual (aparência, personalidade, histórico)
+     */
+    async rerollDetails(dialog, html) {
+        try {
+            // Mostra indicador de carregamento no botão
+            const rerollBtn = html.find('#reroll-details');
+            const originalContent = rerollBtn.html();
+            rerollBtn.html('<i class="fas fa-spinner fa-spin"></i>');
+            rerollBtn.prop('disabled', true);
+
+            // Gera novos detalhes
+            const newAppearance = this.generateAppearance();
+            const newPersonality = this.generatePersonality();
+            const newBackground = this.generateBackground(dialog.currentCharacter.race, dialog.currentCharacter.class);
+            
+            // Atualiza o personagem atual
+            dialog.currentCharacter.appearance = newAppearance;
+            dialog.currentCharacter.personality = newPersonality;
+            dialog.currentCharacter.background = newBackground;
+
+            // Atualiza apenas os detalhes no HTML
+            this.updateDetailsInModal(html, dialog.currentCharacter);
+
+            // Restaura o botão
+            rerollBtn.html(originalContent);
+            rerollBtn.prop('disabled', false);
+
+        } catch (error) {
+            console.error('Erro ao re-rolar detalhes:', error);
+            ui.notifications.error('Erro ao re-rolar detalhes: ' + error.message);
+            
+            // Restaura o botão mesmo em caso de erro
+            const rerollBtn = html.find('#reroll-details');
+            rerollBtn.html('<i class="fas fa-dice"></i>');
+            rerollBtn.prop('disabled', false);
+        }
+    }
+
+    /**
+     * Atualiza apenas os detalhes no modal
+     */
+    updateDetailsInModal(html, character) {
+        // Atualiza aparência
+        html.find('.detail-section').eq(0).find('p').text(
+            `${character.appearance.body}, ${character.appearance.hair}, ${character.appearance.general}`
+        );
+        
+        // Atualiza personalidade
+        html.find('.detail-section').eq(1).find('p').text(
+            `${character.personality.self}, ${character.personality.others}, ${character.personality.world}`
+        );
+        
+        // Atualiza histórico
+        html.find('.detail-section').eq(2).find('p').text(
+            character.background.text
+        );
+    }
+
+    /**
      * Atualiza o conteúdo do modal com um novo personagem
      */
     async updateModalContent(dialog, html) {
@@ -1957,7 +2016,9 @@ class OldDragon2eCharacterGenerator {
                         <!-- Segunda linha: Detalhes -->
                         <div class="bottom-row">
                             <div class="character-details">
-                                <h4><i class="fas fa-user"></i> Detalhes</h4>
+                                <h4><i class="fas fa-user"></i> Detalhes 
+                                    <i class="fas fa-dice btn-reroll-details" id="reroll-details" title="Clique para re-rolar aparência, personalidade e histórico"></i>
+                                </h4>
                                 
                                 <div class="detail-section">
                                     <h5>Aparência:</h5>
@@ -2075,6 +2136,10 @@ class OldDragon2eCharacterGenerator {
 
                 html.find('#reroll-attributes').click(async () => {
                     await this.rerollAttributes(dialog, html);
+                });
+
+                html.find('#reroll-details').click(async () => {
+                    await this.rerollDetails(dialog, html);
                 });
 
                 html.find('#close-modal').click(() => {
