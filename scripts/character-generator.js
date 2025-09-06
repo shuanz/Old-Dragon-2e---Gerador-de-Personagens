@@ -395,6 +395,70 @@ class OldDragon2eCharacterGenerator {
                 'Ler Magias: Decifra inscrições mágicas',
                 'Detectar Magias: Percebe presença mágica'
             ];
+        } else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Pacto Mágico: Poderes especiais através de pactos',
+                'Invocação: Conjura magias através de invocações'
+            ];
+        } else if (/necromante|necromancer/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Necromancia: Especialização em magias de morte',
+                'Comando de Mortos-Vivos: Controla mortos-vivos'
+            ];
+        } else if (/ilusionista|illusionist/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Ilusões: Especialização em magias de ilusão',
+                'Criação de Ilusões: Cria ilusões convincentes'
+            ];
+        } else if (/bárbaro|barbarian/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Fúria: Entra em estado de fúria em combate',
+                'Resistência: Resistência natural a dano',
+                'Ataque Selvagem: Ataques mais poderosos'
+            ];
+        } else if (/paladino|paladin/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas limitadas',
+                'Imunidade a Doenças: Resistência natural',
+                'Cura pelas Mãos: Pode curar ferimentos'
+            ];
+        } else if (/bardo|bard/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias',
+                'Armaduras: Apenas leves',
+                'Magias Arcanas: Conjura magias arcanas limitadas',
+                'Inspiração: Motiva aliados com música',
+                'Talentos: Furtividade, Performance, etc.'
+            ];
+        } else if (/ranger/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Apenas leves',
+                'Inimigo Mortal: Bônus contra inimigos específicos',
+                'Rastreamento: Habilidade em seguir trilhas',
+                'Combate Duplo: Usa duas armas simultaneamente'
+            ];
+        } else if (/druida|druid/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas naturais e simples',
+                'Armaduras: Apenas couro',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Transformação: Transforma-se em animais',
+                'Herbalismo: Conhecimento de plantas medicinais'
+            ];
         }
         
         // Fallback genérico
