@@ -2591,19 +2591,8 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                         
-                        <!-- Coluna 2: Atributos e Detalhes do Personagem -->
+                        <!-- Coluna 2: Detalhes do Personagem -->
                         <div class="middle-column">
-                            <div class="attributes-grid">
-                                <h4><i class="fas fa-dice"></i> Atributos</h4>
-                        ${this.attributes.map(attr => `
-                            <div class="attribute-item">
-                                <div class="attribute-name">${this.attributeNames[attr]}</div>
-                                <div class="attribute-value">${character.attributes[attr]}</div>
-                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                            
                             <div class="character-details">
                                 <h4><i class="fas fa-user"></i> Detalhes</h4>
                                 
@@ -2624,9 +2613,18 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                             
-                        <!-- Coluna 3: Vazia (pode ser removida no futuro) -->
+                        <!-- Coluna 3: Atributos -->
                         <div class="right-column">
-                            <!-- Espaço reservado para futuras funcionalidades -->
+                            <div class="attributes-grid">
+                                <h4><i class="fas fa-dice"></i> Atributos</h4>
+                        ${this.attributes.map(attr => `
+                            <div class="attribute-item">
+                                <div class="attribute-name">${this.attributeNames[attr]}</div>
+                                <div class="attribute-value">${character.attributes[attr]}</div>
+                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
+                            </div>
+                        `).join('')}
+                    </div>
                         </div>
                             </div>
                             
