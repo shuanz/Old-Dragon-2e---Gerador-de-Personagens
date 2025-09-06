@@ -777,22 +777,25 @@ class OldDragon2eCharacterGenerator {
      * Calcula movimento baseado na raça
      */
     calculateMovement(race) {
+        // Se race é um objeto (documento do SRD), usa o nome
+        const raceName = typeof race === 'object' ? race.name : race;
+        
         const movement = {
-            human: 9,
-            elf: 9,
-            'half-elf': 9,
-            dwarf: 6,
-            halfling: 6,
-            gnome: 6
+            'Humano': 9,
+            'Elfo': 9,
+            'Meio-Elfo': 9,
+            'Anão': 6,
+            'Halfling': 6,
+            'Gnomo': 6,
+            // Fallbacks para nomes em inglês
+            'Human': 9,
+            'Elf': 9,
+            'Half-Elf': 9,
+            'Dwarf': 6,
+            'Gnome': 6
         };
 
-        console.log('=== DEBUG MOVIMENTO ===');
-        console.log('Raça recebida:', race);
-        console.log('Tipo da raça:', typeof race);
-        console.log('Valor encontrado:', movement[race]);
-        console.log('Resultado final:', movement[race] || 9);
-        console.log('=== FIM DEBUG ===');
-        return movement[race] || 9;
+        return movement[raceName] || 9;
     }
 
     /**
@@ -1620,8 +1623,8 @@ class OldDragon2eCharacterGenerator {
                 character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
                 character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
                 character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes);
-                character.movement = this.calculateMovement(selectedRace.id);
-                character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
+                character.movement = this.calculateMovement(selectedRace);
+                character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace);
                 
                 // Atualiza o background com a raça e classe corretas
                 character.background = this.generateBackground(selectedRace.name, selectedClass.name);
