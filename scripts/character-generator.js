@@ -519,32 +519,32 @@ class OldDragon2eCharacterGenerator {
         // Elfo Aventureiro (Mago)
         if (/elfo aventureiro|elf adventurer/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Treinamento Racial: +1 PV por nível, sem restrições de armas/armaduras, +2 dano com arma racial');
+                abilities.push('Treinamento Racial: Mantém habilidades raciais de elfo, +1 PV por nível, sem restrições de armas/armaduras, +2 dano com arma racial (cimitarra ou arco)');
             }
             if (level >= 3) {
-                abilities.push('Brilho Mágico: Conjura 1 magia de 1º círculo por dia');
+                abilities.push('Brilho Mágico: Conjura 1 magia de 1º círculo por dia como Mago 1º nível (1-3 em 1d6 chance de perder magia com armadura)');
             }
             if (level >= 6) {
-                abilities.push('Esplendor Arcano: Lança magias como Mago 5 níveis abaixo');
+                abilities.push('Esplendor Arcano: Lança magias como Mago 5 níveis abaixo (1-2 em 1d6 chance de perder magia com armadura)');
             }
             if (level >= 10) {
-                abilities.push('Ataque Extra: Segundo ataque com arma racial');
+                abilities.push('Ataque Extra: Segundo ataque com arma racial escolhida (mesma BA, após primeiro ataque)');
             }
         }
         
         // Anão Aventureiro (Guerreiro)
         else if (/anão aventureiro|anao aventureiro|dwarf adventurer/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Treinamento Racial: Mantém habilidades raciais de anão');
+                abilities.push('Arma Racial: +2 dano com machados ou martelos');
             }
             if (level >= 3) {
-                abilities.push('Resistência a Venenos: +2 em testes contra venenos');
+                abilities.push('Resistência Anã: Bônus em testes de resistência contra venenos e magias');
             }
             if (level >= 6) {
-                abilities.push('Conhecimento de Pedras e Metais: Identifica pedras e metais');
+                abilities.push('Conhecimento de Pedras: Detecta armadilhas e passagens secretas em construções de pedra');
             }
             if (level >= 10) {
-                abilities.push('Maestria em Armas Grandes: Usa armas grandes como médias');
+                abilities.push('Defesa Inabalável: Bônus na CA quando em posição defensiva');
             }
         }
         
@@ -567,16 +567,18 @@ class OldDragon2eCharacterGenerator {
         // Bárbaro (Guerreiro)
         else if (/bárbaro|barbarian/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Fúria: Entra em estado de fúria em combate (+2 Força, -1 CA)');
+                abilities.push('Aparar: Sacrifica escudo/arma para absorver dano físico');
+                abilities.push('Maestria em Arma: +1 dano em uma arma escolhida');
+                abilities.push('Vigor Bárbaro: +2 PV por nível e +2 na JPC');
             }
             if (level >= 3) {
-                abilities.push('Resistência: Resistência natural a dano físico');
+                abilities.push('Talentos Selvagens: Escalar, Furtividade, Sobrevivência');
             }
             if (level >= 6) {
-                abilities.push('Ataque Selvagem: Ataques mais poderosos em fúria');
+                abilities.push('Fúria: Aumenta temporariamente força e resistência em combate');
             }
             if (level >= 10) {
-                abilities.push('Fúria Indomável: Imunidade a efeitos mentais em fúria');
+                abilities.push('Ataque Extra: Segundo ataque por rodada');
             }
         }
         
@@ -663,16 +665,16 @@ class OldDragon2eCharacterGenerator {
         // Proscrito (Clérigo)
         else if (/proscrito|outcast/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Magias Proibidas: Acesso a magias sombrias');
+                abilities.push('Cura Natural: Cura 1d6 PV por dia divididos entre alvos desejados');
             }
             if (level >= 3) {
-                abilities.push('Corrupção: Pode corromper outros');
+                abilities.push('Treinamento em Combate: +1 BA e pode usar qualquer arma ou armadura');
             }
             if (level >= 6) {
-                abilities.push('Necromancia: Cria mortos-vivos');
+                abilities.push('Afetar Mortos-Vivos: Força mortos-vivos a teste de moral (ataques difíceis se falharem)');
             }
             if (level >= 10) {
-                abilities.push('Apoteose: Transforma-se em lich');
+                abilities.push('Misticismo: Conjura magias divinas de 1º círculo conforme tabela de Clérigo');
             }
         }
         
@@ -695,32 +697,35 @@ class OldDragon2eCharacterGenerator {
         // Bardo (Ladrão)
         else if (/bardo|bard/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Inspiração: Motiva aliados com música');
+                abilities.push('Ouvir Ruídos: Chance de 1-2 em 1d6 para ouvir ruídos');
+                abilities.push('Talentos de Ladrão: 2 pontos em cada talento + 2 pontos adicionais para distribuir');
+                abilities.push('Influenciar: Modifica Teste de Reação de monstros/NPCs em +1 ou -1');
             }
             if (level >= 3) {
-                abilities.push('Magias Menores: Conjura magias arcanas limitadas');
+                abilities.push('Inspirar: Aliados têm testes de atributos e ataques um nível mais fácil');
             }
             if (level >= 6) {
-                abilities.push('Performance: Encanta audiências');
+                abilities.push('Fascinar: Audiência não hostil de até 2 DV a cada 3 níveis fica concentrada');
             }
             if (level >= 10) {
-                abilities.push('Magia Suprema: Conjura magias poderosas');
+                abilities.push('Usar Pergaminhos: Usa pergaminhos como Mago com metade dos níveis');
             }
         }
         
         // Assassino (Ladrão)
         else if (/assassino|assassin/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Ataque Furtivo Aprimorado: Dano x3 em ataques furtivos');
+                abilities.push('Veneno: Substitui talento Armadilha - manipula venenos sem se envenenar');
+                abilities.push('Disfarce: Substitui talento Punga - altera aparência para se disfarçar');
             }
             if (level >= 3) {
-                abilities.push('Veneno: Conhecimento de venenos');
+                abilities.push('Ataque Mortal: Ataques fatais se alvo estiver desprevenido');
             }
             if (level >= 6) {
-                abilities.push('Disfarce: Assume identidades falsas');
+                abilities.push('Resistência a Venenos: Bônus em testes de resistência contra venenos');
             }
             if (level >= 10) {
-                abilities.push('Morte Instantânea: Chance de matar instantaneamente');
+                abilities.push('Mestre do Disfarce: Aprimora habilidade de Disfarce');
             }
         }
         
