@@ -68,6 +68,102 @@
     font-weight: bold;
 }
 
+/* Controles de seleção de raça e classe */
+.old-dragon-generator-modal .selection-controls {
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
+    border: 2px solid #d3d3d3;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .selection-controls::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
+}
+
+.old-dragon-generator-modal .selection-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.old-dragon-generator-modal .selection-group:last-child {
+    margin-bottom: 0;
+}
+
+.old-dragon-generator-modal .selection-group label {
+    color: #8B0000;
+    font-weight: bold;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.old-dragon-generator-modal .selection-group label i {
+    color: #A0522D;
+}
+
+.old-dragon-generator-modal .race-select,
+.old-dragon-generator-modal .class-select {
+    padding: 12px 16px;
+    border: 2px solid #d3d3d3;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ffffff, #f5f5f0);
+    color: #333;
+    font-size: 1.1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B0000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.old-dragon-generator-modal .race-select:hover,
+.old-dragon-generator-modal .class-select:hover {
+    border-color: #8B0000;
+    background: linear-gradient(135deg, #f0f0f0, #e8e8e0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
+}
+
+.old-dragon-generator-modal .race-select:focus,
+.old-dragon-generator-modal .class-select:focus {
+    outline: none;
+    border-color: #8B0000;
+    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+    background: linear-gradient(135deg, #ffffff, #f5f5f0);
+}
+
+.old-dragon-generator-modal .race-select option,
+.old-dragon-generator-modal .class-select option {
+    padding: 8px 12px;
+    background: #ffffff;
+    color: #333;
+    font-weight: 500;
+}
+
+.old-dragon-generator-modal .race-select option:hover,
+.old-dragon-generator-modal .class-select option:hover {
+    background: #f0f0f0;
+    color: #8B0000;
+}
+
 .old-dragon-generator-modal .character-preview {
     background: #ede9d5; /* Cor de fundo solicitada */
     border: 1px solid #d3d3d3;

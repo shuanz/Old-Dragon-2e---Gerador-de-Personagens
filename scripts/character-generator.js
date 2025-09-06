@@ -1290,6 +1290,146 @@ class OldDragon2eCharacterGenerator {
 
 
     /**
+     * Carrega todas as raças disponíveis do compêndio SRD
+     */
+    async loadAllRaces() {
+        try {
+            let racePack = game.packs.get('olddragon2e.races');
+            if (!racePack) {
+                // Fallback: tenta localizar um compêndio de raças pelo nome
+                racePack = Array.from(game.packs).find(p => {
+                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                    const label = (p.metadata.label || '').toLowerCase();
+                    return key.includes('races') || label.includes('raça') || label.includes('raças') || label.includes('races');
+                });
+            }
+            if (!racePack) {
+                console.warn('Compêndio de raças não encontrado');
+                return [];
+            }
+            
+            const racesAll = await racePack.getDocuments();
+            const races = racesAll.filter(doc => doc.type === 'race');
+            return races;
+        } catch (error) {
+            console.error('Erro ao carregar raças:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Carrega todas as classes disponíveis do compêndio SRD
+     */
+    async loadAllClasses() {
+        try {
+            let classPack = game.packs.get('olddragon2e.classes');
+            if (!classPack) {
+                // Fallback: tenta localizar um compêndio de classes pelo nome
+                classPack = Array.from(game.packs).find(p => {
+                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
+                    const label = (p.metadata.label || '').toLowerCase();
+                    return key.includes('classes') || label.includes('classe') || label.includes('classes');
+                });
+            }
+            if (!classPack) {
+                console.warn('Compêndio de classes não encontrado');
+                return [];
+            }
+            
+            const classesAll = await classPack.getDocuments();
+            const classes = classesAll.filter(doc => doc.type === 'class');
+            return classes;
+        } catch (error) {
+            console.error('Erro ao carregar classes:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Filtra classes disponíveis baseado na raça selecionada
+     */
+    filterClassesByRace(classes, raceId) {
+        const localRaceId = raceId.toLowerCase();
+        
+        return classes.filter(srdClass => {
+            const className = srdClass.name.toLowerCase();
+            const normalizedClassName = className.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+            
+            // Classes específicas de raça
+            if (localRaceId === 'dwarf' && normalizedClassName.includes('anao aventureiro')) return true;
+            if (localRaceId === 'elf' && normalizedClassName.includes('elfo aventureiro')) return true;
+            if (localRaceId === 'halfling' && normalizedClassName.includes('halfling aventureiro')) return true;
+            
+            // Classes de combate (Guerreiro e especializações)
+            const combatClasses = ['guerreiro', 'bárbaro', 'paladino', 'arqueiro'];
+            if (combatClasses.some(gc => className.includes(gc))) return true;
+            
+            // Classes arcanas (Mago e especializações)
+            const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bruxo'];
+            if (arcaneClasses.some(gc => className.includes(gc))) return true;
+            
+            // Classes divinas (Clérigo e especializações)
+            const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
+            if (divineClasses.some(gc => className.includes(gc))) return true;
+            
+            // Classes de habilidade (Ladrão e especializações)
+            const skillClasses = ['ladrão', 'ranger', 'bardo', 'assassino'];
+            if (skillClasses.some(gc => className.includes(gc))) return true;
+                
+            return false;
+        });
+    }
+
+    /**
+     * Atualiza o personagem quando raça ou classe são alteradas
+     */
+    async updateCharacterFromSelection(character, selectedRace, selectedClass) {
+        if (selectedRace) {
+            character.race = selectedRace.name;
+            character.raceId = selectedRace.id;
+            character.raceUUID = selectedRace.uuid;
+            character.raceData = selectedRace.system;
+            character.name = this.generateRaceName(selectedRace.id);
+        }
+        
+        if (selectedClass) {
+            character.class = selectedClass.name;
+            character.classId = selectedClass.id;
+            character.classUUID = selectedClass.uuid;
+            character.classData = selectedClass.system;
+
+            // Ajusta equipamento para respeitar restrições da classe selecionada
+            const archetype = this.mapClassToArchetype(selectedClass.name);
+            const baseEquip = await this.generateEquipment(archetype);
+            const restrictions = this.getClassRestrictions(selectedClass.name);
+            character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+            
+            // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
+            const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
+            const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(selectedClass.name);
+            const isSkillClassWithMagic = /bardo|bard/i.test(selectedClass.name);
+            
+            if (isArcaneClass || isSkillClassWithMagic) {
+                character.initialSpells = await this.generateInitialSpells(selectedClass.name);
+            }
+        }
+
+        // Recalcula valores que dependem de raça e classe
+        if (selectedRace && selectedClass) {
+            character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
+            character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
+            character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes);
+            character.movement = this.calculateMovement(selectedRace);
+            character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace);
+            
+            // Atualiza o background com a raça e classe corretas
+            character.background = this.generateBackground(selectedRace.name, selectedClass.name);
+        }
+
+        return character;
+    }
+
+    /**
      * Carrega uma raça aleatória do compêndio SRD
      */
     async loadRandomRace() {
@@ -1408,128 +1548,36 @@ class OldDragon2eCharacterGenerator {
             // Gera novo personagem
             const character = await this.generateCharacter();
             
-            // Carrega raça e classe aleatórias do SRD
-            const selectedRace = await this.loadRandomRace();
+            // Carrega todas as raças e classes disponíveis
+            const allRaces = await this.loadAllRaces();
+            const allClasses = await this.loadAllClasses();
             
-            // Carrega classe respeitando restrições de raça
-            let selectedClass = null;
-            if (selectedRace) {
-                // Mapeia o nome da raça do SRD para o formato local
-                const raceNameMapping = {
-                    'gnome': 'gnome',
-                    'dwarf': 'dwarf', 
-                    'elf': 'elf',
-                    'elfo': 'elf',
-                    'halfling': 'halfling',
-                    'human': 'human',
-                    'humano': 'human',
-                    'orc': 'orc'
-                };
-                
-                const localRaceId = raceNameMapping[selectedRace.name.toLowerCase()] || selectedRace.name.toLowerCase();
-                
-                // Carrega todas as classes do SRD
-                let classPack = game.packs.get('olddragon2e.classes');
-                if (!classPack) {
-                    classPack = Array.from(game.packs).find(p => {
-                        const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
-                        const label = (p.metadata.label || '').toLowerCase();
-                        return key.includes('classes') || label.includes('classe') || label.includes('classes');
-                    });
-                }
-                
-                const classesAll = await classPack.getDocuments();
-                const srdClasses = classesAll.filter(doc => doc.type === 'class');
-                
-                // Filtra classes do SRD baseado na raça
-                const availableClasses = srdClasses.filter(srdClass => {
-                    // Normaliza o nome da classe para comparação (remove acentos)
-                    const className = srdClass.name.toLowerCase();
-                    const normalizedClassName = className.normalize('NFD').replace(/\p{Diacritic}/gu, '');
-                    
-                    // Classes específicas de raça
-                    if (localRaceId === 'dwarf' && normalizedClassName.includes('anao aventureiro')) return true;
-                    if (localRaceId === 'elf' && normalizedClassName.includes('elfo aventureiro')) return true;
-                    if (localRaceId === 'halfling' && normalizedClassName.includes('halfling aventureiro')) return true;
-                    
-                    // Classes de combate (Guerreiro e especializações)
-                    const combatClasses = ['guerreiro', 'bárbaro', 'paladino', 'arqueiro'];
-                    if (combatClasses.some(gc => className.includes(gc))) return true;
-                    
-                    // Classes arcanas (Mago e especializações)
-                    const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bruxo'];
-                    if (arcaneClasses.some(gc => className.includes(gc))) return true;
-                    
-                    // Classes divinas (Clérigo e especializações)
-                    const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
-                    if (divineClasses.some(gc => className.includes(gc))) return true;
-                    
-                    // Classes de habilidade (Ladrão e especializações)
-                    const skillClasses = ['ladrão', 'ranger', 'bardo', 'assassino'];
-                    if (skillClasses.some(gc => className.includes(gc))) return true;
-                        
-                    return false;
-                });
-                
-                
-                // Seleciona uma classe aleatória das disponíveis
-                if (availableClasses.length > 0) {
-                    selectedClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
-                } else {
-                    selectedClass = await this.loadRandomClass();
-                }
-            } else {
-                selectedClass = await this.loadRandomClass();
-            }
+            // Seleciona raça e classe aleatórias
+            const selectedRace = allRaces.length > 0 ? allRaces[Math.floor(Math.random() * allRaces.length)] : null;
+            const availableClasses = selectedRace ? this.filterClassesByRace(allClasses, selectedRace.id) : allClasses;
+            const selectedClass = availableClasses.length > 0 ? availableClasses[Math.floor(Math.random() * availableClasses.length)] : null;
             
-            
-            // Atualiza dados do personagem com raça e classe selecionadas
-            if (selectedRace) {
-                character.race = selectedRace.name;
-                character.raceId = selectedRace.id;
-                character.raceUUID = selectedRace.uuid;
-                character.raceData = selectedRace.system;
-                // Gera o nome compatível com a raça selecionada
-                character.name = this.generateRaceName(selectedRace.id);
-            }
-            if (selectedClass) {
-                character.class = selectedClass.name;
-                character.classId = selectedClass.id;
-                character.classUUID = selectedClass.uuid;
-                character.classData = selectedClass.system;
-
-
-                // Ajusta equipamento para respeitar restrições da classe selecionada
-                const archetype = this.mapClassToArchetype(selectedClass.name);
-                const baseEquip = await this.generateEquipment(archetype);
-                const restrictions = this.getClassRestrictions(selectedClass.name);
-                character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
-                
-                // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
-                const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
-                const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(selectedClass.name);
-                const isSkillClassWithMagic = /bardo|bard/i.test(selectedClass.name);
-                
-                if (isArcaneClass || isSkillClassWithMagic) {
-                    character.initialSpells = await this.generateInitialSpells(selectedClass.name);
-                } else if (isDivineClass) {
-                }
-            }
-
-            // Recalcula valores que dependem de raça e classe
-            if (selectedRace && selectedClass) {
-                character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
-                character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
-                character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes);
-                character.movement = this.calculateMovement(selectedRace);
-                character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace);
-                
-                // Atualiza o background com a raça e classe corretas
-                character.background = this.generateBackground(selectedRace.name, selectedClass.name);
-            }
+            // Atualiza o personagem com as seleções
+            await this.updateCharacterFromSelection(character, selectedRace, selectedClass);
 
             // Atualiza a referência do personagem no dialog
             dialog.currentCharacter = character;
+            dialog.allRaces = allRaces;
+            dialog.allClasses = allClasses;
+
+            // Atualiza os dropdowns
+            const raceSelect = html.find('#race-select');
+            const classSelect = html.find('#class-select');
+            
+            // Atualiza dropdown de raças
+            raceSelect.val(selectedRace ? selectedRace.id : '');
+            
+            // Atualiza dropdown de classes
+            classSelect.empty();
+            classSelect.append('<option value="">Selecione uma classe...</option>');
+            availableClasses.forEach(cls => {
+                classSelect.append(`<option value="${cls.id}" ${selectedClass && selectedClass.id === cls.id ? 'selected' : ''}>${cls.name}</option>`);
+            });
 
             // Atualiza o conteúdo do modal
             this.updateModalHTML(html, character);
@@ -1605,143 +1653,39 @@ class OldDragon2eCharacterGenerator {
     async showGeneratorModal() {
         const character = await this.generateCharacter();
         
-        // Carrega raça e classe aleatórias do SRD
-        const selectedRace = await this.loadRandomRace();
+        // Carrega todas as raças e classes disponíveis
+        const allRaces = await this.loadAllRaces();
+        const allClasses = await this.loadAllClasses();
         
-        // Carrega classe respeitando restrições de raça
-        let selectedClass = null;
-        if (selectedRace) {
-            // Mapeia o nome da raça do SRD para o formato local
-            const raceNameMapping = {
-                'gnome': 'gnome',
-                'dwarf': 'dwarf', 
-                'elf': 'elf',
-                'elfo': 'elf',
-                'halfling': 'halfling',
-                'human': 'human',
-                'humano': 'human',
-                'orc': 'orc'
-            };
-            
-            const localRaceId = raceNameMapping[selectedRace.name.toLowerCase()] || selectedRace.name.toLowerCase();
-            
-            // Carrega todas as classes do SRD
-            let classPack = game.packs.get('olddragon2e.classes');
-            if (!classPack) {
-                classPack = Array.from(game.packs).find(p => {
-                    const key = `${p.metadata.package}.${p.metadata.name}`.toLowerCase();
-                    const label = (p.metadata.label || '').toLowerCase();
-                    return key.includes('classes') || label.includes('classe') || label.includes('classes');
-                });
-            }
-            
-            const classesAll = await classPack.getDocuments();
-            const srdClasses = classesAll.filter(doc => doc.type === 'class');
-            
-            // Filtra classes do SRD baseado na raça
-            const availableClasses = srdClasses.filter(srdClass => {
-                // Normaliza o nome da classe para comparação (remove acentos)
-                const className = srdClass.name.toLowerCase();
-                const normalizedClassName = className.normalize('NFD').replace(/\p{Diacritic}/gu, '');
-                
-                // Debug: mostra classes específicas de raça
-                if (srdClass.name.includes('Aventureiro')) {
-                }
-
-                // Classes específicas de raça
-                if (localRaceId === 'dwarf' && normalizedClassName.includes('anao aventureiro')) return true;
-                if (localRaceId === 'elf' && normalizedClassName.includes('elfo aventureiro')) return true;
-                if (localRaceId === 'halfling' && normalizedClassName.includes('halfling aventureiro')) return true;
-                
-                            // Classes de combate (Guerreiro e especializações)
-            const combatClasses = ['guerreiro', 'bárbaro', 'paladino', 'arqueiro'];
-            if (combatClasses.some(gc => className.includes(gc))) return true;
-            
-            // Classes arcanas (Mago e especializações)
-            const arcaneClasses = ['mago', 'ilusionista', 'necromante', 'bruxo'];
-            if (arcaneClasses.some(gc => className.includes(gc))) return true;
-            
-            // Classes divinas (Clérigo e especializações)
-            const divineClasses = ['clérigo', 'druida', 'acadêmico', 'xamã', 'proscrito'];
-            if (divineClasses.some(gc => className.includes(gc))) return true;
-            
-            // Classes de habilidade (Ladrão e especializações)
-            const skillClasses = ['ladrão', 'ranger', 'bardo', 'assassino'];
-            if (skillClasses.some(gc => className.includes(gc))) return true;
-                
-                return false;
-            });
-            
-            
-            // Seleciona uma classe aleatória das disponíveis
-            if (availableClasses.length > 0) {
-                selectedClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
-                console.log('Classe selecionada do SRD:', selectedClass.name);
-            } else {
-                console.log('Nenhuma classe disponível para a raça, usando classe aleatória');
-                selectedClass = await this.loadRandomClass();
-            }
-        } else {
-            selectedClass = await this.loadRandomClass();
-        }
+        // Seleciona raça e classe aleatórias iniciais
+        const selectedRace = allRaces.length > 0 ? allRaces[Math.floor(Math.random() * allRaces.length)] : null;
+        const availableClasses = selectedRace ? this.filterClassesByRace(allClasses, selectedRace.id) : allClasses;
+        const selectedClass = availableClasses.length > 0 ? availableClasses[Math.floor(Math.random() * availableClasses.length)] : null;
         
-        console.log('Raça selecionada:', selectedRace);
-        console.log('Classe selecionada:', selectedClass);
-        
-        // Atualiza dados do personagem com raça e classe selecionadas
-        if (selectedRace) {
-            character.race = selectedRace.name;
-            character.raceId = selectedRace.id;
-            character.raceUUID = selectedRace.uuid;
-            character.raceData = selectedRace.system;
-            // Atualiza habilidades de raça com base na raça selecionada
-            // Gera o nome compatível com a raça selecionada
-            character.name = this.generateRaceName(selectedRace.id);
-            console.log('Raça aplicada:', character.race);
-        }
-        if (selectedClass) {
-            character.class = selectedClass.name;
-            character.classId = selectedClass.id;
-            character.classUUID = selectedClass.uuid;
-            character.classData = selectedClass.system;
-            console.log('Classe aplicada:', character.class);
-
-            // Atualiza habilidades de classe com base na classe selecionada
-
-            // Ajusta equipamento para respeitar restrições da classe selecionada
-            const archetype = this.mapClassToArchetype(selectedClass.name);
-            const baseEquip = await this.generateEquipment(archetype);
-            const restrictions = this.getClassRestrictions(selectedClass.name);
-            character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
-            
-            // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
-            const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
-            const isDivineClass = /clérigo|cleric|druida|druid|acadêmico|academic|xamã|shaman|proscrito|outcast/i.test(selectedClass.name);
-            const isSkillClassWithMagic = /bardo|bard/i.test(selectedClass.name);
-            
-            if (isArcaneClass || isSkillClassWithMagic) {
-                character.initialSpells = await this.generateInitialSpells(selectedClass.name);
-                console.log('Magias iniciais geradas:', character.initialSpells?.map(s => s.name) || 'Nenhuma');
-            } else if (isDivineClass) {
-                console.log('Classe divina detectada, magias serão importadas do SRD');
-            }
-        }
-
-        // Recalcula valores que dependem de raça e classe
-        if (selectedRace && selectedClass) {
-            character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
-            character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
-            character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes);
-            character.movement = this.calculateMovement(selectedRace.id);
-            character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
-            
-            // Atualiza o background com a raça e classe corretas
-            character.background = this.generateBackground(selectedRace.name, selectedClass.name);
-        }
+        // Atualiza o personagem com as seleções iniciais
+        await this.updateCharacterFromSelection(character, selectedRace, selectedClass);
         
         const modalContent = `
             <div class="old-dragon-generator-modal">
                 <h2><i class="fas fa-dice-d20"></i> Gerador de Personagem - Old Dragon 2e</h2>
+                
+                <div class="selection-controls">
+                    <div class="selection-group">
+                        <label for="race-select"><i class="fas fa-users"></i> Raça:</label>
+                        <select id="race-select" class="race-select">
+                            <option value="">Selecione uma raça...</option>
+                            ${allRaces.map(race => `<option value="${race.id}" ${selectedRace && selectedRace.id === race.id ? 'selected' : ''}>${race.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="selection-group">
+                        <label for="class-select"><i class="fas fa-sword"></i> Classe:</label>
+                        <select id="class-select" class="class-select">
+                            <option value="">Selecione uma classe...</option>
+                            ${availableClasses.map(cls => `<option value="${cls.id}" ${selectedClass && selectedClass.id === cls.id ? 'selected' : ''}>${cls.name}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
                 
                 <div class="buttons">
                     <button class="btn btn-primary" id="create-character">
@@ -1837,6 +1781,61 @@ class OldDragon2eCharacterGenerator {
             render: (html) => {
                 // Armazena a referência do personagem atual no dialog
                 dialog.currentCharacter = character;
+                dialog.allRaces = allRaces;
+                dialog.allClasses = allClasses;
+                
+                // Event listener para mudança de raça
+                html.find('#race-select').change(async (event) => {
+                    const selectedRaceId = event.target.value;
+                    const selectedRace = allRaces.find(race => race.id === selectedRaceId);
+                    
+                    if (selectedRace) {
+                        // Filtra classes disponíveis para a raça selecionada
+                        const availableClasses = this.filterClassesByRace(allClasses, selectedRace.id);
+                        
+                        // Atualiza o dropdown de classes
+                        const classSelect = html.find('#class-select');
+                        classSelect.empty();
+                        classSelect.append('<option value="">Selecione uma classe...</option>');
+                        availableClasses.forEach(cls => {
+                            classSelect.append(`<option value="${cls.id}">${cls.name}</option>`);
+                        });
+                        
+                        // Seleciona a primeira classe disponível se houver
+                        if (availableClasses.length > 0) {
+                            const firstClass = availableClasses[0];
+                            classSelect.val(firstClass.id);
+                            
+                            // Atualiza o personagem
+                            await this.updateCharacterFromSelection(dialog.currentCharacter, selectedRace, firstClass);
+                            this.updateModalHTML(html, dialog.currentCharacter);
+                        } else {
+                            // Se não há classes disponíveis, limpa a seleção
+                            classSelect.val('');
+                            dialog.currentCharacter.race = selectedRace.name;
+                            dialog.currentCharacter.raceId = selectedRace.id;
+                            dialog.currentCharacter.raceUUID = selectedRace.uuid;
+                            dialog.currentCharacter.raceData = selectedRace.system;
+                            dialog.currentCharacter.name = this.generateRaceName(selectedRace.id);
+                            this.updateModalHTML(html, dialog.currentCharacter);
+                        }
+                    }
+                });
+                
+                // Event listener para mudança de classe
+                html.find('#class-select').change(async (event) => {
+                    const selectedClassId = event.target.value;
+                    const selectedClass = allClasses.find(cls => cls.id === selectedClassId);
+                    
+                    if (selectedClass) {
+                        const selectedRaceId = html.find('#race-select').val();
+                        const selectedRace = allRaces.find(race => race.id === selectedRaceId);
+                        
+                        // Atualiza o personagem
+                        await this.updateCharacterFromSelection(dialog.currentCharacter, selectedRace, selectedClass);
+                        this.updateModalHTML(html, dialog.currentCharacter);
+                    }
+                });
                 
                 // Usamos posicionamento/arraste nativos do Foundry; sem forçar transform/left/top
                 html.find('#create-character').click(async () => {
