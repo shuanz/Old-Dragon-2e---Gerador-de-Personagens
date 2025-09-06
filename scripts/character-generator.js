@@ -535,16 +535,16 @@ class OldDragon2eCharacterGenerator {
         // Anão Aventureiro (Guerreiro)
         else if (/anão aventureiro|anao aventureiro|dwarf adventurer/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Arma Racial: +2 dano com machados ou martelos');
+                abilities.push('Arma Racial: Mantém habilidades raciais de anão, +2 dano com machado ou martelo escolhido');
             }
             if (level >= 3) {
-                abilities.push('Resistência Anã: Bônus em testes de resistência contra venenos e magias');
+                abilities.push('Duro na Queda: Joga PV com 1d12 em vez de 1d10 (ou escolhe valor médio 6)');
             }
             if (level >= 6) {
-                abilities.push('Conhecimento de Pedras: Detecta armadilhas e passagens secretas em construções de pedra');
+                abilities.push('Bastião Racial: Ataques de Orcs, Ogros e Hobgoblins são considerados difíceis');
             }
             if (level >= 10) {
-                abilities.push('Defesa Inabalável: Bônus na CA quando em posição defensiva');
+                abilities.push('Ataque Extra: Segundo ataque com arma racial escolhida (mesma BA, após primeiro ataque)');
             }
         }
         
