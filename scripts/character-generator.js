@@ -631,16 +631,16 @@ class OldDragon2eCharacterGenerator {
         // Acadêmico (Clérigo)
         else if (/acadêmico|academic/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Conhecimento Acadêmico: +2 em testes de conhecimento');
+                abilities.push('Conhecimento Acadêmico: Identifica monstros/animais, ataques/defesas, habilidades/fraquezas, hábitos (1-2 em 1d6)');
             }
             if (level >= 3) {
-                abilities.push('Pesquisa: Encontra informações em bibliotecas');
+                abilities.push('Decifrar Linguagens: Decifra idiomas, alfabetos, pictogramas, documentos (Conhecimento Acadêmico evolui para 1-3 em 1d6)');
             }
             if (level >= 6) {
-                abilities.push('Magias Especiais: Acesso a magias únicas');
+                abilities.push('Lendas e Tradições: Identifica lendas, tradições, eventos históricos, curiosidades/perigos de lugares + rumor adicional por modificador de Sabedoria (Conhecimento Acadêmico evolui para 1-4 em 1d6)');
             }
             if (level >= 10) {
-                abilities.push('Sabedoria Suprema: Conhecimento de todas as magias');
+                abilities.push('Identificar Itens: Identifica propósito geral de itens mágicos após 1d4 turnos de observação (1-2 em 1d6, itens caóticos se camuflam)');
             }
         }
         
