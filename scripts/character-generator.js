@@ -583,16 +583,16 @@ class OldDragon2eCharacterGenerator {
         // Paladino (Guerreiro)
         else if (/paladino|paladin/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Código de Honra: Deve seguir código de conduta');
+                abilities.push('Imunidade a Doenças: Imune a qualquer doença mundana ou mágica');
             }
             if (level >= 3) {
-                abilities.push('Imunidade a Doenças: Resistência natural a doenças');
+                abilities.push('Cura pelas Mãos: Cura 1 PV por nível do Paladino, 1x/dia (não cura doenças/amputações)');
             }
             if (level >= 6) {
-                abilities.push('Cura pelas Mãos: Pode curar ferimentos 1x/dia');
+                abilities.push('Aura de Proteção: Barreira permanente como magia Proteção contra Alinhamento (vs criaturas caóticas)');
             }
             if (level >= 10) {
-                abilities.push('Afastar Mal: Afasta criaturas malignas');
+                abilities.push('Espada Sagrada: Espada mágica consagrada com +5 dano/ataque contra criaturas caóticas');
             }
         }
         
