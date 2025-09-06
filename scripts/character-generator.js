@@ -727,16 +727,16 @@ class OldDragon2eCharacterGenerator {
         // Ilusionista (Mago)
         else if (/ilusionista|illusionist/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Especialização em Ilusões: +1 em magias de ilusão');
+                abilities.push('Magias Exclusivas: Ilusão e Som Ilusório no grimório (sem memorizar, 1 uso/dia cada, JP difícil)');
             }
             if (level >= 3) {
-                abilities.push('Criação de Ilusões: Cria ilusões convincentes');
+                abilities.push('Ilusão Melhorada: Magia exclusiva adicionada ao grimório');
             }
             if (level >= 6) {
-                abilities.push('Ilusões Avançadas: Ilusões que causam dano');
+                abilities.push('Miragem: Magia exclusiva adicionada ao grimório');
             }
             if (level >= 10) {
-                abilities.push('Realidade Alternativa: Cria dimensões ilusórias');
+                abilities.push('Ilusão Permanente: Magia exclusiva adicionada ao grimório');
             }
         }
         
