@@ -402,6 +402,121 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Obtém as habilidades de raça do SRD
+     */
+    getRaceAbilitiesFromSRD(selectedRace) {
+        try {
+            // Tenta extrair habilidades do sistema da raça do SRD
+            const raceData = selectedRace.system;
+            const abilities = [];
+            
+            // Busca por habilidades em diferentes campos do sistema
+            if (raceData?.features) {
+                Object.values(raceData.features).forEach(feature => {
+                    if (feature?.name && feature?.description) {
+                        abilities.push(`${feature.name}: ${feature.description}`);
+                    }
+                });
+            }
+            
+            // Busca por habilidades em outros campos comuns
+            if (raceData?.abilities) {
+                Object.values(raceData.abilities).forEach(ability => {
+                    if (ability?.name && ability?.description) {
+                        abilities.push(`${ability.name}: ${ability.description}`);
+                    }
+                });
+            }
+            
+            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
+            if (abilities.length === 0) {
+                const localRace = this.races.find(r => 
+                    r.name.toLowerCase() === selectedRace.name.toLowerCase() ||
+                    r.id === selectedRace.id
+                );
+                if (localRace) {
+                    return localRace.abilities;
+                }
+            }
+            
+            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da raça
+            if (abilities.length === 0) {
+                return this.getBasicRaceAbilities(selectedRace.name);
+            }
+            
+            return abilities;
+        } catch (error) {
+            console.warn('Erro ao extrair habilidades de raça do SRD:', error);
+            return this.getBasicRaceAbilities(selectedRace.name);
+        }
+    }
+
+    /**
+     * Retorna habilidades básicas baseadas no nome da raça
+     */
+    getBasicRaceAbilities(raceName) {
+        const raceNameLower = raceName.toLowerCase();
+        
+        if (raceNameLower.includes('humano') || raceNameLower.includes('human')) {
+            return [
+                'Aprendizado: +10% de XP em todas as experiências',
+                'Adaptabilidade: +1 em uma JP à escolha',
+                'Movimento: 9 metros',
+                'Infravisão: Não possui'
+            ];
+        } else if (raceNameLower.includes('elfo') || raceNameLower.includes('elf')) {
+            return [
+                'Percepção Natural: Detecta portas secretas (1 em 1d6)',
+                'Graciosos: +1 em qualquer teste de JPD',
+                'Arma Racial: +1 de dano com arcos',
+                'Imunidades: Sono e paralisia de Ghoul',
+                'Movimento: 9 metros',
+                'Infravisão: 18 metros'
+            ];
+        } else if (raceNameLower.includes('anão') || raceNameLower.includes('anao') || raceNameLower.includes('dwarf')) {
+            return [
+                'Mineradores: Detecta armadilhas em pedras (1 em 1d6)',
+                'Vigoroso: +1 em qualquer teste de JPC',
+                'Armas Grandes: Usa armas grandes como médias',
+                'Inimigos: Ataques fáceis contra orcs, ogros e hobgoblins',
+                'Movimento: 6 metros',
+                'Infravisão: 18 metros'
+            ];
+        } else if (raceNameLower.includes('halfling')) {
+            return [
+                'Sorte: +1 em qualquer teste de JPS',
+                'Furtividade: +1 em testes de furtividade',
+                'Arma Racial: +1 de dano com fundas',
+                'Movimento: 6 metros',
+                'Infravisão: Não possui'
+            ];
+        } else if (raceNameLower.includes('orc')) {
+            return [
+                'Força Bruta: +1 em qualquer teste de JPC',
+                'Intimidação: +1 em testes de intimidação',
+                'Arma Racial: +1 de dano com machados',
+                'Movimento: 9 metros',
+                'Infravisão: 18 metros'
+            ];
+        } else if (raceNameLower.includes('goblin')) {
+            return [
+                'Agilidade: +1 em qualquer teste de JPD',
+                'Furtividade: +1 em testes de furtividade',
+                'Arma Racial: +1 de dano com adagas',
+                'Movimento: 6 metros',
+                'Infravisão: 18 metros'
+            ];
+        }
+        
+        // Fallback genérico
+        return [
+            'Habilidades especiais da raça',
+            'Movimento: 9 metros',
+            'Infravisão: Não possui'
+        ];
+    }
+
+    /**
      * Obtém a descrição de um equipamento do SRD
      */
     async getEquipmentDescription(itemName) {
@@ -1796,9 +1911,12 @@ class OldDragon2eCharacterGenerator {
                 character.raceId = selectedRace.id;
                 character.raceUUID = selectedRace.uuid;
                 character.raceData = selectedRace.system;
+                // Atualiza habilidades de raça com base na raça selecionada
+                character.raceAbilities = this.getRaceAbilitiesFromSRD(selectedRace);
                 // Gera o nome compatível com a raça selecionada
                 character.name = this.generateRaceName(selectedRace.id);
                 console.log('Raça aplicada:', character.race);
+                console.log('Habilidades de raça atualizadas:', character.raceAbilities);
             }
             if (selectedClass) {
                 character.class = selectedClass.name;
@@ -2020,9 +2138,12 @@ class OldDragon2eCharacterGenerator {
             character.raceId = selectedRace.id;
             character.raceUUID = selectedRace.uuid;
             character.raceData = selectedRace.system;
+            // Atualiza habilidades de raça com base na raça selecionada
+            character.raceAbilities = this.getRaceAbilitiesFromSRD(selectedRace);
             // Gera o nome compatível com a raça selecionada
             character.name = this.generateRaceName(selectedRace.id);
             console.log('Raça aplicada:', character.race);
+            console.log('Habilidades de raça atualizadas:', character.raceAbilities);
         }
         if (selectedClass) {
             character.class = selectedClass.name;
