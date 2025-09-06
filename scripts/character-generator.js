@@ -2333,17 +2333,17 @@ class OldDragon2eCharacterGenerator {
      */
     formatAbilityText(abilityText) {
         // Se o texto for muito longo, adiciona quebras de linha em pontos estratégicos
-        if (abilityText.length > 60) {
-            // Quebra após dois pontos seguido de espaço
+        if (abilityText.length > 80) {
+            // Quebra após dois pontos seguido de espaço (mais conservador)
             let formatted = abilityText.replace(/:\s+/g, ':<br>&nbsp;&nbsp;');
             
-            // Quebra após vírgulas em textos muito longos
-            if (formatted.length > 80) {
+            // Quebra após vírgulas apenas em textos extremamente longos
+            if (formatted.length > 120) {
                 formatted = formatted.replace(/,\s+/g, ',<br>&nbsp;&nbsp;');
             }
             
-            // Quebra após parênteses em textos muito longos
-            if (formatted.length > 100) {
+            // Quebra após parênteses apenas em textos muito longos
+            if (formatted.length > 150) {
                 formatted = formatted.replace(/\)\s+/g, ')<br>&nbsp;&nbsp;');
             }
             

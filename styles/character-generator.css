@@ -195,7 +195,7 @@
     border-radius: 4px;
     border: 1px solid #d3d3d3;
     margin: 0;
-    max-height: 200px; /* Altura máxima para evitar frames muito grandes */
+    max-height: 300px; /* Altura máxima aumentada para mostrar mais conteúdo */
     overflow-y: auto; /* Scroll se necessário */
 }
 
@@ -231,7 +231,7 @@
     border-radius: 4px;
     border: 1px solid #d3d3d3;
     margin: 0;
-    max-height: 200px; /* Altura máxima para evitar frames muito grandes */
+    max-height: 300px; /* Altura máxima aumentada para mostrar mais conteúdo */
     overflow-y: auto; /* Scroll se necessário */
 }
 
