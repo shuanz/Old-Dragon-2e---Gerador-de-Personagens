@@ -122,6 +122,27 @@ class OldDragon2eCharacterGenerator {
         }
     }
 
+    /**
+     * Carrega descrições de equipamentos sem limpar o container (para atualizações)
+     */
+    async loadEquipmentDescriptionsWithoutClearing(equipment, container) {
+        const equipmentItems = container.find('.equipment-item');
+        
+        for (let i = 0; i < equipment.length && i < equipmentItems.length; i++) {
+            const item = equipment[i];
+            const itemElement = equipmentItems.eq(i);
+            const descriptionElement = itemElement.find('.equipment-description');
+            
+            try {
+                const description = await this.getEquipmentDescription(item);
+                descriptionElement.text(description);
+            } catch (error) {
+                console.warn('Erro ao carregar descrição do item:', item, error);
+                descriptionElement.text('Equipamento de aventura.');
+            }
+        }
+    }
+
 
 
     /**
@@ -1755,8 +1776,14 @@ class OldDragon2eCharacterGenerator {
             rerollBtn.html('<i class="fas fa-spinner fa-spin"></i>');
             rerollBtn.prop('disabled', true);
 
-            // Preserva a posição da rolagem usando múltiplos seletores
-            const scrollPosition = this.preserveScrollPosition(html);
+            // Preserva a posição da rolagem de forma mais robusta
+            const windowContent = html.find('.window-content');
+            const scrollTop = windowContent.length > 0 ? windowContent.scrollTop() : 0;
+            
+            // Também preserva a posição relativa ao equipamento
+            const equipmentSection = html.find('.equipment-section');
+            const equipmentOffset = equipmentSection.length > 0 ? equipmentSection.offset() : null;
+            const relativeScrollPosition = equipmentOffset ? scrollTop - equipmentOffset.top : 0;
 
             // Gera novo equipamento respeitando a classe atual
             const characterClass = dialog.currentCharacter.class;
@@ -1780,8 +1807,25 @@ class OldDragon2eCharacterGenerator {
             // Atualiza informações básicas que dependem do equipamento
             this.updateBasicInfoInModal(html, dialog.currentCharacter);
 
-            // Restaura a posição da rolagem
-            this.restoreScrollPosition(html, scrollPosition);
+            // Restaura a posição da rolagem de forma mais robusta
+            setTimeout(() => {
+                if (windowContent.length > 0) {
+                    // Primeira tentativa: restaura posição absoluta
+                    windowContent.scrollTop(scrollTop);
+                    
+                    // Segunda tentativa: restaura posição relativa ao equipamento
+                    setTimeout(() => {
+                        const newEquipmentSection = html.find('.equipment-section');
+                        if (newEquipmentSection.length > 0 && equipmentOffset) {
+                            const newEquipmentOffset = newEquipmentSection.offset();
+                            if (newEquipmentOffset) {
+                                const targetScrollTop = newEquipmentOffset.top + relativeScrollPosition;
+                                windowContent.scrollTop(targetScrollTop);
+                            }
+                        }
+                    }, 100);
+                }
+            }, 50);
 
             // Restaura o botão
             rerollBtn.html(originalContent);
@@ -1827,13 +1871,20 @@ class OldDragon2eCharacterGenerator {
      * Restaura a posição da rolagem
      */
     restoreScrollPosition(html, positions) {
-        // Aguarda um frame para garantir que o DOM foi atualizado
+        // Aguarda múltiplos frames para garantir que o DOM foi completamente atualizado
         requestAnimationFrame(() => {
-            Object.entries(positions).forEach(([selector, scrollTop]) => {
-                const element = html.find(selector);
-                if (element.length > 0) {
-                    element.scrollTop(scrollTop);
-                }
+            requestAnimationFrame(() => {
+                Object.entries(positions).forEach(([selector, scrollTop]) => {
+                    const element = html.find(selector);
+                    if (element.length > 0) {
+                        element.scrollTop(scrollTop);
+                        
+                        // Força uma segunda tentativa após um pequeno delay para garantir
+                        setTimeout(() => {
+                            element.scrollTop(scrollTop);
+                        }, 50);
+                    }
+                });
             });
         });
     }
@@ -1844,7 +1895,10 @@ class OldDragon2eCharacterGenerator {
     async updateEquipmentInModal(html, character) {
         const equipmentItems = html.find('.equipment-items');
         
-        // Limpa e recria o conteúdo (mais simples e confiável)
+        // Preserva a altura atual para evitar mudanças na rolagem
+        const currentHeight = equipmentItems.height();
+        
+        // Limpa e recria o conteúdo sem animação para evitar problemas de rolagem
         equipmentItems.empty();
         
         // Adiciona os novos itens de equipamento
@@ -1858,8 +1912,8 @@ class OldDragon2eCharacterGenerator {
             equipmentItems.append(itemHtml);
         });
         
-        // Carrega descrições de forma assíncrona
-        await this.loadEquipmentDescriptions(character.equipment, equipmentItems);
+        // Carrega descrições de forma assíncrona sem limpar o container
+        await this.loadEquipmentDescriptionsWithoutClearing(character.equipment, equipmentItems);
     }
 
     /**
