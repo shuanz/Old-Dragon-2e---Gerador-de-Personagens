@@ -266,12 +266,193 @@ class OldDragon2eCharacterGenerator {
 
         // Padrões para identificação simples por nome (pré-exibição do equipamento)
         this.patterns = {
-            impactWeapons: /(ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|hammer|mace|club|flail)/i,
-            twoHandedHints: /(duas m[aã]os|two[- ]hand|alabarda|montante|espad[aã]o|glaive|halberd|lanca longa)/i,
-            leatherArmor: /(couro|leather)/i,
-            metalArmor: /(malha|escama|placa|cota|chain|scale|plate)/i,
-            smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o)/i
+            impactWeapons: /(ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|hammer|mace|club|flail|martelo de batalha|maça|mangual)/i,
+            twoHandedHints: /(duas m[aã]os|two[- ]hand|alabarda|montante|espad[aã]o|glaive|halberd|lanca longa|lança montada|montante|alabarda|pique)/i,
+            leatherArmor: /(couro|leather|acolchoada|leve)/i,
+            metalArmor: /(malha|escama|placa|cota|chain|scale|plate|completa|pesada)/i,
+            smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o|azagaia|virote pequeno|besta de mão)/i,
+            mediumWeapons: /(espada curta|espada longa|arco curto|arco longo|lança|lança montada|machado|machado de batalha|cimitarra|espada bastarda)/i,
+            largeWeapons: /(montante|alabarda|pique|lança montada|glaive|halberd)/i
         };
+
+    }
+
+    /**
+     * Carrega descrições de equipamentos do SRD de forma assíncrona
+     */
+    async loadEquipmentDescriptions(equipment, container) {
+        // Limpa o container primeiro
+        container.empty();
+        
+        for (const item of equipment) {
+            try {
+                const description = await this.getEquipmentDescription(item);
+                const itemHtml = `
+                    <div class="equipment-item">
+                        <div class="equipment-name">${item}</div>
+                        <div class="equipment-description">${description}</div>
+                    </div>
+                `;
+                container.append(itemHtml);
+            } catch (error) {
+                console.warn('Erro ao carregar descrição do item:', item, error);
+                const itemHtml = `
+                    <div class="equipment-item">
+                        <div class="equipment-name">${item}</div>
+                        <div class="equipment-description">Equipamento de aventura.</div>
+                    </div>
+                `;
+                container.append(itemHtml);
+            }
+        }
+    }
+
+    /**
+     * Obtém as habilidades de classe do SRD
+     */
+    getClassAbilitiesFromSRD(selectedClass) {
+        try {
+            // Tenta extrair habilidades do sistema da classe do SRD
+            const classData = selectedClass.system;
+            const abilities = [];
+            
+            // Busca por habilidades em diferentes campos do sistema
+            if (classData?.features) {
+                Object.values(classData.features).forEach(feature => {
+                    if (feature?.name && feature?.description) {
+                        abilities.push(`${feature.name}: ${feature.description}`);
+                    }
+                });
+            }
+            
+            // Busca por habilidades em outros campos comuns
+            if (classData?.abilities) {
+                Object.values(classData.abilities).forEach(ability => {
+                    if (ability?.name && ability?.description) {
+                        abilities.push(`${ability.name}: ${ability.description}`);
+                    }
+                });
+            }
+            
+            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
+            if (abilities.length === 0) {
+                const localClass = this.classes.find(c => 
+                    c.name.toLowerCase() === selectedClass.name.toLowerCase() ||
+                    c.id === selectedClass.id
+                );
+                if (localClass) {
+                    return localClass.abilities;
+                }
+            }
+            
+            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da classe
+            if (abilities.length === 0) {
+                return this.getBasicClassAbilities(selectedClass.name);
+            }
+            
+            return abilities;
+        } catch (error) {
+            console.warn('Erro ao extrair habilidades de classe do SRD:', error);
+            return this.getBasicClassAbilities(selectedClass.name);
+        }
+    }
+
+    /**
+     * Retorna habilidades básicas baseadas no nome da classe
+     */
+    getBasicClassAbilities(className) {
+        const classNameLower = className.toLowerCase();
+        
+        if (/clérigo|cleric/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/guerreiro|fighter/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Aparar: Sacrifica escudo/arma para absorver dano',
+                'Maestria em Arma: +1 de dano em uma arma escolhida',
+                'Ataque Extra: Segundo ataque no 6º nível'
+            ];
+        } else if (/ladino|thief|rogue/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias',
+                'Armaduras: Apenas leves',
+                'Ataque Furtivo: Dano x2 em ataques furtivos',
+                'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
+                'Talentos: Furtividade, Escalar, Arrombar, etc.'
+            ];
+        } else if (/mago|mage|wizard/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Ler Magias: Decifra inscrições mágicas',
+                'Detectar Magias: Percebe presença mágica'
+            ];
+        }
+        
+        // Fallback genérico
+        return ['Habilidades específicas da classe'];
+    }
+
+    /**
+     * Obtém a descrição de um equipamento do SRD
+     */
+    async getEquipmentDescription(itemName) {
+        try {
+            // Remove quantidade se houver (ex: "Ração de viagem (3)" -> "Ração de viagem")
+            const cleanName = itemName.replace(/\s*\(\d+\)$/, '').trim();
+            
+            // Busca em todos os packs de equipamentos
+            const equipmentPacks = [
+                'olddragon2e.equipment',
+                'olddragon2e.weapons',
+                'olddragon2e.armors',
+                'olddragon2e.items'
+            ];
+            
+            for (const packName of equipmentPacks) {
+                const pack = game.packs.get(packName);
+                if (!pack) {
+                    console.log(`Pack ${packName} não encontrado`);
+                    continue;
+                }
+                
+                const items = await pack.getDocuments();
+                console.log(`Buscando "${cleanName}" em ${packName} (${items.length} itens)`);
+                
+                // Busca exata primeiro
+                let item = items.find(i => i.name.toLowerCase() === cleanName.toLowerCase());
+                
+                // Se não encontrar, busca parcial
+                if (!item) {
+                    item = items.find(i => i.name.toLowerCase().includes(cleanName.toLowerCase()));
+                }
+                
+                if (item) {
+                    console.log(`Encontrado item: ${item.name}`);
+                    const description = item.system?.description?.value || 
+                                     item.system?.description || 
+                                     item.description?.value || 
+                                     item.description || 
+                                     'Equipamento de aventura.';
+                    console.log(`Descrição: ${description.substring(0, 50)}...`);
+                    return description;
+                }
+            }
+            
+            console.log(`Item "${cleanName}" não encontrado em nenhum pack`);
+            return 'Equipamento de aventura.';
+        } catch (error) {
+            console.warn('Erro ao buscar descrição do equipamento:', error);
+            return 'Equipamento de aventura.';
+        }
     }
 
     /**
@@ -546,7 +727,7 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-    * Gera equipamento básico baseado na classe com restrições
+     * Gera equipamento básico baseado na classe com restrições
      */
     async generateEquipment(characterClass) {
         const cls = (characterClass || '').toLowerCase();
@@ -606,13 +787,65 @@ class OldDragon2eCharacterGenerator {
     getClassRestrictions(className) {
         const n = (className || '').toLowerCase();
         const r = { armor: 'any', shield: true, onlyImpact: false, onlySmall: false, noLarge: false, leatherOnly: false };
-        if (/mago|bruxo|feiticeiro|wizard|warlock/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
-        else if (/necromante|ilusionista/.test(n)) { r.armor = 'none'; r.shield = false; r.onlySmall = true; }
-        else if (/ladr[aã]o|ladino|thief|bardo/.test(n)) { r.armor = 'light'; r.shield = false; r.noLarge = true; }
-        else if (/ranger/.test(n)) { r.armor = 'light'; r.shield = true; r.noLarge = false; }
-        else if (/druida/.test(n)) { r.armor = 'light'; r.leatherOnly = true; r.shield = false; r.noLarge = true; }
-        else if (/cl[eê]rigo|cleric/.test(n)) { r.onlyImpact = true; r.armor = 'any'; r.shield = true; }
-        else if (/b[aá]rbaro/.test(n)) { r.armor = 'light'; r.shield = true; }
+        
+        // Classes Arcanas (Mago e especializações)
+        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/.test(n)) { 
+            r.armor = 'none'; 
+            r.shield = false; 
+            r.onlySmall = true; 
+        }
+        // Classes Divinas (Clérigo e especializações)
+        else if (/cl[eê]rigo|cleric|druida|druid|acad[eê]mico|academic|xam[aã]|shaman|proscrito|outcast/.test(n)) { 
+            r.onlyImpact = true; 
+            r.armor = 'any'; 
+            r.shield = true; 
+            if (/druida|druid/.test(n)) {
+                r.leatherOnly = true;
+                r.noLarge = true;
+            }
+        }
+        // Classes de Habilidade (Ladrão e especializações)
+        else if (/ladr[aã]o|ladino|thief|bardo|bard|assassino|assassin/.test(n)) { 
+            r.armor = 'light'; 
+            r.shield = false; 
+            r.noLarge = true; 
+        }
+        // Ranger (especialização de Ladrão com algumas diferenças)
+        else if (/ranger/.test(n)) { 
+            r.armor = 'light'; 
+            r.shield = true; 
+            r.noLarge = false; 
+        }
+        // Classes de Combate (Guerreiro e especializações)
+        else if (/guerreiro|fighter|b[aá]rbaro|barbarian|paladino|paladin|arqueiro|archer/.test(n)) { 
+            r.armor = 'any'; 
+            r.shield = true; 
+            if (/b[aá]rbaro|barbarian/.test(n)) {
+                r.armor = 'light';
+            }
+        }
+        // Classes específicas de raça (herdam restrições da classe base)
+        else if (/aventureiro|adventurer/.test(n)) {
+            // Anão Aventureiro - herda de Clérigo
+            if (/an[aã]o|dwarf/.test(n)) {
+                r.onlyImpact = true;
+                r.armor = 'any';
+                r.shield = true;
+            }
+            // Elfo Aventureiro - herda de Ladrão
+            else if (/elfo|elf/.test(n)) {
+                r.armor = 'light';
+                r.shield = false;
+                r.noLarge = true;
+            }
+            // Halfling Aventureiro - herda de Ladrão
+            else if (/halfling/.test(n)) {
+                r.armor = 'light';
+                r.shield = false;
+                r.noLarge = true;
+            }
+        }
+        
         return r;
     }
 
@@ -620,6 +853,7 @@ class OldDragon2eCharacterGenerator {
         const p = this.patterns;
         return list.filter(name => {
             const lower = (name || '').toLowerCase();
+            
             // armor
             if (/armadura|armor/.test(lower)) {
                 if (restrictions.armor === 'none') return false;
@@ -627,15 +861,27 @@ class OldDragon2eCharacterGenerator {
                 if (restrictions.leatherOnly && !p.leatherArmor.test(lower)) return false;
                 return true;
             }
+            
             // shield
             if (/escudo|shield/.test(lower)) return !!restrictions.shield;
+            
             // weapons (heurístico por nome)
-            if (/espada|lan[cç]a|adaga|punhal|faca|arco|besta|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante/.test(lower)) {
+            if (/espada|lan[cç]a|adaga|punhal|faca|arco|besta|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante|azagaia|virote|pique|cimitarra/.test(lower)) {
+                // Apenas armas de impacto (Clérigo e especializações)
                 if (restrictions.onlyImpact && !p.impactWeapons.test(lower)) return false;
+                
+                // Apenas armas pequenas (Mago e especializações)
                 if (restrictions.onlySmall && !p.smallWeapons.test(lower)) return false;
+                
+                // Não armas grandes (Ladrão, Druida, etc.)
+                if (restrictions.noLarge && p.largeWeapons.test(lower)) return false;
+                
+                // Não armas de duas mãos (Ladrão, Druida, etc.)
                 if (restrictions.noLarge && p.twoHandedHints.test(lower)) return false;
+                
                 return true;
             }
+            
             // outros itens são sempre permitidos
             return true;
         });
@@ -1563,7 +1809,7 @@ class OldDragon2eCharacterGenerator {
 
                 // Ajusta equipamento para respeitar restrições da classe selecionada
                 const archetype = this.mapClassToArchetype(selectedClass.name);
-                const baseEquip = this.generateEquipment(archetype);
+                const baseEquip = await this.generateEquipment(archetype);
                 const restrictions = this.getClassRestrictions(selectedClass.name);
                 character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
                 
@@ -1629,12 +1875,12 @@ class OldDragon2eCharacterGenerator {
             attributeItem.find('.attribute-modifier').text(modifier >= 0 ? `+${modifier}` : modifier);
         });
 
-        // Atualiza equipamento
-        const equipmentList = html.find('#equipment-list');
-        equipmentList.empty();
-        character.equipment.forEach(item => {
-            equipmentList.append(`<li>${item}</li>`);
-        });
+        // Atualiza equipamento com descrições do SRD
+        const equipmentItems = html.find('.equipment-items');
+        equipmentItems.empty();
+        
+        // Carrega descrições de forma assíncrona
+        this.loadEquipmentDescriptions(character.equipment, equipmentItems);
 
         // Atualiza habilidades de raça
         const raceAbilities = html.find('.race-abilities ul');
@@ -1785,9 +2031,12 @@ class OldDragon2eCharacterGenerator {
             character.classData = selectedClass.system;
             console.log('Classe aplicada:', character.class);
 
+            // Atualiza habilidades de classe com base na classe selecionada
+            character.classAbilities = this.getClassAbilitiesFromSRD(selectedClass);
+
             // Ajusta equipamento para respeitar restrições da classe selecionada
             const archetype = this.mapClassToArchetype(selectedClass.name);
-            const baseEquip = this.generateEquipment(archetype);
+            const baseEquip = await this.generateEquipment(archetype);
             const restrictions = this.getClassRestrictions(selectedClass.name);
             character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
             
@@ -1824,6 +2073,7 @@ class OldDragon2eCharacterGenerator {
                     <h3>Prévia do Personagem</h3>
                     
                     <div class="main-layout">
+                        <!-- Coluna 1: Informações Básicas e Atributos -->
                         <div class="left-column">
                     <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
@@ -1851,6 +2101,23 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         `).join('')}
                     </div>
+                        </div>
+                        
+                        <!-- Coluna 2: Habilidades e Jogadas de Proteção -->
+                        <div class="middle-column">
+                            <div class="race-abilities">
+                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
+                                <ul>
+                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="class-abilities">
+                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
+                                <ul>
+                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                </ul>
+                    </div>
                             
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
@@ -1867,9 +2134,12 @@ class OldDragon2eCharacterGenerator {
                                         <div class="saving-throw-name">JPS</div>
                                         <div class="saving-throw-value">${character.savingThrows.JPS}</div>
                                     </div>
+                                    </div>
                                 </div>
                             </div>
                             
+                        <!-- Coluna 3: Detalhes do Personagem -->
+                        <div class="right-column">
                             <div class="character-details">
                                 <h4><i class="fas fa-user"></i> Detalhes</h4>
                                 
@@ -1889,27 +2159,18 @@ class OldDragon2eCharacterGenerator {
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="right-column">
-                            <div class="race-abilities">
-                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
-                                <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
                             </div>
                             
-                            <div class="class-abilities">
-                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
-                                <ul>
-                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
-                                </ul>
-                    </div>
-                    
+                    <div class="equipment-section">
                     <div class="equipment-list">
                         <h4><i class="fas fa-sack"></i> Equipamento</h4>
-                        <ul>
-                            ${character.equipment.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
+                            <div class="equipment-items">
+                                ${character.equipment.map(item => `
+                                    <div class="equipment-item">
+                                        <div class="equipment-name">${item}</div>
+                                        <div class="equipment-description">Carregando descrição...</div>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
                     </div>
@@ -1953,6 +2214,15 @@ class OldDragon2eCharacterGenerator {
         });
 
         dialog.render(true);
+        
+        // Carrega descrições dos equipamentos após o modal ser renderizado
+        setTimeout(async () => {
+            const equipmentItems = dialog.element.find('.equipment-items');
+            if (equipmentItems.length > 0) {
+                await this.loadEquipmentDescriptions(character.equipment, equipmentItems);
+            }
+        }, 100);
+        
         // Removido hook de re-centralização forçada
     }
 }
