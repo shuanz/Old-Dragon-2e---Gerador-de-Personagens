@@ -122,6 +122,27 @@ class OldDragon2eCharacterGenerator {
         }
     }
 
+    /**
+     * Carrega descrições de equipamentos sem limpar o container (para atualizações)
+     */
+    async loadEquipmentDescriptionsWithoutClearing(equipment, container) {
+        const equipmentItems = container.find('.equipment-item');
+        
+        for (let i = 0; i < equipment.length && i < equipmentItems.length; i++) {
+            const item = equipment[i];
+            const itemElement = equipmentItems.eq(i);
+            const descriptionElement = itemElement.find('.equipment-description');
+            
+            try {
+                const description = await this.getEquipmentDescription(item);
+                descriptionElement.text(description);
+            } catch (error) {
+                console.warn('Erro ao carregar descrição do item:', item, error);
+                descriptionElement.text('Equipamento de aventura.');
+            }
+        }
+    }
+
 
 
     /**
@@ -1745,6 +1766,157 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Re-rola apenas o equipamento do personagem atual respeitando restrições da classe
+     */
+    async rerollEquipment(dialog, html) {
+        try {
+            // Mostra indicador de carregamento no botão
+            const rerollBtn = html.find('#reroll-equipment');
+            const originalContent = rerollBtn.html();
+            rerollBtn.html('<i class="fas fa-spinner fa-spin"></i>');
+            rerollBtn.prop('disabled', true);
+
+            // Preserva a posição da rolagem de forma mais robusta
+            const windowContent = html.find('.window-content');
+            const scrollTop = windowContent.length > 0 ? windowContent.scrollTop() : 0;
+            
+            // Também preserva a posição relativa ao equipamento
+            const equipmentSection = html.find('.equipment-section');
+            const equipmentOffset = equipmentSection.length > 0 ? equipmentSection.offset() : null;
+            const relativeScrollPosition = equipmentOffset ? scrollTop - equipmentOffset.top : 0;
+
+            // Gera novo equipamento respeitando a classe atual
+            const characterClass = dialog.currentCharacter.class;
+            const archetype = this.mapClassToArchetype(characterClass);
+            const baseEquip = await this.generateEquipment(archetype);
+            const restrictions = this.getClassRestrictions(characterClass);
+            const newEquipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+            
+            // Atualiza o personagem atual
+            dialog.currentCharacter.equipment = newEquipment;
+
+            // Recalcula valores que dependem do equipamento
+            dialog.currentCharacter.armorClass = this.calculateArmorClass(
+                dialog.currentCharacter.attributes.dexterity, 
+                newEquipment
+            );
+
+            // Atualiza apenas o equipamento no HTML
+            await this.updateEquipmentInModal(html, dialog.currentCharacter);
+            
+            // Atualiza informações básicas que dependem do equipamento
+            this.updateBasicInfoInModal(html, dialog.currentCharacter);
+
+            // Restaura a posição da rolagem de forma mais robusta
+            setTimeout(() => {
+                if (windowContent.length > 0) {
+                    // Primeira tentativa: restaura posição absoluta
+                    windowContent.scrollTop(scrollTop);
+                    
+                    // Segunda tentativa: restaura posição relativa ao equipamento
+                    setTimeout(() => {
+                        const newEquipmentSection = html.find('.equipment-section');
+                        if (newEquipmentSection.length > 0 && equipmentOffset) {
+                            const newEquipmentOffset = newEquipmentSection.offset();
+                            if (newEquipmentOffset) {
+                                const targetScrollTop = newEquipmentOffset.top + relativeScrollPosition;
+                                windowContent.scrollTop(targetScrollTop);
+                            }
+                        }
+                    }, 100);
+                }
+            }, 50);
+
+            // Restaura o botão
+            rerollBtn.html(originalContent);
+            rerollBtn.prop('disabled', false);
+
+        } catch (error) {
+            console.error('Erro ao re-rolar equipamento:', error);
+            ui.notifications.error('Erro ao re-rolar equipamento: ' + error.message);
+            
+            // Restaura o botão mesmo em caso de erro
+            const rerollBtn = html.find('#reroll-equipment');
+            rerollBtn.html('<i class="fas fa-sack"></i>');
+            rerollBtn.prop('disabled', false);
+        }
+    }
+
+    /**
+     * Preserva a posição da rolagem usando múltiplos seletores
+     */
+    preserveScrollPosition(html) {
+        const positions = {};
+        
+        // Tenta diferentes seletores para encontrar o container de rolagem
+        const selectors = [
+            '.window-app .window-content',
+            '.window-app',
+            '.dialog .window-content',
+            '.dialog',
+            'body'
+        ];
+        
+        selectors.forEach(selector => {
+            const element = html.find(selector);
+            if (element.length > 0) {
+                positions[selector] = element.scrollTop();
+            }
+        });
+        
+        return positions;
+    }
+
+    /**
+     * Restaura a posição da rolagem
+     */
+    restoreScrollPosition(html, positions) {
+        // Aguarda múltiplos frames para garantir que o DOM foi completamente atualizado
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                Object.entries(positions).forEach(([selector, scrollTop]) => {
+                    const element = html.find(selector);
+                    if (element.length > 0) {
+                        element.scrollTop(scrollTop);
+                        
+                        // Força uma segunda tentativa após um pequeno delay para garantir
+                        setTimeout(() => {
+                            element.scrollTop(scrollTop);
+                        }, 50);
+                    }
+                });
+            });
+        });
+    }
+
+    /**
+     * Atualiza apenas o equipamento no modal
+     */
+    async updateEquipmentInModal(html, character) {
+        const equipmentItems = html.find('.equipment-items');
+        
+        // Preserva a altura atual para evitar mudanças na rolagem
+        const currentHeight = equipmentItems.height();
+        
+        // Limpa e recria o conteúdo sem animação para evitar problemas de rolagem
+        equipmentItems.empty();
+        
+        // Adiciona os novos itens de equipamento
+        character.equipment.forEach(item => {
+            const itemHtml = `
+                <div class="equipment-item">
+                    <div class="equipment-name">${item}</div>
+                    <div class="equipment-description">Carregando descrição...</div>
+                </div>
+            `;
+            equipmentItems.append(itemHtml);
+        });
+        
+        // Carrega descrições de forma assíncrona sem limpar o container
+        await this.loadEquipmentDescriptionsWithoutClearing(character.equipment, equipmentItems);
+    }
+
+    /**
      * Atualiza o conteúdo do modal com um novo personagem
      */
     async updateModalContent(dialog, html) {
@@ -2038,7 +2210,7 @@ class OldDragon2eCharacterGenerator {
                             
                     <div class="equipment-section">
                     <div class="equipment-list">
-                        <h4><i class="fas fa-sack"></i> Equipamento</h4>
+                        <h4><i class="fas fa-sack btn-reroll-equipment" id="reroll-equipment" title="Clique para re-rolar equipamento respeitando restrições da classe"></i> Equipamento</h4>
                             <div class="equipment-items">
                                 ${character.equipment.map(item => `
                                     <div class="equipment-item">
@@ -2138,6 +2310,10 @@ class OldDragon2eCharacterGenerator {
 
                 html.find('#reroll-details').click(async () => {
                     await this.rerollDetails(dialog, html);
+                });
+
+                html.find('#reroll-equipment').click(async () => {
+                    await this.rerollEquipment(dialog, html);
                 });
 
                 html.find('#close-modal').click(() => {

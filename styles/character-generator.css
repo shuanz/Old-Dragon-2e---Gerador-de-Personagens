@@ -452,6 +452,44 @@
     transform: none;
 }
 
+/* Botão de re-rolar equipamento */
+.old-dragon-generator-modal .btn-reroll-equipment {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 2px 4px;
+    border-radius: 4px;
+    margin-right: 6px;
+    display: inline-block;
+    position: relative;
+    animation: gentle-glow-red 2s ease-in-out infinite;
+    color: #8B0000;
+}
+
+.old-dragon-generator-modal .btn-reroll-equipment:hover {
+    color: #228B22;
+    background: rgba(34, 139, 34, 0.15);
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(34, 139, 34, 0.3);
+    animation: gentle-glow-green 1.5s ease-in-out infinite;
+}
+
+.old-dragon-generator-modal .btn-reroll-equipment:active {
+    transform: scale(0.95);
+    color: #006400;
+}
+
+.old-dragon-generator-modal .btn-reroll-equipment:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+}
+
+.old-dragon-generator-modal .btn-reroll-equipment:disabled:hover {
+    color: #8B0000;
+    background: none;
+    transform: none;
+}
+
 .old-dragon-generator-modal .attribute-item {
     background: linear-gradient(135deg, #ffffff, #f5f5f0);
     padding: 8px 6px;
@@ -534,6 +572,9 @@
     margin-bottom: 15px;
     font-size: 1.4em; /* Fonte ainda maior */
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .old-dragon-generator-modal .equipment-items {
