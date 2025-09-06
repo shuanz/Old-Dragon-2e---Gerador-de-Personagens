@@ -362,6 +362,18 @@
     color: #333;
 }
 
+.old-dragon-generator-modal .saving-throw-breakdown {
+    margin-top: 4px;
+    font-size: 0.8em;
+    color: #666;
+    line-height: 1.2;
+}
+
+.old-dragon-generator-modal .saving-throw-breakdown small {
+    display: block;
+    margin: 1px 0;
+}
+
 .old-dragon-generator-modal .character-details {
     background: #ede9d5; /* Cor de fundo solicitada */
     padding: 12px;
