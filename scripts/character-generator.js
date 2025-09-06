@@ -1722,7 +1722,7 @@ class OldDragon2eCharacterGenerator {
             alignment: this.generateAlignment(),
             appearance: this.generateAppearance(),
             personality: this.generatePersonality(),
-            background: this.generateBackground(race, characterClass),
+            background: this.generateBackground('Humano', 'Guerreiro'),
             level: 1,
             experience: 0,
             initialSpells: [] // Será preenchido depois com dados do SRD
@@ -2427,6 +2427,9 @@ class OldDragon2eCharacterGenerator {
                 character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
                 character.movement = this.calculateMovement(selectedRace.id);
                 character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
+                
+                // Atualiza o background com a raça e classe corretas
+                character.background = this.generateBackground(selectedRace.name, selectedClass.name);
             }
 
             // Atualiza a referência do personagem no dialog
@@ -2651,6 +2654,9 @@ class OldDragon2eCharacterGenerator {
             character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
             character.movement = this.calculateMovement(selectedRace.id);
             character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
+            
+            // Atualiza o background com a raça e classe corretas
+            character.background = this.generateBackground(selectedRace.name, selectedClass.name);
         }
         
         const modalContent = `
