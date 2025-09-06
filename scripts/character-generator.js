@@ -1644,7 +1644,7 @@ class OldDragon2eCharacterGenerator {
 
                 // Ajusta equipamento para respeitar restrições da classe selecionada
                 const archetype = this.mapClassToArchetype(selectedClass.name);
-                const baseEquip = this.generateEquipment(archetype);
+                const baseEquip = await this.generateEquipment(archetype);
                 const restrictions = this.getClassRestrictions(selectedClass.name);
                 character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
                 
@@ -1868,7 +1868,7 @@ class OldDragon2eCharacterGenerator {
 
             // Ajusta equipamento para respeitar restrições da classe selecionada
             const archetype = this.mapClassToArchetype(selectedClass.name);
-            const baseEquip = this.generateEquipment(archetype);
+            const baseEquip = await this.generateEquipment(archetype);
             const restrictions = this.getClassRestrictions(selectedClass.name);
             character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
             
