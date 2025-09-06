@@ -372,16 +372,16 @@
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:hover {
-    color: #228B22;
-    background: rgba(34, 139, 34, 0.15);
+    color: #1E90FF;
+    background: rgba(30, 144, 255, 0.15);
     transform: scale(1.15);
-    box-shadow: 0 2px 8px rgba(34, 139, 34, 0.3);
+    box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3);
     animation: none;
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:active {
     transform: scale(0.95);
-    color: #006400;
+    color: #0066CC;
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:disabled {
