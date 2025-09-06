@@ -632,7 +632,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    justify-content: space-between;
 }
 
 .old-dragon-generator-modal .detail-section {

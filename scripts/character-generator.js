@@ -2016,9 +2016,7 @@ class OldDragon2eCharacterGenerator {
                         <!-- Segunda linha: Detalhes -->
                         <div class="bottom-row">
                             <div class="character-details">
-                                <h4><i class="fas fa-user"></i> Detalhes 
-                                    <i class="fas fa-dice btn-reroll-details" id="reroll-details" title="Clique para re-rolar aparência, personalidade e histórico"></i>
-                                </h4>
+                                <h4><i class="fas fa-user btn-reroll-details" id="reroll-details" title="Clique para re-rolar aparência, personalidade e histórico"></i> Detalhes</h4>
                                 
                                 <div class="detail-section">
                                     <h5>Aparência:</h5>
