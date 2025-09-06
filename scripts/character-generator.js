@@ -749,67 +749,6 @@ class OldDragon2eCharacterGenerator {
         return { JPD, JPC, JPS };
     }
 
-    /**
-     * Calcula Jogadas de Proteção finais incluindo modificadores de atributos e bônus raciais
-     */
-    calculateFinalSavingThrows(characterClass, level, attributes, race) {
-        // Valores base da classe
-        const baseSavingThrows = this.calculateSavingThrows(characterClass, level);
-        
-        // Modificadores de atributos
-        const modifiers = this.calculateModifiers(attributes);
-        
-        // Bônus raciais
-        const raceName = (race || '').toString().toLowerCase();
-        let raceBonusJPD = 0;
-        let raceBonusJPC = 0;
-        let raceBonusJPS = 0;
-        
-        if (raceName.includes('humano')) {
-            // Humano: bônus aleatório em uma JP
-            const randomBonus = Math.floor(Math.random() * 3); // 0, 1 ou 2
-            if (randomBonus === 0) raceBonusJPD = 1;
-            else if (randomBonus === 1) raceBonusJPC = 1;
-            else raceBonusJPS = 1;
-        } else if (raceName.includes('elf') && !raceName.includes('meio')) {
-            raceBonusJPD = 1; // Elfo: +1 JPD
-        } else if (raceName.includes('meio') && raceName.includes('elf')) {
-            // Meio-Elfo: escolhe entre JPC ou JPD
-            const randomChoice = Math.floor(Math.random() * 2); // 0 ou 1
-            if (randomChoice === 0) raceBonusJPC = 1; // Escolhe JPC
-            else raceBonusJPD = 1; // Escolhe JPD
-        } else if (raceName.includes('anão') || raceName.includes('anao')) {
-            raceBonusJPC = 1; // Anão: +1 JPC
-        } else if (raceName.includes('halfling')) {
-            raceBonusJPS = 1; // Halfling: +1 JPS
-        } else if (raceName.includes('orc')) {
-            raceBonusJPC = 1; // Orc: +1 JPC
-        } else if (raceName.includes('goblin')) {
-            raceBonusJPD = 1; // Goblin: +1 JPD
-        }
-        
-        // Calcula valores finais
-        const finalJPD = baseSavingThrows.JPD + modifiers.dexterity + raceBonusJPD;
-        const finalJPC = baseSavingThrows.JPC + modifiers.constitution + raceBonusJPC;
-        const finalJPS = baseSavingThrows.JPS + modifiers.wisdom + raceBonusJPS;
-        
-        return {
-            JPD: finalJPD,
-            JPC: finalJPC,
-            JPS: finalJPS,
-            base: baseSavingThrows,
-            modifiers: {
-                JPD: modifiers.dexterity,
-                JPC: modifiers.constitution,
-                JPS: modifiers.wisdom
-            },
-            raceBonus: {
-                JPD: raceBonusJPD,
-                JPC: raceBonusJPC,
-                JPS: raceBonusJPS
-            }
-        };
-    }
 
     /**
      * Calcula movimento baseado na raça
@@ -1651,7 +1590,6 @@ class OldDragon2eCharacterGenerator {
                 character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
                 character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
                 character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
-                character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
                 character.movement = this.calculateMovement(selectedRace.id);
                 character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
                 
