@@ -760,6 +760,7 @@ class OldDragon2eCharacterGenerator {
         else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
             if (level >= 1) {
                 abilities.push('Iniciado: Conjura magias 1º círculo, pode usar armas médias e armaduras leves (mesmo metal) sem prejudicar rituais');
+                abilities.push('Metal: Objetos de metal atrapalham canalização (1-2 em 1d6 chance de perder ritual)');
             }
             if (level >= 3) {
                 abilities.push('Médium: Conjura magias 2º círculo, pode usar armas grandes (mesmo metal) sem prejudicar rituais');
@@ -768,7 +769,7 @@ class OldDragon2eCharacterGenerator {
                 abilities.push('Conjurador: Conjura magias 3º círculo, pode usar armaduras médias (mesmo metal) sem prejudicar rituais');
             }
             if (level >= 10) {
-                abilities.push('Entidade: Conjura magias 4º-6º círculos, pode usar todas armaduras/armas (mesmo metal) sem prejudicar rituais');
+                abilities.push('Entidade: Conjura magias 4º-6º círculos, pode usar todas armaduras e armas (mesmo metal) sem prejudicar rituais');
             }
         }
         
