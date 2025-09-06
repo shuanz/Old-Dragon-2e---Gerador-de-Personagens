@@ -86,29 +86,28 @@
     font-size: 1.6em; /* Fonte ainda maior para o título */
 }
 
-/* Layout principal reorganizado */
+/* Layout principal melhorado */
 .old-dragon-generator-modal .main-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 0; /* Sem gap, usando margins individuais */
-    margin-bottom: 25px; /* Mais espaço no final */
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
     position: relative;
 }
 
-
-/* Primeira linha: Informações Básicas e Atributos lado a lado */
+/* Layout em duas colunas para informações básicas e atributos */
 .old-dragon-generator-modal .top-row {
     display: grid;
-    grid-template-columns: 1.2fr 1fr; /* Informações Básicas maior, Atributos menor */
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
     align-items: start;
-    margin-bottom: 0px; /* Remove completamente o espaçamento */
+    margin-bottom: 0;
 }
 
-/* Segunda linha: Detalhes ocupando toda a largura */
+/* Layout para detalhes ocupando toda a largura */
 .old-dragon-generator-modal .bottom-row {
     display: block;
-    margin-top: 0px; /* Remove completamente o espaçamento */
+    margin-top: 0;
 }
 
 /* Layout com seção de equipamentos em largura total */
@@ -128,29 +127,42 @@
 /* Estilos para as seções individuais */
 .old-dragon-generator-modal .character-basic-info,
 .old-dragon-generator-modal .attributes-grid,
-.old-dragon-generator-modal .saving-throws,
 .old-dragon-generator-modal .character-details {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Mais espaço entre seções */
-    align-items: stretch; /* Estica elementos para ocupar largura */
+    gap: 15px;
+    align-items: stretch;
+    height: fit-content;
 }
 
-/* Informações básicas compactas */
+/* Informações básicas melhoradas */
 .old-dragon-generator-modal .character-basic-info {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    border: 1px solid #d3d3d3;
-    border-radius: 6px;
-    padding: 12px;
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
+    border: 2px solid #d3d3d3;
+    border-radius: 12px;
+    padding: 20px;
     margin: 0;
-    min-height: fit-content; /* Altura baseada no conteúdo */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    min-height: fit-content;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .character-basic-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
 }
 
 .old-dragon-generator-modal .character-basic-info:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    border-color: #8B0000;
 }
 
 .old-dragon-generator-modal .character-basic-info h4 {
@@ -178,22 +190,35 @@
 }
 
 .old-dragon-generator-modal .attributes-grid {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    border: 1px solid #d3d3d3;
-    border-radius: 6px;
-    padding: 12px;
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
+    border: 2px solid #d3d3d3;
+    border-radius: 12px;
+    padding: 20px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 12px;
     margin: 0;
-    min-height: fit-content; /* Altura baseada no conteúdo */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    min-height: fit-content;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .attributes-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
 }
 
 .old-dragon-generator-modal .attributes-grid:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    border-color: #8B0000;
 }
 
 .old-dragon-generator-modal .attributes-grid h4 {
@@ -210,19 +235,38 @@
 }
 
 .old-dragon-generator-modal .attribute-item {
-    background: #f5f5f0; /* Fundo ligeiramente mais claro para contraste */
-    padding: 8px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, #ffffff, #f5f5f0);
+    padding: 12px 8px;
+    border-radius: 8px;
     text-align: center;
-    border: 1px solid #d3d3d3;
-    transition: all 0.2s ease;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .attribute-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
 }
 
 .old-dragon-generator-modal .attribute-item:hover {
-    background: #e8e8e0;
+    background: linear-gradient(135deg, #f0f0f0, #e8e8e0);
     border-color: #8B0000;
-    transform: scale(1.02);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+}
+
+.old-dragon-generator-modal .attribute-item:hover::before {
+    transform: scaleX(1);
 }
 
 .old-dragon-generator-modal .attribute-name {
@@ -244,12 +288,25 @@
 
 
 .old-dragon-generator-modal .equipment-list {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 15px;
-    border-radius: 4px;
-    border: 1px solid #d3d3d3;
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px solid #d3d3d3;
     margin: 0;
-    grid-column: 1 / -1; /* Ocupa toda a largura */
+    grid-column: 1 / -1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .equipment-list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
 }
 
 .old-dragon-generator-modal .equipment-list h4 {
@@ -267,18 +324,36 @@
 }
 
 .old-dragon-generator-modal .equipment-item {
-    background: #f5f5f0;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #ffffff, #f5f5f0);
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .equipment-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
 }
 
 .old-dragon-generator-modal .equipment-item:hover {
-    background: #f0f0eb;
+    background: linear-gradient(135deg, #f0f0f0, #e8e8e0);
     border-color: #8B0000;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(139, 0, 0, 0.2);
+}
+
+.old-dragon-generator-modal .equipment-item:hover::before {
+    transform: scaleX(1);
 }
 
 .old-dragon-generator-modal .equipment-name {
@@ -299,20 +374,32 @@
 
 
 .old-dragon-generator-modal .character-details {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #d3d3d3;
-    margin: 60px 0 0 0; /* Espaçamento abaixo da linha divisória */
-    /* Remove flex: 1 para não esticar desnecessariamente */
-    min-height: fit-content; /* Altura baseada no conteúdo */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px solid #d3d3d3;
+    margin: 0;
+    min-height: fit-content;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .character-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
 }
 
 .old-dragon-generator-modal .character-details:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    border-color: #8B0000;
 }
 
 .old-dragon-generator-modal .character-details h4 {
@@ -328,58 +415,122 @@
 }
 
 .old-dragon-generator-modal .detail-section {
-    margin-bottom: 8px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    border-left: 4px solid #8B0000;
+    transition: all 0.3s ease;
+}
+
+.old-dragon-generator-modal .detail-section:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .old-dragon-generator-modal .detail-section h5 {
-    color: #333; /* Texto escuro como na ficha */
-    margin-bottom: 6px;
-    font-size: 1.2em; /* Fonte ainda maior */
+    color: #8B0000;
+    margin-bottom: 8px;
+    font-size: 1.3em;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.old-dragon-generator-modal .detail-section h5::before {
+    content: '▶';
+    color: #A0522D;
+    font-size: 0.8em;
 }
 
 .old-dragon-generator-modal .detail-section p {
     margin: 0;
-    font-size: 1.2em; /* Fonte ainda maior */
-    line-height: 1.4; /* Melhor legibilidade */
+    font-size: 1.1em;
+    line-height: 1.5;
+    color: #444;
+    font-style: italic;
 }
 
 .old-dragon-generator-modal .buttons {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 20px;
     margin-bottom: 20px;
-    padding: 15px;
-    background: #ede9d5; /* Cor de fundo solicitada */
-    border-radius: 6px;
-    border: 1px solid #d3d3d3;
+    padding: 25px;
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
+    border-radius: 12px;
+    border: 2px solid #d3d3d3;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.old-dragon-generator-modal .buttons::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B0000, #A0522D);
 }
 
 .old-dragon-generator-modal .btn {
-    padding: 10px 20px;
-    margin: 0 10px;
+    padding: 12px 24px;
+    margin: 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1.1em;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.old-dragon-generator-modal .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.old-dragon-generator-modal .btn:hover::before {
+    left: 100%;
 }
 
 .old-dragon-generator-modal .btn-primary {
-    background: #8B0000; /* Vermelho escuro como na ficha */
+    background: linear-gradient(135deg, #8B0000, #A0522D);
     color: white;
-    border: 1px solid #660000;
+    border: 2px solid #660000;
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+}
+
+.old-dragon-generator-modal .btn-primary:hover {
+    background: linear-gradient(135deg, #A0522D, #8B0000);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(139, 0, 0, 0.4);
 }
 
 .old-dragon-generator-modal .btn-secondary {
-    background: #696969; /* Cinza escuro como na ficha */
+    background: linear-gradient(135deg, #696969, #808080);
     color: white;
-    border: 1px solid #555555;
+    border: 2px solid #555555;
+    box-shadow: 0 4px 12px rgba(105, 105, 105, 0.3);
 }
 
-.old-dragon-generator-modal .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+.old-dragon-generator-modal .btn-secondary:hover {
+    background: linear-gradient(135deg, #808080, #696969);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(105, 105, 105, 0.4);
 }
 
 /* Animações */
@@ -393,28 +544,26 @@
 }
 
 
-/* Responsividade para o novo layout */
+/* Responsividade melhorada */
 @media (max-width: 1400px) {
     .old-dragon-generator-modal .top-row {
-        grid-template-columns: 1fr 1fr; /* Mantém duas colunas */
-        gap: 15px;
-    }
-    
-    .old-dragon-generator-modal .bottom-row {
-        grid-template-columns: 1fr 1fr; /* Mantém duas colunas */
-        gap: 15px;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
     }
 }
 
 @media (max-width: 1000px) {
-    .old-dragon-generator-modal .top-row,
-    .old-dragon-generator-modal .bottom-row {
-        grid-template-columns: 1fr; /* Uma coluna em telas menores */
-        gap: 15px;
+    .old-dragon-generator-modal .top-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .old-dragon-generator-modal .attributes-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-/* Responsividade */
+/* Responsividade para dispositivos móveis */
 @media (max-width: 768px) {
     .old-dragon-generator-modal {
         margin: 10px;
@@ -422,28 +571,39 @@
         max-width: 95vw;
     }
     
-    .old-dragon-generator-modal .top-row,
-    .old-dragon-generator-modal .bottom-row {
+    .old-dragon-generator-modal .top-row {
         grid-template-columns: 1fr;
         gap: 15px;
     }
     
     .old-dragon-generator-modal .attributes-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 15px;
     }
     
     .old-dragon-generator-modal .info-grid {
         grid-template-columns: 1fr;
     }
     
+    .old-dragon-generator-modal .character-basic-info,
+    .old-dragon-generator-modal .character-details,
+    .old-dragon-generator-modal .equipment-list {
+        padding: 15px;
+    }
     
     .old-dragon-generator-modal .buttons {
-        display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
+        padding: 20px;
     }
     
     .old-dragon-generator-modal .btn {
+        width: 100%;
         margin: 0;
+    }
+    
+    .old-dragon-generator-modal .equipment-items {
+        grid-template-columns: 1fr;
     }
 }
