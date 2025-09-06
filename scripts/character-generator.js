@@ -310,7 +310,7 @@ class OldDragon2eCharacterGenerator {
     /**
      * Obtém as habilidades de classe do SRD
      */
-    getClassAbilitiesFromSRD(selectedClass) {
+    getClassAbilitiesFromSRD(selectedClass, level = 1) {
         try {
             // Tenta extrair habilidades do sistema da classe do SRD
             const classData = selectedClass.system;
@@ -333,6 +333,10 @@ class OldDragon2eCharacterGenerator {
                     }
                 });
             }
+            
+            // Adiciona habilidades específicas de especializações por nível
+            const specializationAbilities = this.getSpecializationAbilities(selectedClass.name, level);
+            abilities.push(...specializationAbilities);
             
             // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
             if (abilities.length === 0) {
@@ -503,6 +507,64 @@ class OldDragon2eCharacterGenerator {
         
         // Fallback genérico
         return ['Habilidades específicas da classe'];
+    }
+
+    /**
+     * Obtém habilidades específicas de especializações por nível
+     */
+    getSpecializationAbilities(className, level = 1) {
+        const classNameLower = className.toLowerCase();
+        const abilities = [];
+        
+        // Elfo Aventureiro (Mago)
+        if (/elfo aventureiro|elf adventurer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Treinamento Racial: +1 PV por nível, sem restrições de armas/armaduras, +2 dano com arma racial');
+            }
+            if (level >= 3) {
+                abilities.push('Brilho Mágico: Conjura 1 magia de 1º círculo por dia');
+            }
+            if (level >= 6) {
+                abilities.push('Esplendor Arcano: Lança magias como Mago 5 níveis abaixo');
+            }
+            if (level >= 10) {
+                abilities.push('Ataque Extra: Segundo ataque com arma racial');
+            }
+        }
+        
+        // Anão Aventureiro (Guerreiro)
+        else if (/anão aventureiro|anao aventureiro|dwarf adventurer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Treinamento Racial: Mantém habilidades raciais de anão');
+            }
+            if (level >= 3) {
+                abilities.push('Resistência a Venenos: +2 em testes contra venenos');
+            }
+            if (level >= 6) {
+                abilities.push('Conhecimento de Pedras e Metais: Identifica pedras e metais');
+            }
+            if (level >= 10) {
+                abilities.push('Maestria em Armas Grandes: Usa armas grandes como médias');
+            }
+        }
+        
+        // Halfling Aventureiro (Ladrão)
+        else if (/halfling aventureiro|halfling adventurer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Treinamento Racial: Mantém habilidades raciais de halfling');
+            }
+            if (level >= 3) {
+                abilities.push('Sorte Natural: +1 em testes de sorte');
+            }
+            if (level >= 6) {
+                abilities.push('Habilidade com Fundas: +1 de dano com fundas');
+            }
+            if (level >= 10) {
+                abilities.push('Furtividade Aprimorada: +2 em testes de furtividade');
+            }
+        }
+        
+        return abilities;
     }
 
     /**
