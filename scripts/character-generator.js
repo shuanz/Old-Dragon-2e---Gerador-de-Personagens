@@ -743,16 +743,16 @@ class OldDragon2eCharacterGenerator {
         // Necromante (Mago)
         else if (/necromante|necromancer/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Magias Exclusivas: Acesso a Aterrorizar e Toque Sombrio');
+                abilities.push('Magias Exclusivas: Toque Sombrio e Aterrorizar no grimório (sem memorizar, 1 uso/dia cada, JP difícil)');
             }
             if (level >= 3) {
-                abilities.push('Comando de Mortos-Vivos: Controla criaturas mortas-vivas');
+                abilities.push('Criar Mortos-Vivos: Magia exclusiva adicionada ao grimório');
             }
             if (level >= 6) {
-                abilities.push('Criar Mortos-Vivos: Anima cadáveres como servos');
+                abilities.push('Drenar Vida: Magia exclusiva adicionada ao grimório');
             }
             if (level >= 10) {
-                abilities.push('Drenar Vida: Absorve energia vital de inimigos');
+                abilities.push('Magia da Morte: Magia exclusiva adicionada ao grimório');
             }
         }
         
