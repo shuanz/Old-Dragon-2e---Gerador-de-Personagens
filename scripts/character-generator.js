@@ -786,6 +786,7 @@ class OldDragon2eCharacterGenerator {
             gnome: 6
         };
 
+        console.log('Calculando movimento para raça:', race, 'Resultado:', movement[race] || 9);
         return movement[race] || 9;
     }
 
