@@ -567,18 +567,16 @@ class OldDragon2eCharacterGenerator {
         // Bárbaro (Guerreiro)
         else if (/bárbaro|barbarian/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Aparar: Sacrifica escudo/arma para absorver dano físico');
-                abilities.push('Maestria em Arma: +1 dano em uma arma escolhida');
                 abilities.push('Vigor Bárbaro: +2 PV por nível e +2 na JPC');
             }
             if (level >= 3) {
-                abilities.push('Talentos Selvagens: Escalar, Furtividade, Sobrevivência');
+                abilities.push('Talentos Selvagens: Escalar (1-3 em 1d6), Camuflagem Natural (1-2 em 1d6)');
             }
             if (level >= 6) {
-                abilities.push('Fúria: Aumenta temporariamente força e resistência em combate');
+                abilities.push('Surpresa Selvagem: Surpreende inimigos em ambientes naturais (1-4 em 1d6), só é surpreendido com 1 em 1d6');
             }
             if (level >= 10) {
-                abilities.push('Ataque Extra: Segundo ataque por rodada');
+                abilities.push('Força do Totem: Atinge criaturas que necessitam de arma mágica +1 ou melhor');
             }
         }
         
