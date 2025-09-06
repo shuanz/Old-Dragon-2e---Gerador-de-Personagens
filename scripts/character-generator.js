@@ -1745,6 +1745,76 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Re-rola apenas o equipamento do personagem atual respeitando restrições da classe
+     */
+    async rerollEquipment(dialog, html) {
+        try {
+            // Mostra indicador de carregamento no botão
+            const rerollBtn = html.find('#reroll-equipment');
+            const originalContent = rerollBtn.html();
+            rerollBtn.html('<i class="fas fa-spinner fa-spin"></i>');
+            rerollBtn.prop('disabled', true);
+
+            // Gera novo equipamento respeitando a classe atual
+            const characterClass = dialog.currentCharacter.class;
+            const archetype = this.mapClassToArchetype(characterClass);
+            const baseEquip = await this.generateEquipment(archetype);
+            const restrictions = this.getClassRestrictions(characterClass);
+            const newEquipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+            
+            // Atualiza o personagem atual
+            dialog.currentCharacter.equipment = newEquipment;
+
+            // Recalcula valores que dependem do equipamento
+            dialog.currentCharacter.armorClass = this.calculateArmorClass(
+                dialog.currentCharacter.attributes.dexterity, 
+                newEquipment
+            );
+
+            // Atualiza apenas o equipamento no HTML
+            this.updateEquipmentInModal(html, dialog.currentCharacter);
+            
+            // Atualiza informações básicas que dependem do equipamento
+            this.updateBasicInfoInModal(html, dialog.currentCharacter);
+
+            // Restaura o botão
+            rerollBtn.html(originalContent);
+            rerollBtn.prop('disabled', false);
+
+        } catch (error) {
+            console.error('Erro ao re-rolar equipamento:', error);
+            ui.notifications.error('Erro ao re-rolar equipamento: ' + error.message);
+            
+            // Restaura o botão mesmo em caso de erro
+            const rerollBtn = html.find('#reroll-equipment');
+            rerollBtn.html('<i class="fas fa-sack"></i>');
+            rerollBtn.prop('disabled', false);
+        }
+    }
+
+    /**
+     * Atualiza apenas o equipamento no modal
+     */
+    async updateEquipmentInModal(html, character) {
+        const equipmentItems = html.find('.equipment-items');
+        equipmentItems.empty();
+        
+        // Adiciona os novos itens de equipamento
+        character.equipment.forEach(item => {
+            const itemHtml = `
+                <div class="equipment-item">
+                    <div class="equipment-name">${item}</div>
+                    <div class="equipment-description">Carregando descrição...</div>
+                </div>
+            `;
+            equipmentItems.append(itemHtml);
+        });
+        
+        // Carrega descrições de forma assíncrona
+        await this.loadEquipmentDescriptions(character.equipment, equipmentItems);
+    }
+
+    /**
      * Atualiza o conteúdo do modal com um novo personagem
      */
     async updateModalContent(dialog, html) {
@@ -2038,7 +2108,7 @@ class OldDragon2eCharacterGenerator {
                             
                     <div class="equipment-section">
                     <div class="equipment-list">
-                        <h4><i class="fas fa-sack"></i> Equipamento</h4>
+                        <h4><i class="fas fa-sack btn-reroll-equipment" id="reroll-equipment" title="Clique para re-rolar equipamento respeitando restrições da classe"></i> Equipamento</h4>
                             <div class="equipment-items">
                                 ${character.equipment.map(item => `
                                     <div class="equipment-item">
@@ -2138,6 +2208,10 @@ class OldDragon2eCharacterGenerator {
 
                 html.find('#reroll-details').click(async () => {
                     await this.rerollDetails(dialog, html);
+                });
+
+                html.find('#reroll-equipment').click(async () => {
+                    await this.rerollEquipment(dialog, html);
                 });
 
                 html.find('#close-modal').click(() => {
