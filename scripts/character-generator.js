@@ -1804,7 +1804,6 @@ class OldDragon2eCharacterGenerator {
             character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
             character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
             character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
-            character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
             character.movement = this.calculateMovement(selectedRace.id);
             character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
             
