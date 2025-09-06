@@ -73,38 +73,39 @@
 .old-dragon-generator-modal .selection-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: nowrap;
-    min-height: 28px;
+    min-height: 24px;
     width: 100%;
 }
 
 .old-dragon-generator-modal .selection-item strong {
-    min-width: 60px;
-    width: 60px;
+    min-width: 45px;
+    width: 45px;
     flex-shrink: 0;
+    font-size: 0.95em;
 }
 
 .old-dragon-generator-modal .inline-select {
-    padding: 5px 10px;
-    border: 2px solid #8B0000;
-    border-radius: 5px;
+    padding: 3px 8px;
+    border: 1px solid #8B0000;
+    border-radius: 4px;
     background: linear-gradient(135deg, #ffffff, #f5f5f0);
     color: #333;
-    font-size: 0.95em;
+    font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B0000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 6px center;
-    background-size: 12px;
-    padding-right: 28px;
-    min-width: 100px;
+    background-position: right 4px center;
+    background-size: 10px;
+    padding-right: 24px;
+    min-width: 80px;
     flex: 1;
-    height: 28px;
-    line-height: 1.2;
+    height: 24px;
+    line-height: 1.1;
 }
 
 .old-dragon-generator-modal .inline-select:hover {
@@ -122,12 +123,12 @@
 }
 
 .old-dragon-generator-modal .inline-select option {
-    padding: 6px 10px;
+    padding: 4px 8px;
     background: #ffffff;
     color: #333;
     font-weight: 600;
-    font-size: 0.9em;
-    line-height: 1.2;
+    font-size: 0.85em;
+    line-height: 1.1;
 }
 
 .old-dragon-generator-modal .inline-select option:hover {
@@ -138,26 +139,27 @@
 /* Ajuste para o grid de informações */
 .old-dragon-generator-modal .info-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 4px;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
     align-items: start;
 }
 
 .old-dragon-generator-modal .info-item {
-    font-size: 1.1em;
-    padding: 3px 0;
-    line-height: 1.2;
+    font-size: 1em;
+    padding: 2px 0;
+    line-height: 1.1;
     display: flex;
     align-items: center;
-    min-height: 28px;
+    min-height: 24px;
     width: 100%;
 }
 
 .old-dragon-generator-modal .info-item strong {
-    margin-right: 8px;
+    margin-right: 6px;
     flex-shrink: 0;
-    min-width: 60px;
-    width: 60px;
+    min-width: 45px;
+    width: 45px;
+    font-size: 0.95em;
 }
 
 .old-dragon-generator-modal .character-preview {
@@ -232,7 +234,7 @@
     background: linear-gradient(135deg, #f8f5f0, #ede9d5);
     border: 2px solid #d3d3d3;
     border-radius: 12px;
-    padding: 20px;
+    padding: 12px;
     margin: 0;
     min-height: fit-content;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -259,14 +261,14 @@
 
 .old-dragon-generator-modal .character-basic-info h4 {
     color: #8B0000; /* Vermelho escuro como na ficha */
-    margin-bottom: 12px;
-    font-size: 1.4em; /* Fonte ainda maior */
+    margin-bottom: 8px;
+    font-size: 1.2em; /* Fonte ainda maior */
     font-weight: bold;
     border-bottom: 2px solid #8B0000;
-    padding-bottom: 8px;
+    padding-bottom: 4px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .old-dragon-generator-modal .info-grid {
