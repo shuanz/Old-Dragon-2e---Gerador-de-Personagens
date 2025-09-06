@@ -1755,6 +1755,9 @@ class OldDragon2eCharacterGenerator {
             rerollBtn.html('<i class="fas fa-spinner fa-spin"></i>');
             rerollBtn.prop('disabled', true);
 
+            // Preserva a posição da rolagem usando múltiplos seletores
+            const scrollPosition = this.preserveScrollPosition(html);
+
             // Gera novo equipamento respeitando a classe atual
             const characterClass = dialog.currentCharacter.class;
             const archetype = this.mapClassToArchetype(characterClass);
@@ -1772,10 +1775,13 @@ class OldDragon2eCharacterGenerator {
             );
 
             // Atualiza apenas o equipamento no HTML
-            this.updateEquipmentInModal(html, dialog.currentCharacter);
+            await this.updateEquipmentInModal(html, dialog.currentCharacter);
             
             // Atualiza informações básicas que dependem do equipamento
             this.updateBasicInfoInModal(html, dialog.currentCharacter);
+
+            // Restaura a posição da rolagem
+            this.restoreScrollPosition(html, scrollPosition);
 
             // Restaura o botão
             rerollBtn.html(originalContent);
@@ -1793,49 +1799,64 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Preserva a posição da rolagem usando múltiplos seletores
+     */
+    preserveScrollPosition(html) {
+        const positions = {};
+        
+        // Tenta diferentes seletores para encontrar o container de rolagem
+        const selectors = [
+            '.window-app .window-content',
+            '.window-app',
+            '.dialog .window-content',
+            '.dialog',
+            'body'
+        ];
+        
+        selectors.forEach(selector => {
+            const element = html.find(selector);
+            if (element.length > 0) {
+                positions[selector] = element.scrollTop();
+            }
+        });
+        
+        return positions;
+    }
+
+    /**
+     * Restaura a posição da rolagem
+     */
+    restoreScrollPosition(html, positions) {
+        // Aguarda um frame para garantir que o DOM foi atualizado
+        requestAnimationFrame(() => {
+            Object.entries(positions).forEach(([selector, scrollTop]) => {
+                const element = html.find(selector);
+                if (element.length > 0) {
+                    element.scrollTop(scrollTop);
+                }
+            });
+        });
+    }
+
+    /**
      * Atualiza apenas o equipamento no modal
      */
     async updateEquipmentInModal(html, character) {
         const equipmentItems = html.find('.equipment-items');
-        const existingItems = equipmentItems.find('.equipment-item');
         
-        // Se há itens existentes, atualiza apenas os nomes
-        if (existingItems.length > 0) {
-            character.equipment.forEach((item, index) => {
-                if (existingItems.eq(index).length > 0) {
-                    // Atualiza nome do item existente
-                    existingItems.eq(index).find('.equipment-name').text(item);
-                    existingItems.eq(index).find('.equipment-description').text('Carregando descrição...');
-                } else {
-                    // Adiciona novo item se não existir
-                    const itemHtml = `
-                        <div class="equipment-item">
-                            <div class="equipment-name">${item}</div>
-                            <div class="equipment-description">Carregando descrição...</div>
-                        </div>
-                    `;
-                    equipmentItems.append(itemHtml);
-                }
-            });
-            
-            // Remove itens extras se o novo equipamento tem menos itens
-            if (existingItems.length > character.equipment.length) {
-                for (let i = character.equipment.length; i < existingItems.length; i++) {
-                    existingItems.eq(i).remove();
-                }
-            }
-        } else {
-            // Se não há itens existentes, cria todos
-            character.equipment.forEach(item => {
-                const itemHtml = `
-                    <div class="equipment-item">
-                        <div class="equipment-name">${item}</div>
-                        <div class="equipment-description">Carregando descrição...</div>
-                    </div>
-                `;
-                equipmentItems.append(itemHtml);
-            });
-        }
+        // Limpa e recria o conteúdo (mais simples e confiável)
+        equipmentItems.empty();
+        
+        // Adiciona os novos itens de equipamento
+        character.equipment.forEach(item => {
+            const itemHtml = `
+                <div class="equipment-item">
+                    <div class="equipment-name">${item}</div>
+                    <div class="equipment-description">Carregando descrição...</div>
+                </div>
+            `;
+            equipmentItems.append(itemHtml);
+        });
         
         // Carrega descrições de forma assíncrona
         await this.loadEquipmentDescriptions(character.equipment, equipmentItems);
