@@ -437,11 +437,11 @@ class OldDragon2eCharacterGenerator {
             ];
         } else if (/bardo|bard/i.test(classNameLower)) {
             return [
-                'Armas: Apenas pequenas ou médias',
-                'Armaduras: Apenas leves',
-                'Magias Arcanas: Conjura magias arcanas limitadas',
-                'Inspiração: Motiva aliados com música',
-                'Talentos: Furtividade, Performance, etc.'
+                'Armas: Apenas pequenas ou médias. Armas grandes geram ataques difíceis',
+                'Armaduras: Apenas leves. Escudos e armaduras médias/pesadas impedem habilidades',
+                'Itens Mágicos: Podem usar todos os pergaminhos com metade dos níveis',
+                'Inspiração: Motiva aliados com música e performance',
+                'Talentos: Furtividade, Performance, Escalar, Arrombar, etc.'
             ];
         } else if (/ranger/i.test(classNameLower)) {
             return [
