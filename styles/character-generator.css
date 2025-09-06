@@ -363,32 +363,43 @@
     margin-right: 6px;
     display: inline-block;
     position: relative;
-    animation: gentle-glow 2s ease-in-out infinite;
-    color: #1E90FF;
+    animation: gentle-glow-red 2s ease-in-out infinite;
+    color: #8B0000;
 }
 
-@keyframes gentle-glow {
+@keyframes gentle-glow-red {
     0%, 100% { 
-        text-shadow: 0 0 5px rgba(30, 144, 255, 0.5);
+        text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
         filter: brightness(1);
     }
     50% { 
-        text-shadow: 0 0 15px rgba(30, 144, 255, 0.8), 0 0 25px rgba(30, 144, 255, 0.4);
+        text-shadow: 0 0 15px rgba(139, 0, 0, 0.8), 0 0 25px rgba(139, 0, 0, 0.4);
         filter: brightness(1.2);
     }
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:hover {
-    color: #1E90FF;
-    background: rgba(30, 144, 255, 0.15);
+    color: #228B22;
+    background: rgba(34, 139, 34, 0.15);
     transform: scale(1.15);
-    box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3);
-    animation: none;
+    box-shadow: 0 2px 8px rgba(34, 139, 34, 0.3);
+    animation: gentle-glow-green 1.5s ease-in-out infinite;
+}
+
+@keyframes gentle-glow-green {
+    0%, 100% { 
+        text-shadow: 0 0 5px rgba(34, 139, 34, 0.5);
+        filter: brightness(1);
+    }
+    50% { 
+        text-shadow: 0 0 15px rgba(34, 139, 34, 0.8), 0 0 25px rgba(34, 139, 34, 0.4);
+        filter: brightness(1.2);
+    }
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:active {
     transform: scale(0.95);
-    color: #0066CC;
+    color: #006400;
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:disabled {
