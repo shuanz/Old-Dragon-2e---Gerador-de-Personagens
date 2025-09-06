@@ -310,50 +310,54 @@ class OldDragon2eCharacterGenerator {
     /**
      * Obtém as habilidades de classe do SRD
      */
-    getClassAbilitiesFromSRD(selectedClass) {
+    async getClassAbilitiesFromSRD(selectedClass, level = 1) {
         try {
-            // Tenta extrair habilidades do sistema da classe do SRD
+            // Extrai habilidades exclusivamente do sistema da classe do SRD
             const classData = selectedClass.system;
             const abilities = [];
             
-            // Busca por habilidades em diferentes campos do sistema
-            if (classData?.features) {
-                Object.values(classData.features).forEach(feature => {
-                    if (feature?.name && feature?.description) {
-                        abilities.push(`${feature.name}: ${feature.description}`);
-                    }
-                });
-            }
+            // Debug: mostra a estrutura completa dos dados do SRD
+            console.log('Dados da classe do SRD:', selectedClass.name, classData);
             
-            // Busca por habilidades em outros campos comuns
-            if (classData?.abilities) {
-                Object.values(classData.abilities).forEach(ability => {
-                    if (ability?.name && ability?.description) {
-                        abilities.push(`${ability.name}: ${ability.description}`);
+            // Busca habilidades usando as referências do compendium
+            if (classData?.class_abilities && Array.isArray(classData.class_abilities)) {
+                console.log('Class abilities encontradas:', classData.class_abilities);
+                
+                for (const abilityRef of classData.class_abilities) {
+                    try {
+                        // Busca o item no compendium usando a referência
+                        const abilityItem = await fromUuid(abilityRef);
+                        if (abilityItem) {
+                            console.log('Habilidade encontrada:', abilityItem.name, abilityItem.system);
+                            
+                            // Extrai nome e descrição da habilidade
+                            const name = abilityItem.name || 'Habilidade';
+                            const description = abilityItem.system?.description || 
+                                              abilityItem.system?.description?.value || 
+                                              abilityItem.system?.description?.text ||
+                                              'Descrição não disponível';
+                            
+                            // Remove tags HTML da descrição se necessário
+                            const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
+                            
+                            abilities.push(`${name}: ${cleanDescription}`);
+                        } else {
+                            console.warn('Não foi possível encontrar habilidade:', abilityRef);
+                        }
+                    } catch (error) {
+                        console.warn('Erro ao carregar habilidade:', abilityRef, error);
                     }
-                });
-            }
-            
-            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
-            if (abilities.length === 0) {
-                const localClass = this.classes.find(c => 
-                    c.name.toLowerCase() === selectedClass.name.toLowerCase() ||
-                    c.id === selectedClass.id
-                );
-                if (localClass) {
-                    return localClass.abilities;
                 }
             }
             
-            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da classe
-            if (abilities.length === 0) {
-                return this.getBasicClassAbilities(selectedClass.name);
-            }
+            console.log('Habilidades extraídas do SRD:', abilities);
             
+            // Retorna apenas as habilidades encontradas no SRD
             return abilities;
+            
         } catch (error) {
             console.warn('Erro ao extrair habilidades de classe do SRD:', error);
-            return this.getBasicClassAbilities(selectedClass.name);
+            return [];
         }
     }
 
@@ -395,6 +399,110 @@ class OldDragon2eCharacterGenerator {
                 'Ler Magias: Decifra inscrições mágicas',
                 'Detectar Magias: Percebe presença mágica'
             ];
+        } else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Ler Magias: Decifra inscrições mágicas',
+                'Detectar Magias: Percebe presença mágica'
+            ];
+        } else if (/necromante|necromancer/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Ler Magias: Decifra inscrições mágicas',
+                'Detectar Magias: Percebe presença mágica'
+            ];
+        } else if (/ilusionista|illusionist/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas',
+                'Armaduras: Nenhuma',
+                'Magias Arcanas: Conjura magias arcanas diariamente',
+                'Ler Magias: Decifra inscrições mágicas',
+                'Detectar Magias: Percebe presença mágica'
+            ];
+        } else if (/bárbaro|barbarian/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Itens Mágicos: Não pode usar cajados, varinhas e pergaminhos mágicos',
+                'Aparar: Sacrifica escudo/arma para absorver dano',
+                'Maestria em Arma: +1 de dano em uma arma escolhida'
+            ];
+        } else if (/paladino|paladin/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Itens Mágicos: Não pode usar cajados, varinhas e pergaminhos mágicos',
+                'Aparar: Sacrifica escudo/arma para absorver dano',
+                'Maestria em Arma: +1 de dano em uma arma escolhida'
+            ];
+        } else if (/arqueiro|archer/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Itens Mágicos: Não pode usar cajados, varinhas e pergaminhos mágicos',
+                'Aparar: Sacrifica escudo/arma para absorver dano',
+                'Maestria em Arma: +1 de dano em uma arma escolhida'
+            ];
+        } else if (/bardo|bard/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias. Armas grandes geram ataques difíceis',
+                'Armaduras: Apenas leves. Escudos e armaduras médias/pesadas impedem habilidades',
+                'Itens Mágicos: Podem usar todos os pergaminhos com metade dos níveis',
+                'Inspiração: Motiva aliados com música e performance',
+                'Talentos: Furtividade, Performance, Escalar, Arrombar, etc.'
+            ];
+        } else if (/ranger/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias',
+                'Armaduras: Apenas leves',
+                'Ataque Furtivo: Dano x2 em ataques furtivos',
+                'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
+                'Talentos: Furtividade, Escalar, Arrombar, etc.'
+            ];
+        } else if (/assassino|assassin/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias',
+                'Armaduras: Apenas leves',
+                'Ataque Furtivo: Dano x2 em ataques furtivos',
+                'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
+                'Talentos: Furtividade, Escalar, Arrombar, etc.'
+            ];
+        } else if (/druida|druid/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/acadêmico|academic/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/xamã|shaman/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/proscrito|outcast/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
         }
         
         // Fallback genérico
@@ -402,52 +510,325 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Obtém habilidades específicas de especializações por nível
+     */
+    getSpecializationAbilities(className, level = 1) {
+        const classNameLower = className.toLowerCase();
+        const abilities = [];
+        
+        // Elfo Aventureiro (Mago)
+        if (/elfo aventureiro|elf adventurer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Treinamento Racial: Mantém habilidades raciais de elfo, +1 PV por nível, sem restrições de armas/armaduras, +2 dano com arma racial (cimitarra ou arco)');
+            }
+            if (level >= 3) {
+                abilities.push('Brilho Mágico: Conjura 1 magia de 1º círculo por dia como Mago 1º nível (1-3 em 1d6 chance de perder magia com armadura)');
+            }
+            if (level >= 6) {
+                abilities.push('Esplendor Arcano: Lança magias como Mago 5 níveis abaixo (1-2 em 1d6 chance de perder magia com armadura)');
+            }
+            if (level >= 10) {
+                abilities.push('Ataque Extra: Segundo ataque com arma racial escolhida (mesma BA, após primeiro ataque)');
+            }
+        }
+        
+        // Anão Aventureiro (Guerreiro)
+        else if (/anão aventureiro|anao aventureiro|dwarf adventurer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Arma Racial: Mantém habilidades raciais de anão, +2 dano com machado ou martelo escolhido');
+            }
+            if (level >= 3) {
+                abilities.push('Duro na Queda: Joga PV com 1d12 em vez de 1d10 (ou escolhe valor médio 6)');
+            }
+            if (level >= 6) {
+                abilities.push('Bastião Racial: Ataques de Orcs, Ogros e Hobgoblins são considerados difíceis');
+            }
+            if (level >= 10) {
+                abilities.push('Ataque Extra: Segundo ataque com arma racial escolhida (mesma BA, após primeiro ataque)');
+            }
+        }
+        
+        // Halfling Aventureiro (Ladrão)
+        else if (/halfling aventureiro|halfling adventurer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Arma Racial: Mantém habilidades raciais de halfling, +2 dano com arma de arremesso escolhida');
+            }
+            if (level >= 3) {
+                abilities.push('Valente: Imune a efeitos de medo/terror/horror, testes de atributo/JP/ataque se tornam fáceis quando amedrontado');
+            }
+            if (level >= 6) {
+                abilities.push('No Alvo: Ataques à distância com arma racial são considerados muito fáceis');
+            }
+            if (level >= 10) {
+                abilities.push('Arremesso Extra: Segundo arremesso por ataque com arma racial (mesma BA, após primeiro ataque)');
+            }
+        }
+        
+        // Bárbaro (Guerreiro)
+        else if (/bárbaro|barbarian/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Vigor Bárbaro: +2 PV por nível e +2 na JPC');
+            }
+            if (level >= 3) {
+                abilities.push('Talentos Selvagens: Escalar (1-3 em 1d6), Camuflagem Natural (1-2 em 1d6)');
+            }
+            if (level >= 6) {
+                abilities.push('Surpresa Selvagem: Surpreende inimigos em ambientes naturais (1-4 em 1d6), só é surpreendido com 1 em 1d6');
+            }
+            if (level >= 10) {
+                abilities.push('Força do Totem: Atinge criaturas que necessitam de arma mágica +1 ou melhor');
+            }
+        }
+        
+        // Paladino (Guerreiro)
+        else if (/paladino|paladin/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Imunidade a Doenças: Imune a qualquer doença mundana ou mágica');
+            }
+            if (level >= 3) {
+                abilities.push('Cura pelas Mãos: Cura 1 PV por nível do Paladino, 1x/dia (não cura doenças/amputações)');
+            }
+            if (level >= 6) {
+                abilities.push('Aura de Proteção: Barreira permanente como magia Proteção contra Alinhamento (vs criaturas caóticas)');
+            }
+            if (level >= 10) {
+                abilities.push('Espada Sagrada: Espada mágica consagrada com +5 dano/ataque contra criaturas caóticas');
+            }
+        }
+        
+        // Arqueiro (Guerreiro)
+        else if (/arqueiro|archer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Tiros em Curva: Não são ataques difíceis - cobertura, distância além do arco, alvos em combate corpo a corpo');
+            }
+            if (level >= 3) {
+                abilities.push('Puxada Aprimorada: Acrescenta modificador de Força nos danos com arcos');
+            }
+            if (level >= 6) {
+                abilities.push('Truques com Flechas: Grampear, desarmar, efeitos especiais (alvo escolhe consequência ou dano normal)');
+            }
+            if (level >= 10) {
+                abilities.push('Tiro Rápido: Segundo disparo durante ação de combate');
+            }
+        }
+        
+        // Druida (Clérigo)
+        else if (/druida|druid/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Herbalismo: Identifica plantas, animais e reconhece água pura e segura');
+            }
+            if (level >= 3) {
+                abilities.push('Previdência: Acampamentos nos ermos sempre são do tipo seguro');
+            }
+            if (level >= 6) {
+                abilities.push('Transformação: Assume forma de animal pequeno não-mágico até 6 DV, 3x/dia');
+            }
+            if (level >= 10) {
+                abilities.push('Transformação Melhorada: Assume forma de animal não-mágico qualquer tamanho até 10 DV, 3x/dia');
+            }
+        }
+        
+        // Acadêmico (Clérigo)
+        else if (/acadêmico|academic/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Conhecimento Acadêmico: Identifica monstros/animais, ataques/defesas, habilidades/fraquezas, hábitos (1-2 em 1d6)');
+            }
+            if (level >= 3) {
+                abilities.push('Decifrar Linguagens: Decifra idiomas, alfabetos, pictogramas, documentos (Conhecimento Acadêmico evolui para 1-3 em 1d6)');
+            }
+            if (level >= 6) {
+                abilities.push('Lendas e Tradições: Identifica lendas, tradições, eventos históricos, curiosidades/perigos de lugares + rumor adicional por modificador de Sabedoria (Conhecimento Acadêmico evolui para 1-4 em 1d6)');
+            }
+            if (level >= 10) {
+                abilities.push('Identificar Itens: Identifica propósito geral de itens mágicos após 1d4 turnos de observação (1-2 em 1d6, itens caóticos se camuflam)');
+            }
+        }
+        
+        // Xamã (Clérigo)
+        else if (/xamã|shaman/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Animal Sagrado: Seleciona animal/criatura como símbolo divino, seguidores fazem ataques fáceis durante canções sagradas');
+            }
+            if (level >= 3) {
+                abilities.push('Cura Totêmica: Troca magia preparada por Curar Ferimentos 1º círculo (1d8 PV)');
+            }
+            if (level >= 6) {
+                abilities.push('Fúria: Cantoria sagrada estimula aliado a entrar em fúria (dado de dano superior, ataques muito fáceis, alvo fácil para inimigos)');
+            }
+            if (level >= 10) {
+                abilities.push('Fúria da Natureza: Troca magia 5º círculo por Controlar o Clima 7º círculo (mesmo sem acesso a magias 7º círculo)');
+            }
+        }
+        
+        // Proscrito (Clérigo)
+        else if (/proscrito|outcast/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Cura Natural: Cura como curandeiro/médico (2 PV ou 1d4+1 em repouso), pode evitar morte de agonizantes');
+            }
+            if (level >= 3) {
+                abilities.push('Treinamento em Combate: +1 BA em relação a Clérigo padrão, pode usar qualquer arma ou armadura');
+            }
+            if (level >= 6) {
+                abilities.push('Afetar Mortos-Vivos: 1x/dia força mortos-vivos a teste de moral (ataques difíceis se falharem)');
+            }
+            if (level >= 10) {
+                abilities.push('Misticismo: Conjura magias divinas de 1º círculo conforme tabela padrão de Clérigo');
+            }
+        }
+        
+        // Ranger (Ladrão)
+        else if (/ranger/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Inimigo Mortal: Guardião de região dos ermos, escolhe inimigo (Orcs, Goblins, Homens Lagartos, Trolls, Gigantes) - ataques fáceis e -2 em testes de reação');
+            }
+            if (level >= 3) {
+                abilities.push('Combativo: Pode usar armas grandes e escudos sem penalidades (limitado a Armaduras Leves)');
+            }
+            if (level >= 6) {
+                abilities.push('Previdência: Nos ermos só é surpreendido com 1 em 1d6, acampamentos sempre são seguros');
+            }
+            if (level >= 10) {
+                abilities.push('Companheiro Animal: Criatura dos ermos adota Ranger como aliado (ataques, vigia, mensagens), 1-4 chances em 1d6 de novo companheiro a cada nível se morrer');
+            }
+        }
+        
+        // Bardo (Ladrão)
+        else if (/bardo|bard/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Influenciar: Por música/oratória influencia reações de monstros/NPCs (1-2 em 1d6), +1 ou -1 no Teste de Reação');
+            }
+            if (level >= 3) {
+                abilities.push('Inspirar: Atuando por 1+ rodadas, aliados têm testes de atributos/ataques um nível mais fácil');
+            }
+            if (level >= 6) {
+                abilities.push('Fascinar: Audiência não hostil até 2 DV a cada 3 níveis fica concentrada no desempenho artístico');
+            }
+            if (level >= 10) {
+                abilities.push('Usar Pergaminhos: Usa pergaminhos como Mago com metade dos níveis');
+            }
+        }
+        
+        // Assassino (Ladrão)
+        else if (/assassino|assassin/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Ataque Assassino: Após aproximação furtiva, ataque muito fácil com dano x2');
+            }
+            if (level >= 3) {
+                abilities.push('Espreitar: 1 rodada observando = primeiro ataque fácil, 4 rodadas = ataque muito fácil');
+            }
+            if (level >= 6) {
+                abilities.push('Assassinato: Golpe fatal (1-2 em 1d6), cada DV do alvo ≥ DV do Assassino reduz chance em 1');
+            }
+            if (level >= 10) {
+                abilities.push('Ataque Mortal: Ataque Assassino evolui para dano x3, Assassinato evolui para 1-3 em 1d6');
+            }
+        }
+        
+        // Ilusionista (Mago)
+        else if (/ilusionista|illusionist/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Magias Exclusivas: Ilusão e Som Ilusório no grimório (sem memorizar, 1 uso/dia cada, JP difícil)');
+            }
+            if (level >= 3) {
+                abilities.push('Ilusão Melhorada: Magia exclusiva adicionada ao grimório');
+            }
+            if (level >= 6) {
+                abilities.push('Miragem: Magia exclusiva adicionada ao grimório');
+            }
+            if (level >= 10) {
+                abilities.push('Ilusão Permanente: Magia exclusiva adicionada ao grimório');
+            }
+        }
+        
+        // Necromante (Mago)
+        else if (/necromante|necromancer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Magias Exclusivas: Toque Sombrio e Aterrorizar no grimório (sem memorizar, 1 uso/dia cada, JP difícil)');
+            }
+            if (level >= 3) {
+                abilities.push('Criar Mortos-Vivos: Magia exclusiva adicionada ao grimório');
+            }
+            if (level >= 6) {
+                abilities.push('Drenar Vida: Magia exclusiva adicionada ao grimório');
+            }
+            if (level >= 10) {
+                abilities.push('Magia da Morte: Magia exclusiva adicionada ao grimório');
+            }
+        }
+        
+        // Bruxo (Mago)
+        else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Rituais: Canaliza poder extraplanar através de rituais de palavras e gestos. Ritual leva 1 rodada para executar, efeito inicia na próxima rodada');
+                abilities.push('Lista de Rituais: Pode escolher livremente suas magias dentre todas as magias dos círculos disponíveis para seu nível');
+                abilities.push('Metal: Objetos de metal atrapalham canalização do ritual (1-2 em 1d6 chance de perder ritual sem efeito)');
+                abilities.push('Iniciado: Conjura magias 1º círculo, pode usar armas médias e armaduras leves sem prejudicar rituais');
+            }
+            if (level >= 3) {
+                abilities.push('Médium: Conjura magias 2º círculo, pode usar armas grandes sem prejudicar rituais');
+            }
+            if (level >= 6) {
+                abilities.push('Conjurador: Conjura magias 3º círculo, pode usar armaduras médias sem prejudicar rituais');
+            }
+            if (level >= 10) {
+                abilities.push('Entidade: Conjura magias 4º-6º círculos (conforme nível), pode usar todas armaduras e armas sem prejudicar rituais');
+            }
+        }
+        
+        return abilities;
+    }
+
+    /**
      * Obtém as habilidades de raça do SRD
      */
-    getRaceAbilitiesFromSRD(selectedRace) {
+    async getRaceAbilitiesFromSRD(selectedRace) {
         try {
-            // Tenta extrair habilidades do sistema da raça do SRD
+            // Extrai habilidades exclusivamente do sistema da raça do SRD
             const raceData = selectedRace.system;
             const abilities = [];
             
-            // Busca por habilidades em diferentes campos do sistema
-            if (raceData?.features) {
-                Object.values(raceData.features).forEach(feature => {
-                    if (feature?.name && feature?.description) {
-                        abilities.push(`${feature.name}: ${feature.description}`);
-                    }
-                });
-            }
+            // Debug: mostra a estrutura completa dos dados do SRD
+            console.log('Dados da raça do SRD:', selectedRace.name, raceData);
             
-            // Busca por habilidades em outros campos comuns
-            if (raceData?.abilities) {
-                Object.values(raceData.abilities).forEach(ability => {
-                    if (ability?.name && ability?.description) {
-                        abilities.push(`${ability.name}: ${ability.description}`);
+            // Busca habilidades usando as referências do compendium
+            if (raceData?.race_abilities && Array.isArray(raceData.race_abilities)) {
+                console.log('Race abilities encontradas:', raceData.race_abilities);
+                
+                for (const abilityRef of raceData.race_abilities) {
+                    try {
+                        // Busca o item no compendium usando a referência
+                        const abilityItem = await fromUuid(abilityRef);
+                        if (abilityItem) {
+                            console.log('Habilidade encontrada:', abilityItem.name, abilityItem.system);
+                            
+                            // Extrai nome e descrição da habilidade
+                            const name = abilityItem.name || 'Habilidade';
+                            const description = abilityItem.system?.description || 
+                                              abilityItem.system?.description?.value || 
+                                              abilityItem.system?.description?.text ||
+                                              'Descrição não disponível';
+                            
+                            // Remove tags HTML da descrição se necessário
+                            const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
+                            
+                            abilities.push(`${name}: ${cleanDescription}`);
+                        } else {
+                            console.warn('Não foi possível encontrar habilidade:', abilityRef);
+                        }
+                    } catch (error) {
+                        console.warn('Erro ao carregar habilidade:', abilityRef, error);
                     }
-                });
-            }
-            
-            // Se não encontrou habilidades no SRD, usa as habilidades locais como fallback
-            if (abilities.length === 0) {
-                const localRace = this.races.find(r => 
-                    r.name.toLowerCase() === selectedRace.name.toLowerCase() ||
-                    r.id === selectedRace.id
-                );
-                if (localRace) {
-                    return localRace.abilities;
                 }
             }
             
-            // Se ainda não encontrou nada, retorna habilidades básicas baseadas no nome da raça
-            if (abilities.length === 0) {
-                return this.getBasicRaceAbilities(selectedRace.name);
-            }
+            console.log('Habilidades extraídas do SRD:', abilities);
             
+            // Retorna apenas as habilidades encontradas no SRD
             return abilities;
+            
         } catch (error) {
             console.warn('Erro ao extrair habilidades de raça do SRD:', error);
-            return this.getBasicRaceAbilities(selectedRace.name);
+            return [];
         }
     }
 
@@ -1194,66 +1575,33 @@ class OldDragon2eCharacterGenerator {
     async generateCharacter() {
         const attributes = this.generateAttributes();
         const modifiers = this.calculateModifiers(attributes);
-        const race = this.races[Math.floor(Math.random() * this.races.length)];
         
-        // Filtra classes disponíveis baseado na raça
-        const availableClasses = this.classes.filter(cls => {
-            // Se a classe tem restrição de raça, só pode ser escolhida pela raça correta
-            if (cls.raceRestriction) {
-                return cls.raceRestriction === race.id;
-            }
-            // Classes sem restrição podem ser escolhidas por qualquer raça
-            return true;
-        });
-        
-        console.log('Raça selecionada:', race.id, race.name);
-        console.log('Classes disponíveis:', availableClasses.map(c => c.name));
-        console.log('Total de classes disponíveis:', availableClasses.length);
-        
-        const characterClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
-        console.log('Classe selecionada:', characterClass.name, 'ID:', characterClass.id);
-        const name = this.generateRaceName(race.id);
-        const equipment = await this.generateEquipment(characterClass.id);
-        const hitPoints = this.calculateHitPoints(characterClass.id, attributes.constitution);
-        
-        // Novos cálculos
-        const armorClass = this.calculateArmorClass(attributes.dexterity, equipment);
-        const baseAttack = this.calculateBaseAttack(characterClass.id, 1);
-        const savingThrows = this.calculateSavingThrows(characterClass.id, 1);
-        const movement = this.calculateMovement(race.id);
-        const languages = this.calculateLanguages(attributes.intelligence, race.id);
-        const alignment = this.generateAlignment();
-        const appearance = this.generateAppearance();
-        const personality = this.generatePersonality();
-        const background = this.generateBackground();
-        
-        // Magias iniciais serão geradas em showGeneratorModal após carregar classe do SRD
-
         // Debug: log dos atributos e modificadores
         console.log('Atributos gerados:', attributes);
         console.log('Modificadores calculados:', modifiers);
 
         return {
-            name,
-            race: race.name,
-            raceAbilities: race.abilities,
-            class: characterClass.name,
-            classAbilities: characterClass.abilities,
+            name: '', // Será preenchido depois com dados do SRD
+            race: '', // Será preenchido depois com dados do SRD
+            raceAbilities: [], // Será preenchido depois com dados do SRD
+            class: '', // Será preenchido depois com dados do SRD
+            classAbilities: [], // Será preenchido depois com dados do SRD
             attributes,
             modifiers,
-            hitPoints,
-            armorClass,
-            baseAttack,
-            savingThrows,
-            movement,
-            languages,
-            alignment,
-            appearance,
-            personality,
-            background,
-            equipment,
+            equipment: [], // Será preenchido depois com dados do SRD
+            hitPoints: 0, // Será calculado depois com dados do SRD
+            armorClass: 0, // Será calculado depois com dados do SRD
+            baseAttack: 0, // Será calculado depois com dados do SRD
+            savingThrows: {}, // Será calculado depois com dados do SRD
+            movement: 0, // Será calculado depois com dados do SRD
+            languages: { count: 0, languages: [] }, // Será calculado depois com dados do SRD
+            alignment: this.generateAlignment(),
+            appearance: this.generateAppearance(),
+            personality: this.generatePersonality(),
+            background: this.generateBackground(),
             level: 1,
-            experience: 0
+            experience: 0,
+            initialSpells: [] // Será preenchido depois com dados do SRD
         };
     }
 
@@ -1912,7 +2260,7 @@ class OldDragon2eCharacterGenerator {
                 character.raceUUID = selectedRace.uuid;
                 character.raceData = selectedRace.system;
                 // Atualiza habilidades de raça com base na raça selecionada
-                character.raceAbilities = this.getRaceAbilitiesFromSRD(selectedRace);
+                character.raceAbilities = await this.getRaceAbilitiesFromSRD(selectedRace);
                 // Gera o nome compatível com a raça selecionada
                 character.name = this.generateRaceName(selectedRace.id);
                 console.log('Raça aplicada:', character.race);
@@ -1924,6 +2272,9 @@ class OldDragon2eCharacterGenerator {
                 character.classUUID = selectedClass.uuid;
                 character.classData = selectedClass.system;
                 console.log('Classe aplicada:', character.class);
+
+                // Atualiza habilidades de classe com base na classe selecionada
+                character.classAbilities = await this.getClassAbilitiesFromSRD(selectedClass);
 
                 // Ajusta equipamento para respeitar restrições da classe selecionada
                 const archetype = this.mapClassToArchetype(selectedClass.name);
@@ -1942,6 +2293,16 @@ class OldDragon2eCharacterGenerator {
                 } else if (isDivineClass) {
                     console.log('Classe divina detectada, magias serão importadas do SRD');
                 }
+            }
+
+            // Recalcula valores que dependem de raça e classe
+            if (selectedRace && selectedClass) {
+                character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
+                character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
+                character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
+                character.savingThrows = this.calculateSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level);
+                character.movement = this.calculateMovement(selectedRace.id);
+                character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
             }
 
             // Atualiza a referência do personagem no dialog
@@ -2139,7 +2500,7 @@ class OldDragon2eCharacterGenerator {
             character.raceUUID = selectedRace.uuid;
             character.raceData = selectedRace.system;
             // Atualiza habilidades de raça com base na raça selecionada
-            character.raceAbilities = this.getRaceAbilitiesFromSRD(selectedRace);
+            character.raceAbilities = await this.getRaceAbilitiesFromSRD(selectedRace);
             // Gera o nome compatível com a raça selecionada
             character.name = this.generateRaceName(selectedRace.id);
             console.log('Raça aplicada:', character.race);
@@ -2153,7 +2514,7 @@ class OldDragon2eCharacterGenerator {
             console.log('Classe aplicada:', character.class);
 
             // Atualiza habilidades de classe com base na classe selecionada
-            character.classAbilities = this.getClassAbilitiesFromSRD(selectedClass);
+            character.classAbilities = await this.getClassAbilitiesFromSRD(selectedClass);
 
             // Ajusta equipamento para respeitar restrições da classe selecionada
             const archetype = this.mapClassToArchetype(selectedClass.name);
@@ -2172,6 +2533,16 @@ class OldDragon2eCharacterGenerator {
             } else if (isDivineClass) {
                 console.log('Classe divina detectada, magias serão importadas do SRD');
             }
+        }
+
+        // Recalcula valores que dependem de raça e classe
+        if (selectedRace && selectedClass) {
+            character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
+            character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
+            character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
+            character.savingThrows = this.calculateSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level);
+            character.movement = this.calculateMovement(selectedRace.id);
+            character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
         }
         
         const modalContent = `
