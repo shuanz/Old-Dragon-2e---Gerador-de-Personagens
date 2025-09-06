@@ -564,6 +564,214 @@ class OldDragon2eCharacterGenerator {
             }
         }
         
+        // Bárbaro (Guerreiro)
+        else if (/bárbaro|barbarian/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Fúria: Entra em estado de fúria em combate (+2 Força, -1 CA)');
+            }
+            if (level >= 3) {
+                abilities.push('Resistência: Resistência natural a dano físico');
+            }
+            if (level >= 6) {
+                abilities.push('Ataque Selvagem: Ataques mais poderosos em fúria');
+            }
+            if (level >= 10) {
+                abilities.push('Fúria Indomável: Imunidade a efeitos mentais em fúria');
+            }
+        }
+        
+        // Paladino (Guerreiro)
+        else if (/paladino|paladin/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Código de Honra: Deve seguir código de conduta');
+            }
+            if (level >= 3) {
+                abilities.push('Imunidade a Doenças: Resistência natural a doenças');
+            }
+            if (level >= 6) {
+                abilities.push('Cura pelas Mãos: Pode curar ferimentos 1x/dia');
+            }
+            if (level >= 10) {
+                abilities.push('Afastar Mal: Afasta criaturas malignas');
+            }
+        }
+        
+        // Arqueiro (Guerreiro)
+        else if (/arqueiro|archer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Especialização em Arco: +1 de dano com arcos');
+            }
+            if (level >= 3) {
+                abilities.push('Tiro Preciso: Ignora cobertura parcial');
+            }
+            if (level >= 6) {
+                abilities.push('Tiro Múltiplo: Ataca múltiplos alvos');
+            }
+            if (level >= 10) {
+                abilities.push('Tiro Mortal: Chance de causar dano crítico');
+            }
+        }
+        
+        // Druida (Clérigo)
+        else if (/druida|druid/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Comunhão com Natureza: Compreende animais');
+            }
+            if (level >= 3) {
+                abilities.push('Transformação: Transforma-se em animais');
+            }
+            if (level >= 6) {
+                abilities.push('Herbalismo: Conhecimento de plantas medicinais');
+            }
+            if (level >= 10) {
+                abilities.push('Forma Elemental: Transforma-se em elemento');
+            }
+        }
+        
+        // Acadêmico (Clérigo)
+        else if (/acadêmico|academic/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Conhecimento Acadêmico: +2 em testes de conhecimento');
+            }
+            if (level >= 3) {
+                abilities.push('Pesquisa: Encontra informações em bibliotecas');
+            }
+            if (level >= 6) {
+                abilities.push('Magias Especiais: Acesso a magias únicas');
+            }
+            if (level >= 10) {
+                abilities.push('Sabedoria Suprema: Conhecimento de todas as magias');
+            }
+        }
+        
+        // Xamã (Clérigo)
+        else if (/xamã|shaman/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Comunhão Espiritual: Contato com espíritos');
+            }
+            if (level >= 3) {
+                abilities.push('Visões: Recebe visões proféticas');
+            }
+            if (level >= 6) {
+                abilities.push('Possessão: Espíritos podem possuir aliados');
+            }
+            if (level >= 10) {
+                abilities.push('Ascensão: Transforma-se em espírito');
+            }
+        }
+        
+        // Proscrito (Clérigo)
+        else if (/proscrito|outcast/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Magias Proibidas: Acesso a magias sombrias');
+            }
+            if (level >= 3) {
+                abilities.push('Corrupção: Pode corromper outros');
+            }
+            if (level >= 6) {
+                abilities.push('Necromancia: Cria mortos-vivos');
+            }
+            if (level >= 10) {
+                abilities.push('Apoteose: Transforma-se em lich');
+            }
+        }
+        
+        // Ranger (Ladrão)
+        else if (/ranger/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Inimigo Mortal: Bônus contra inimigos específicos');
+            }
+            if (level >= 3) {
+                abilities.push('Rastreamento: Segue trilhas na natureza');
+            }
+            if (level >= 6) {
+                abilities.push('Combate Duplo: Usa duas armas simultaneamente');
+            }
+            if (level >= 10) {
+                abilities.push('Mestre da Floresta: Controle sobre animais selvagens');
+            }
+        }
+        
+        // Bardo (Ladrão)
+        else if (/bardo|bard/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Inspiração: Motiva aliados com música');
+            }
+            if (level >= 3) {
+                abilities.push('Magias Menores: Conjura magias arcanas limitadas');
+            }
+            if (level >= 6) {
+                abilities.push('Performance: Encanta audiências');
+            }
+            if (level >= 10) {
+                abilities.push('Magia Suprema: Conjura magias poderosas');
+            }
+        }
+        
+        // Assassino (Ladrão)
+        else if (/assassino|assassin/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Ataque Furtivo Aprimorado: Dano x3 em ataques furtivos');
+            }
+            if (level >= 3) {
+                abilities.push('Veneno: Conhecimento de venenos');
+            }
+            if (level >= 6) {
+                abilities.push('Disfarce: Assume identidades falsas');
+            }
+            if (level >= 10) {
+                abilities.push('Morte Instantânea: Chance de matar instantaneamente');
+            }
+        }
+        
+        // Ilusionista (Mago)
+        else if (/ilusionista|illusionist/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Especialização em Ilusões: +1 em magias de ilusão');
+            }
+            if (level >= 3) {
+                abilities.push('Criação de Ilusões: Cria ilusões convincentes');
+            }
+            if (level >= 6) {
+                abilities.push('Ilusões Avançadas: Ilusões que causam dano');
+            }
+            if (level >= 10) {
+                abilities.push('Realidade Alternativa: Cria dimensões ilusórias');
+            }
+        }
+        
+        // Necromante (Mago)
+        else if (/necromante|necromancer/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Especialização em Necromancia: +1 em magias de morte');
+            }
+            if (level >= 3) {
+                abilities.push('Comando de Mortos-Vivos: Controla mortos-vivos');
+            }
+            if (level >= 6) {
+                abilities.push('Drenar Vida: Absorve vida de inimigos');
+            }
+            if (level >= 10) {
+                abilities.push('Imortalidade: Transforma-se em lich');
+            }
+        }
+        
+        // Bruxo (Mago)
+        else if (/bruxo|warlock|feiticeiro/i.test(classNameLower)) {
+            if (level >= 1) {
+                abilities.push('Pacto Mágico: Poderes através de pactos');
+            }
+            if (level >= 3) {
+                abilities.push('Invocação: Conjura magias através de invocações');
+            }
+            if (level >= 6) {
+                abilities.push('Magias Proibidas: Acesso a magias sombrias');
+            }
+            if (level >= 10) {
+                abilities.push('Apoteose: Transforma-se em demônio');
+            }
+        }
+        
         return abilities;
     }
 
