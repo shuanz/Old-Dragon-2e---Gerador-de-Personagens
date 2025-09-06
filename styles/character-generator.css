@@ -73,54 +73,86 @@
 .old-dragon-generator-modal .selection-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 12px;
+    flex-wrap: nowrap;
+    min-height: 40px;
+}
+
+.old-dragon-generator-modal .selection-item strong {
+    min-width: 60px;
+    flex-shrink: 0;
 }
 
 .old-dragon-generator-modal .inline-select {
-    padding: 6px 12px;
-    border: 2px solid #d3d3d3;
-    border-radius: 6px;
+    padding: 10px 16px;
+    border: 2px solid #8B0000;
+    border-radius: 8px;
     background: linear-gradient(135deg, #ffffff, #f5f5f0);
     color: #333;
-    font-size: 1em;
-    font-weight: 500;
+    font-size: 1.1em;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B0000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 14px;
-    padding-right: 32px;
-    min-width: 150px;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+    min-width: 180px;
     flex: 1;
+    height: 40px;
+    line-height: 1.2;
 }
 
 .old-dragon-generator-modal .inline-select:hover {
-    border-color: #8B0000;
-    background: linear-gradient(135deg, #f0f0f0, #e8e8e0);
+    border-color: #A0522D;
+    background: linear-gradient(135deg, #f8f5f0, #ede9d5);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.15);
 }
 
 .old-dragon-generator-modal .inline-select:focus {
     outline: none;
     border-color: #8B0000;
-    box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.2);
     background: linear-gradient(135deg, #ffffff, #f5f5f0);
 }
 
 .old-dragon-generator-modal .inline-select option {
-    padding: 8px 12px;
+    padding: 12px 16px;
     background: #ffffff;
     color: #333;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1em;
+    line-height: 1.4;
 }
 
 .old-dragon-generator-modal .inline-select option:hover {
     background: #f0f0f0;
     color: #8B0000;
+}
+
+/* Ajuste para o grid de informações */
+.old-dragon-generator-modal .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.old-dragon-generator-modal .info-item {
+    font-size: 1.3em;
+    padding: 6px 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+}
+
+.old-dragon-generator-modal .info-item strong {
+    margin-right: 8px;
+    flex-shrink: 0;
 }
 
 .old-dragon-generator-modal .character-preview {

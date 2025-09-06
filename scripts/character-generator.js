@@ -1606,15 +1606,15 @@ class OldDragon2eCharacterGenerator {
         const infoItems = html.find('.info-item');
         
         // Atualiza cada informação básica na ordem correta
-        infoItems.eq(0).html(`<strong>Nome:</strong> ${character.name}`);
+        infoItems.eq(0).find('span').text(character.name);
         // Os dropdowns de raça e classe são atualizados pelos event listeners
-        infoItems.eq(3).html(`<strong>Nível:</strong> ${character.level}`);
-        infoItems.eq(4).html(`<strong>PV:</strong> ${character.hitPoints}`);
-        infoItems.eq(5).html(`<strong>CA:</strong> ${character.armorClass}`);
-        infoItems.eq(6).html(`<strong>BAC:</strong> ${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
-        infoItems.eq(7).html(`<strong>MV:</strong> ${character.movement}m`);
-        infoItems.eq(8).html(`<strong>Idiomas:</strong> ${character.languages.languages.join(', ')}`);
-        infoItems.eq(9).html(`<strong>Alinhamento:</strong> ${character.alignment}`);
+        infoItems.eq(3).find('span').text(character.level);
+        infoItems.eq(4).find('span').text(character.hitPoints);
+        infoItems.eq(5).find('span').text(character.armorClass);
+        infoItems.eq(6).find('span').html(`${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
+        infoItems.eq(7).find('span').text(`${character.movement}m`);
+        infoItems.eq(8).find('span').text(character.languages.languages.join(', '));
+        infoItems.eq(9).find('span').text(character.alignment);
 
         // Atualiza atributos - usando os seletores corretos baseados no HTML atual
         const attributeItems = html.find('.attribute-item');
@@ -1690,7 +1690,10 @@ class OldDragon2eCharacterGenerator {
                             <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
                                 <div class="info-grid">
-                                    <div class="info-item"><strong>Nome:</strong> ${character.name}</div>
+                                    <div class="info-item">
+                                        <strong>Nome:</strong> 
+                                        <span>${character.name}</span>
+                                    </div>
                                     <div class="info-item selection-item">
                                         <strong>Raça:</strong> 
                                         <select id="race-select" class="inline-select race-select">
@@ -1705,13 +1708,34 @@ class OldDragon2eCharacterGenerator {
                                             ${availableClasses.map(cls => `<option value="${cls.id}" ${selectedClass && selectedClass.id === cls.id ? 'selected' : ''}>${cls.name}</option>`).join('')}
                                         </select>
                                     </div>
-                                    <div class="info-item"><strong>Nível:</strong> ${character.level}</div>
-                                    <div class="info-item"><strong>PV:</strong> ${character.hitPoints}</div>
-                                    <div class="info-item"><strong>CA:</strong> ${character.armorClass}</div>
-                                    <div class="info-item"><strong>BAC:</strong> ${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}</div>
-                                    <div class="info-item"><strong>MV:</strong> ${character.movement}m</div>
-                                    <div class="info-item"><strong>Idiomas:</strong> ${character.languages.languages.join(', ')}</div>
-                                    <div class="info-item"><strong>Alinhamento:</strong> ${character.alignment}</div>
+                                    <div class="info-item">
+                                        <strong>Nível:</strong> 
+                                        <span>${character.level}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>PV:</strong> 
+                                        <span>${character.hitPoints}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>CA:</strong> 
+                                        <span>${character.armorClass}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>BAC:</strong> 
+                                        <span>${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>MV:</strong> 
+                                        <span>${character.movement}m</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>Idiomas:</strong> 
+                                        <span>${character.languages.languages.join(', ')}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>Alinhamento:</strong> 
+                                        <span>${character.alignment}</span>
+                                    </div>
                                 </div>
                             </div>
                             
