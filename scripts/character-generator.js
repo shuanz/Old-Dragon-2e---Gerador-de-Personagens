@@ -551,16 +551,16 @@ class OldDragon2eCharacterGenerator {
         // Halfling Aventureiro (Ladrão)
         else if (/halfling aventureiro|halfling adventurer/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Treinamento Racial: Mantém habilidades raciais de halfling');
+                abilities.push('Arma Racial: Mantém habilidades raciais de halfling, +2 dano com arma de arremesso escolhida');
             }
             if (level >= 3) {
-                abilities.push('Sorte Natural: +1 em testes de sorte');
+                abilities.push('Valente: Imune a efeitos de medo/terror/horror, testes de atributo/JP/ataque se tornam fáceis quando amedrontado');
             }
             if (level >= 6) {
-                abilities.push('Habilidade com Fundas: +1 de dano com fundas');
+                abilities.push('No Alvo: Ataques à distância com arma racial são considerados muito fáceis');
             }
             if (level >= 10) {
-                abilities.push('Furtividade Aprimorada: +2 em testes de furtividade');
+                abilities.push('Arremesso Extra: Segundo arremesso por ataque com arma racial (mesma BA, após primeiro ataque)');
             }
         }
         
