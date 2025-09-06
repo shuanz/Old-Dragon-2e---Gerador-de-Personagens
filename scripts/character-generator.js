@@ -2326,32 +2326,6 @@ class OldDragon2eCharacterGenerator {
         }
     }
 
-    /**
-     * Formata o texto das habilidades para melhor legibilidade
-     * @param {string} abilityText - Texto da habilidade
-     * @returns {string} - Texto formatado
-     */
-    formatAbilityText(abilityText) {
-        // Se o texto for muito longo, adiciona quebras de linha em pontos estratégicos
-        if (abilityText.length > 80) {
-            // Quebra após dois pontos seguido de espaço (mais conservador)
-            let formatted = abilityText.replace(/:\s+/g, ':<br>&nbsp;&nbsp;');
-            
-            // Quebra após vírgulas apenas em textos extremamente longos
-            if (formatted.length > 120) {
-                formatted = formatted.replace(/,\s+/g, ',<br>&nbsp;&nbsp;');
-            }
-            
-            // Quebra após parênteses apenas em textos muito longos
-            if (formatted.length > 150) {
-                formatted = formatted.replace(/\)\s+/g, ')<br>&nbsp;&nbsp;');
-            }
-            
-            return formatted;
-        }
-        
-        return abilityText;
-    }
 
     /**
      * Atualiza o HTML do modal com os novos dados do personagem
@@ -2388,21 +2362,6 @@ class OldDragon2eCharacterGenerator {
         // Carrega descrições de forma assíncrona
         this.loadEquipmentDescriptions(character.equipment, equipmentItems);
 
-        // Atualiza habilidades de raça
-        const raceAbilities = html.find('.race-abilities ul');
-        raceAbilities.empty();
-        character.raceAbilities.forEach(ability => {
-            const formattedAbility = this.formatAbilityText(ability);
-            raceAbilities.append(`<li>${formattedAbility}</li>`);
-        });
-
-        // Atualiza habilidades de classe
-        const classAbilities = html.find('.class-abilities ul');
-        classAbilities.empty();
-        character.classAbilities.forEach(ability => {
-            const formattedAbility = this.formatAbilityText(ability);
-            classAbilities.append(`<li>${formattedAbility}</li>`);
-        });
 
         // Atualiza jogadas de proteção
         html.find('.saving-throw-item').eq(0).find('.saving-throw-value').text(character.savingThrows.JPD);
@@ -2668,24 +2627,6 @@ class OldDragon2eCharacterGenerator {
                         </div>
                             </div>
                             
-                    <!-- Seção de Habilidades - Largura Completa -->
-                    <div class="abilities-section">
-                        <div class="abilities-container">
-                            <div class="race-abilities">
-                                <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
-                                <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="class-abilities">
-                                <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
-                                <ul>
-                                    ${character.classAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                             
                     <div class="equipment-section">
                     <div class="equipment-list">
