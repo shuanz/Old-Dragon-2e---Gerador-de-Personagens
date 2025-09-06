@@ -435,6 +435,14 @@ class OldDragon2eCharacterGenerator {
                 'Aparar: Sacrifica escudo/arma para absorver dano',
                 'Maestria em Arma: +1 de dano em uma arma escolhida'
             ];
+        } else if (/arqueiro|archer/i.test(classNameLower)) {
+            return [
+                'Armas: Pode usar todas as armas',
+                'Armaduras: Pode usar todas as armaduras',
+                'Itens Mágicos: Não pode usar cajados, varinhas e pergaminhos mágicos',
+                'Aparar: Sacrifica escudo/arma para absorver dano',
+                'Maestria em Arma: +1 de dano em uma arma escolhida'
+            ];
         } else if (/bardo|bard/i.test(classNameLower)) {
             return [
                 'Armas: Apenas pequenas ou médias. Armas grandes geram ataques difíceis',
@@ -451,7 +459,39 @@ class OldDragon2eCharacterGenerator {
                 'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
                 'Talentos: Furtividade, Escalar, Arrombar, etc.'
             ];
+        } else if (/assassino|assassin/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas pequenas ou médias',
+                'Armaduras: Apenas leves',
+                'Ataque Furtivo: Dano x2 em ataques furtivos',
+                'Ouvir Ruídos: Detecta sons (1-2 em 1d6)',
+                'Talentos: Furtividade, Escalar, Arrombar, etc.'
+            ];
         } else if (/druida|druid/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/acadêmico|academic/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/xamã|shaman/i.test(classNameLower)) {
+            return [
+                'Armas: Apenas armas impactantes',
+                'Armaduras: Pode usar todas as armaduras',
+                'Magias Divinas: Conjura magias divinas diariamente',
+                'Afastar Mortos-Vivos: Afasta mortos-vivos 1x/dia',
+                'Cura Milagrosa: Troca magia por Curar Ferimentos'
+            ];
+        } else if (/proscrito|outcast/i.test(classNameLower)) {
             return [
                 'Armas: Apenas armas impactantes',
                 'Armaduras: Pode usar todas as armaduras',
