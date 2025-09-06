@@ -679,16 +679,16 @@ class OldDragon2eCharacterGenerator {
         // Ranger (Ladrão)
         else if (/ranger/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Inimigo Mortal: Bônus contra inimigos específicos');
+                abilities.push('Inimigo Mortal: Guardião de região dos ermos, escolhe inimigo (Orcs, Goblins, Homens Lagartos, Trolls, Gigantes) - ataques fáceis e -2 em testes de reação');
             }
             if (level >= 3) {
-                abilities.push('Rastreamento: Segue trilhas na natureza');
+                abilities.push('Combativo: Pode usar armas grandes e escudos sem penalidades (limitado a Armaduras Leves)');
             }
             if (level >= 6) {
-                abilities.push('Combate Duplo: Usa duas armas simultaneamente');
+                abilities.push('Previdência: Nos ermos só é surpreendido com 1 em 1d6, acampamentos sempre são seguros');
             }
             if (level >= 10) {
-                abilities.push('Mestre da Floresta: Controle sobre animais selvagens');
+                abilities.push('Companheiro Animal: Criatura dos ermos adota Ranger como aliado (ataques, vigia, mensagens), 1-4 chances em 1d6 de novo companheiro a cada nível se morrer');
             }
         }
         
