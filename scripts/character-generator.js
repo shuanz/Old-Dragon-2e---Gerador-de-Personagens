@@ -56,6 +56,19 @@ class OldDragon2eCharacterGenerator {
                     'Movimento: 6 metros',
                     'Infravisão: Não possui'
                 ]
+            },
+            { 
+                id: 'half-elf', 
+                name: 'Meio-Elfo', 
+                namePlural: 'Meio-Elfos',
+                abilities: [
+                    'Herança Dupla: Combina características de humanos e elfos',
+                    'Escolha Estratégica: +1 em JPC ou JPD à escolha',
+                    'Resistência Élfica: Imunidade parcial ao sono',
+                    'Percepção Natural: Detecta portas secretas (1 em 1d6)',
+                    'Movimento: 9 metros',
+                    'Infravisão: 9 metros'
+                ]
             }
         ];
 
@@ -845,6 +858,15 @@ class OldDragon2eCharacterGenerator {
                 'Movimento: 9 metros',
                 'Infravisão: Não possui'
             ];
+        } else if (raceNameLower.includes('meio') && raceNameLower.includes('elf')) {
+            return [
+                'Herança Dupla: Combina características de humanos e elfos',
+                'Escolha Estratégica: +1 em JPC ou JPD à escolha',
+                'Resistência Élfica: Imunidade parcial ao sono',
+                'Percepção Natural: Detecta portas secretas (1 em 1d6)',
+                'Movimento: 9 metros',
+                'Infravisão: 9 metros'
+            ];
         } else if (raceNameLower.includes('elfo') || raceNameLower.includes('elf')) {
             return [
                 'Percepção Natural: Detecta portas secretas (1 em 1d6)',
@@ -1433,7 +1455,7 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-     * Calcula Jogadas de Proteção
+     * Calcula Jogadas de Proteção baseadas apenas na classe e nível
      */
     calculateSavingThrows(characterClass, level) {
         const archetype = this.mapClassToArchetype(characterClass);
@@ -1454,12 +1476,75 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Calcula Jogadas de Proteção finais incluindo modificadores de atributos e bônus raciais
+     */
+    calculateFinalSavingThrows(characterClass, level, attributes, race) {
+        // Valores base da classe
+        const baseSavingThrows = this.calculateSavingThrows(characterClass, level);
+        
+        // Modificadores de atributos
+        const modifiers = this.calculateModifiers(attributes);
+        
+        // Bônus raciais
+        const raceName = (race || '').toString().toLowerCase();
+        let raceBonusJPD = 0;
+        let raceBonusJPC = 0;
+        let raceBonusJPS = 0;
+        
+        if (raceName.includes('humano')) {
+            // Humano: bônus aleatório em uma JP
+            const randomBonus = Math.floor(Math.random() * 3); // 0, 1 ou 2
+            if (randomBonus === 0) raceBonusJPD = 1;
+            else if (randomBonus === 1) raceBonusJPC = 1;
+            else raceBonusJPS = 1;
+        } else if (raceName.includes('elf') && !raceName.includes('meio')) {
+            raceBonusJPD = 1; // Elfo: +1 JPD
+        } else if (raceName.includes('meio') && raceName.includes('elf')) {
+            // Meio-Elfo: escolhe entre JPC ou JPD
+            const randomChoice = Math.floor(Math.random() * 2); // 0 ou 1
+            if (randomChoice === 0) raceBonusJPC = 1; // Escolhe JPC
+            else raceBonusJPD = 1; // Escolhe JPD
+        } else if (raceName.includes('anão') || raceName.includes('anao')) {
+            raceBonusJPC = 1; // Anão: +1 JPC
+        } else if (raceName.includes('halfling')) {
+            raceBonusJPS = 1; // Halfling: +1 JPS
+        } else if (raceName.includes('orc')) {
+            raceBonusJPC = 1; // Orc: +1 JPC
+        } else if (raceName.includes('goblin')) {
+            raceBonusJPD = 1; // Goblin: +1 JPD
+        }
+        
+        // Calcula valores finais
+        const finalJPD = baseSavingThrows.JPD + modifiers.dexterity + raceBonusJPD;
+        const finalJPC = baseSavingThrows.JPC + modifiers.constitution + raceBonusJPC;
+        const finalJPS = baseSavingThrows.JPS + modifiers.wisdom + raceBonusJPS;
+        
+        return {
+            JPD: finalJPD,
+            JPC: finalJPC,
+            JPS: finalJPS,
+            base: baseSavingThrows,
+            modifiers: {
+                JPD: modifiers.dexterity,
+                JPC: modifiers.constitution,
+                JPS: modifiers.wisdom
+            },
+            raceBonus: {
+                JPD: raceBonusJPD,
+                JPC: raceBonusJPC,
+                JPS: raceBonusJPS
+            }
+        };
+    }
+
+    /**
      * Calcula movimento baseado na raça
      */
     calculateMovement(race) {
         const movement = {
             human: 9,
             elf: 9,
+            'half-elf': 9,
             dwarf: 6,
             halfling: 6
         };
@@ -1485,6 +1570,7 @@ class OldDragon2eCharacterGenerator {
         const raceLanguages = {
             humano: ['Comum'],
             elfo: ['Comum', 'Élfico'],
+            'half-elf': ['Comum', 'Élfico'],
             anao: ['Comum', 'Anão'],
             halfling: ['Comum', 'Halfling'],
             meio_elfo: ['Comum', 'Élfico'],
@@ -1643,13 +1729,13 @@ class OldDragon2eCharacterGenerator {
                     jpd_total: characterData.savingThrows.JPD,
                     jpc_total: characterData.savingThrows.JPC,
                     jps_total: characterData.savingThrows.JPS,
-                    jp: characterData.savingThrows.JPD, // Base da classe
-                    jpd_race_bonus: 0,
-                    jpc_race_bonus: 0,
-                    jps_race_bonus: 0,
-                    jpd_mod: characterData.modifiers.dexterity,
-                    jpc_mod: characterData.modifiers.constitution,
-                    jps_mod: characterData.modifiers.wisdom,
+                    jp: characterData.savingThrows.base?.JPD || characterData.savingThrows.JPD, // Base da classe
+                    jpd_race_bonus: characterData.savingThrows.raceBonus?.JPD || 0,
+                    jpc_race_bonus: characterData.savingThrows.raceBonus?.JPC || 0,
+                    jps_race_bonus: characterData.savingThrows.raceBonus?.JPS || 0,
+                    jpd_mod: characterData.savingThrows.modifiers?.JPD || characterData.modifiers.dexterity,
+                    jpc_mod: characterData.savingThrows.modifiers?.JPC || characterData.modifiers.constitution,
+                    jps_mod: characterData.savingThrows.modifiers?.JPS || characterData.modifiers.wisdom,
                     
                     // Combate
                     ca: characterData.armorClass,
@@ -2300,7 +2386,7 @@ class OldDragon2eCharacterGenerator {
                 character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
                 character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
                 character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
-                character.savingThrows = this.calculateSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level);
+                character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
                 character.movement = this.calculateMovement(selectedRace.id);
                 character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
             }
@@ -2363,10 +2449,6 @@ class OldDragon2eCharacterGenerator {
         this.loadEquipmentDescriptions(character.equipment, equipmentItems);
 
 
-        // Atualiza jogadas de proteção
-        html.find('.saving-throw-item').eq(0).find('.saving-throw-value').text(character.savingThrows.JPD);
-        html.find('.saving-throw-item').eq(1).find('.saving-throw-value').text(character.savingThrows.JPC);
-        html.find('.saving-throw-item').eq(2).find('.saving-throw-value').text(character.savingThrows.JPS);
 
         // Atualiza detalhes do personagem
         html.find('.detail-section').eq(0).find('p').text(
@@ -2528,7 +2610,7 @@ class OldDragon2eCharacterGenerator {
             character.hitPoints = this.calculateHitPoints(this.mapClassToArchetype(selectedClass.name), character.attributes.constitution);
             character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
             character.baseAttack = this.calculateBaseAttack(this.mapClassToArchetype(selectedClass.name), character.level);
-            character.savingThrows = this.calculateSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level);
+            character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
             character.movement = this.calculateMovement(selectedRace.id);
             character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
         }
@@ -2553,9 +2635,9 @@ class OldDragon2eCharacterGenerator {
                     <h3>Prévia do Personagem</h3>
                     
                     <div class="main-layout">
-                        <!-- Coluna 1: Informações Básicas e Jogadas de Proteção -->
-                        <div class="left-column">
-                    <div class="character-basic-info">
+                        <!-- Primeira linha: Informações Básicas e Atributos lado a lado -->
+                        <div class="top-row">
+                            <div class="character-basic-info">
                                 <h4><i class="fas fa-info-circle"></i> Informações Básicas</h4>
                                 <div class="info-grid">
                                     <div class="info-item"><strong>Nome:</strong> ${character.name}</div>
@@ -2569,30 +2651,22 @@ class OldDragon2eCharacterGenerator {
                                     <div class="info-item"><strong>Idiomas:</strong> ${character.languages.languages.join(', ')}</div>
                                     <div class="info-item"><strong>Alinhamento:</strong> ${character.alignment}</div>
                                 </div>
-                    </div>
-                    
-                            <div class="saving-throws">
-                                <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
-                                <div class="saving-throws-grid">
-                                    <div class="saving-throw-item">
-                                        <div class="saving-throw-name">JPD</div>
-                                        <div class="saving-throw-value">${character.savingThrows.JPD}</div>
+                            </div>
+                            
+                            <div class="attributes-grid">
+                                <h4><i class="fas fa-dice"></i> Atributos</h4>
+                                ${this.attributes.map(attr => `
+                                    <div class="attribute-item">
+                                        <div class="attribute-name">${this.attributeNames[attr]}</div>
+                                        <div class="attribute-value">${character.attributes[attr]}</div>
+                                        <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
                                     </div>
-                                    <div class="saving-throw-item">
-                                        <div class="saving-throw-name">JPC</div>
-                                        <div class="saving-throw-value">${character.savingThrows.JPC}</div>
-                                    </div>
-                                    <div class="saving-throw-item">
-                                        <div class="saving-throw-name">JPS</div>
-                                        <div class="saving-throw-value">${character.savingThrows.JPS}</div>
-                                    </div>
-                                    </div>
-                                </div>
+                                `).join('')}
                             </div>
                         </div>
                         
-                        <!-- Coluna 2: Detalhes do Personagem -->
-                        <div class="middle-column">
+                        <!-- Segunda linha: Detalhes -->
+                        <div class="bottom-row">
                             <div class="character-details">
                                 <h4><i class="fas fa-user"></i> Detalhes</h4>
                                 
@@ -2610,20 +2684,6 @@ class OldDragon2eCharacterGenerator {
                                     <h5>Histórico:</h5>
                                     <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
                                 </div>
-                            </div>
-                        </div>
-                            
-                        <!-- Coluna 3: Atributos -->
-                        <div class="right-column">
-                            <div class="attributes-grid">
-                                <h4><i class="fas fa-dice"></i> Atributos</h4>
-                        ${this.attributes.map(attr => `
-                            <div class="attribute-item">
-                                <div class="attribute-name">${this.attributeNames[attr]}</div>
-                                <div class="attribute-value">${character.attributes[attr]}</div>
-                                <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
-                            </div>
-                        `).join('')}
                             </div>
                         </div>
                     </div>
