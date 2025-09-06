@@ -225,7 +225,7 @@ class OldDragon2eCharacterGenerator {
             charisma: 'Carisma'
         };
 
-        // Tabelas para detalhes finais
+        // Tabelas para detalhes finais - conforme SRD Old Dragon 2E
         this.appearance = {
             body: ['Alto', 'Baixo', 'Musculoso', 'Franzino', 'Gordo', 'Especial'],
             hair: ['Careca', 'Calvo', 'Cabelos Raspados', 'Cabelos Curtos', 'Cabelos Longos', 'Especial'],
@@ -234,11 +234,21 @@ class OldDragon2eCharacterGenerator {
         };
 
         this.personality = {
-            self: ['Alerta', 'Distraído', 'Calmo', 'Agitado', 'Indeciso', 'Especial'],
-            others: ['Gentil', 'Grosso', 'Desconfiado', 'Tímido', 'Extrovertido', 'Especial'],
-            world: ['Otimista', 'Pessimista', 'Perfeccionista', 'Teimoso', 'Vaidoso', 'Especial'],
-            special: ['Modesto', 'Egoísta', 'Humilde', 'Galanteador', 'Idealista', 'Excêntrico']
+            self: ['Alerta', 'Distraído', 'Calmo', 'Agitado', 'Especial', 'Especial'],
+            others: ['Gentil', 'Grosso', 'Desconfiado', 'Tímido', 'Especial', 'Especial'],
+            world: ['Otimista', 'Pessimista', 'Perfeccionista', 'Teimoso', 'Especial', 'Especial'],
+            special: ['Modesto', 'Egoísta', 'Humilde', 'Galanteador', 'Especial', 'Especial']
         };
+
+        // Templates de histórico conforme SRD Old Dragon 2E
+        this.backgroundTemplates = [
+            "Ainda criança, foi abandonado [LUGAR]. Cresceu sob os cuidados de um [CLASSE] o qual lhe ensinou tudo o que ele sabe. Tornou-se aventureiro para [MOTIVO].",
+            "Nascido [LUGAR] em uma [FAMÍLIA], ficou órfão após [TRAGÉDIA]. Tornou-se aventureiro para [MOTIVO].",
+            "Vítima de uma [TRAGÉDIA], acabou crescendo desamparado [LUGAR]. Foi empurrado para uma vida de aventuras [MOTIVO].",
+            "Sua vida era tranquila e pacífica junto da sua [FAMÍLIA], até que, há alguns anos, você foi vítima [TRAGÉDIA] e foi forçado a aprender sozinho as técnicas de [CLASSE]. Hoje, se aventura para [MOTIVO].",
+            "Você é um [SUA RAÇA] que cresceu numa família de [OUTRA RAÇA] depois [TRAGÉDIA]. Isso o fez se sentir pouco acolhido e então resolveu se tornar um aventureiro para [MOTIVO].",
+            "Você era um jovem que cresceu [LUGAR]. Acabou virando aventureiro após um [TRAGÉDIA] que matou todos os seus parentes. Seu sonho é acabar sua vida aposentado [LUGAR]."
+        ];
 
         this.background = {
             place: ['numa fazenda nos campos', 'numa pequena e distante vila', 'numa grande e importante cidade', 'numa vila à beira do mar', 'numa aldeia nas montanhas', 'numa pequena cidade no meio da floresta'],
@@ -1635,17 +1645,45 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-     * Gera histórico aleatório
+     * Gera histórico aleatório usando templates da SRD
      */
-    generateBackground() {
+    generateBackground(characterRace = 'Humano', characterClass = 'Guerreiro') {
         const roll = () => Math.floor(Math.random() * 6);
         
+        // Seleciona um template aleatório
+        const templateIndex = roll();
+        let template = this.backgroundTemplates[templateIndex];
+        
+        // Preenche as lacunas do template
         const place = this.background.place[roll()];
         const motive = this.background.motive[roll()];
         const family = this.background.family[roll()];
         const tragedy = this.background.tragedy[roll()];
+        
+        // Substitui as lacunas no template
+        template = template.replace(/\[LUGAR\]/g, place);
+        template = template.replace(/\[MOTIVO\]/g, motive);
+        template = template.replace(/\[FAMÍLIA\]/g, family);
+        template = template.replace(/\[TRAGÉDIA\]/g, tragedy);
+        template = template.replace(/\[CLASSE\]/g, characterClass);
+        template = template.replace(/\[SUA RAÇA\]/g, characterRace.toLowerCase());
+        
+        // Para o template 5, precisa de outra raça
+        if (templateIndex === 4) {
+            const otherRaces = ['humano', 'elfo', 'anão', 'halfling', 'gnomo', 'orc'];
+            const filteredRaces = otherRaces.filter(race => race !== characterRace.toLowerCase());
+            const otherRace = filteredRaces[Math.floor(Math.random() * filteredRaces.length)];
+            template = template.replace(/\[OUTRA RAÇA\]/g, otherRace);
+        }
 
-        return { place, motive, family, tragedy };
+        return { 
+            template: templateIndex + 1,
+            text: template,
+            place, 
+            motive, 
+            family, 
+            tragedy 
+        };
     }
 
     /**
@@ -1684,7 +1722,7 @@ class OldDragon2eCharacterGenerator {
             alignment: this.generateAlignment(),
             appearance: this.generateAppearance(),
             personality: this.generatePersonality(),
-            background: this.generateBackground(),
+            background: this.generateBackground('Humano', 'Guerreiro'),
             level: 1,
             experience: 0,
             initialSpells: [] // Será preenchido depois com dados do SRD
@@ -1768,7 +1806,7 @@ class OldDragon2eCharacterGenerator {
                             ? `${characterData.personality.self}; ${characterData.personality.others}; ${characterData.personality.world}`
                             : '',
                         background: characterData.background
-                            ? `Nascido ${characterData.background.place} em uma ${characterData.background.family}, ficou órfão após ${characterData.background.tragedy}. Tornou-se aventureiro para ${characterData.background.motive}.`
+                            ? characterData.background.text
                             : '',
                         notes: ''
                     },
@@ -2389,6 +2427,9 @@ class OldDragon2eCharacterGenerator {
                 character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
                 character.movement = this.calculateMovement(selectedRace.id);
                 character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
+                
+                // Atualiza o background com a raça e classe corretas
+                character.background = this.generateBackground(selectedRace.name, selectedClass.name);
             }
 
             // Atualiza a referência do personagem no dialog
@@ -2458,7 +2499,7 @@ class OldDragon2eCharacterGenerator {
             `${character.personality.self}, ${character.personality.others}, ${character.personality.world}`
         );
         html.find('.detail-section').eq(2).find('p').text(
-            `Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.`
+            character.background.text
         );
     }
 
@@ -2613,6 +2654,9 @@ class OldDragon2eCharacterGenerator {
             character.savingThrows = this.calculateFinalSavingThrows(this.mapClassToArchetype(selectedClass.name), character.level, character.attributes, selectedRace.name);
             character.movement = this.calculateMovement(selectedRace.id);
             character.languages = this.calculateLanguages(character.attributes.intelligence, selectedRace.id);
+            
+            // Atualiza o background com a raça e classe corretas
+            character.background = this.generateBackground(selectedRace.name, selectedClass.name);
         }
         
         const modalContent = `
@@ -2682,7 +2726,7 @@ class OldDragon2eCharacterGenerator {
                                 
                                 <div class="detail-section">
                                     <h5>Histórico:</h5>
-                                    <p>Nascido ${character.background.place} em uma ${character.background.family}, ficou órfão após ${character.background.tragedy}. Tornou-se aventureiro para ${character.background.motive}.</p>
+                                    <p>${character.background.text}</p>
                                 </div>
                             </div>
                         </div>
