@@ -615,16 +615,16 @@ class OldDragon2eCharacterGenerator {
         // Druida (Clérigo)
         else if (/druida|druid/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Comunhão com Natureza: Compreende animais');
+                abilities.push('Herbalismo: Identifica plantas, animais e reconhece água pura e segura');
             }
             if (level >= 3) {
-                abilities.push('Transformação: Transforma-se em animais');
+                abilities.push('Previdência: Acampamentos nos ermos sempre são do tipo seguro');
             }
             if (level >= 6) {
-                abilities.push('Herbalismo: Conhecimento de plantas medicinais');
+                abilities.push('Transformação: Assume forma de animal pequeno não-mágico até 6 DV, 3x/dia');
             }
             if (level >= 10) {
-                abilities.push('Forma Elemental: Transforma-se em elemento');
+                abilities.push('Transformação Melhorada: Assume forma de animal não-mágico qualquer tamanho até 10 DV, 3x/dia');
             }
         }
         
