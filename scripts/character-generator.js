@@ -782,7 +782,8 @@ class OldDragon2eCharacterGenerator {
             elf: 9,
             'half-elf': 9,
             dwarf: 6,
-            halfling: 6
+            halfling: 6,
+            gnome: 6
         };
 
         return movement[race] || 9;
