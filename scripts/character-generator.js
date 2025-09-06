@@ -612,8 +612,17 @@ class OldDragon2eCharacterGenerator {
 
     async loadSrdEquipment() {
         if (!this.srdEquipment) {
-            const moduleData = await import('./srd-equipment.json', { assert: { type: 'json' } });
-            this.srdEquipment = moduleData.default;
+            const url = new URL('./srd-equipment.json', import.meta.url);
+            const isNode = typeof process !== 'undefined' && process.versions?.node;
+            if (isNode) {
+                const fs = await import('fs/promises');
+                const data = await fs.readFile(url, 'utf-8');
+                this.srdEquipment = JSON.parse(data);
+            } else {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Falha ao carregar SRD: ${response.status}`);
+                this.srdEquipment = await response.json();
+            }
         }
         return this.srdEquipment;
     }
