@@ -695,15 +695,13 @@ class OldDragon2eCharacterGenerator {
         // Bardo (Ladrão)
         else if (/bardo|bard/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Ouvir Ruídos: Chance de 1-2 em 1d6 para ouvir ruídos');
-                abilities.push('Talentos de Ladrão: 2 pontos em cada talento + 2 pontos adicionais para distribuir');
-                abilities.push('Influenciar: Modifica Teste de Reação de monstros/NPCs em +1 ou -1');
+                abilities.push('Influenciar: Por música/oratória influencia reações de monstros/NPCs (1-2 em 1d6), +1 ou -1 no Teste de Reação');
             }
             if (level >= 3) {
-                abilities.push('Inspirar: Aliados têm testes de atributos e ataques um nível mais fácil');
+                abilities.push('Inspirar: Atuando por 1+ rodadas, aliados têm testes de atributos/ataques um nível mais fácil');
             }
             if (level >= 6) {
-                abilities.push('Fascinar: Audiência não hostil de até 2 DV a cada 3 níveis fica concentrada');
+                abilities.push('Fascinar: Audiência não hostil até 2 DV a cada 3 níveis fica concentrada no desempenho artístico');
             }
             if (level >= 10) {
                 abilities.push('Usar Pergaminhos: Usa pergaminhos como Mago com metade dos níveis');
