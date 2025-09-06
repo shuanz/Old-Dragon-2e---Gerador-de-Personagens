@@ -1797,29 +1797,45 @@ class OldDragon2eCharacterGenerator {
      */
     async updateEquipmentInModal(html, character) {
         const equipmentItems = html.find('.equipment-items');
+        const existingItems = equipmentItems.find('.equipment-item');
         
-        // Preserva a posição da rolagem antes da atualização
-        const scrollContainer = html.find('.old-dragon-generator-modal').closest('.window-app');
-        const scrollTop = scrollContainer.scrollTop();
-        
-        // Limpa o conteúdo atual
-        equipmentItems.empty();
-        
-        // Adiciona os novos itens de equipamento
-        character.equipment.forEach(item => {
-            const itemHtml = `
-                <div class="equipment-item">
-                    <div class="equipment-name">${item}</div>
-                    <div class="equipment-description">Carregando descrição...</div>
-                </div>
-            `;
-            equipmentItems.append(itemHtml);
-        });
-        
-        // Restaura a posição da rolagem após um pequeno delay
-        setTimeout(() => {
-            scrollContainer.scrollTop(scrollTop);
-        }, 10);
+        // Se há itens existentes, atualiza apenas os nomes
+        if (existingItems.length > 0) {
+            character.equipment.forEach((item, index) => {
+                if (existingItems.eq(index).length > 0) {
+                    // Atualiza nome do item existente
+                    existingItems.eq(index).find('.equipment-name').text(item);
+                    existingItems.eq(index).find('.equipment-description').text('Carregando descrição...');
+                } else {
+                    // Adiciona novo item se não existir
+                    const itemHtml = `
+                        <div class="equipment-item">
+                            <div class="equipment-name">${item}</div>
+                            <div class="equipment-description">Carregando descrição...</div>
+                        </div>
+                    `;
+                    equipmentItems.append(itemHtml);
+                }
+            });
+            
+            // Remove itens extras se o novo equipamento tem menos itens
+            if (existingItems.length > character.equipment.length) {
+                for (let i = character.equipment.length; i < existingItems.length; i++) {
+                    existingItems.eq(i).remove();
+                }
+            }
+        } else {
+            // Se não há itens existentes, cria todos
+            character.equipment.forEach(item => {
+                const itemHtml = `
+                    <div class="equipment-item">
+                        <div class="equipment-name">${item}</div>
+                        <div class="equipment-description">Carregando descrição...</div>
+                    </div>
+                `;
+                equipmentItems.append(itemHtml);
+            });
+        }
         
         // Carrega descrições de forma assíncrona
         await this.loadEquipmentDescriptions(character.equipment, equipmentItems);
