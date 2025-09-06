@@ -711,17 +711,16 @@ class OldDragon2eCharacterGenerator {
         // Assassino (Ladrão)
         else if (/assassino|assassin/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Veneno: Substitui talento Armadilha - manipula venenos sem se envenenar');
-                abilities.push('Disfarce: Substitui talento Punga - altera aparência para se disfarçar');
+                abilities.push('Ataque Assassino: Após aproximação furtiva, ataque muito fácil com dano x2');
             }
             if (level >= 3) {
-                abilities.push('Ataque Mortal: Ataques fatais se alvo estiver desprevenido');
+                abilities.push('Espreitar: 1 rodada observando = primeiro ataque fácil, 4 rodadas = ataque muito fácil');
             }
             if (level >= 6) {
-                abilities.push('Resistência a Venenos: Bônus em testes de resistência contra venenos');
+                abilities.push('Assassinato: Golpe fatal (1-2 em 1d6), cada DV do alvo ≥ DV do Assassino reduz chance em 1');
             }
             if (level >= 10) {
-                abilities.push('Mestre do Disfarce: Aprimora habilidade de Disfarce');
+                abilities.push('Ataque Mortal: Ataque Assassino evolui para dano x3, Assassinato evolui para 1-3 em 1d6');
             }
         }
         
