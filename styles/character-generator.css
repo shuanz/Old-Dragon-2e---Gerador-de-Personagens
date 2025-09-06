@@ -105,12 +105,9 @@
     margin-bottom: 0px; /* Remove completamente o espaçamento */
 }
 
-/* Segunda linha: Jogadas de Proteção e Detalhes lado a lado */
+/* Segunda linha: Detalhes ocupando toda a largura */
 .old-dragon-generator-modal .bottom-row {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr; /* Jogadas de Proteção menor, Detalhes maior */
-    gap: 20px;
-    align-items: start;
+    display: block;
     margin-top: 0px; /* Remove completamente o espaçamento */
 }
 
@@ -300,79 +297,6 @@
     font-style: italic;
 }
 
-.old-dragon-generator-modal .saving-throws {
-    background: #ede9d5; /* Cor de fundo solicitada */
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #d3d3d3;
-    margin: 60px 0 0 0; /* Espaçamento abaixo da linha divisória */
-    min-height: fit-content; /* Altura baseada no conteúdo */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.old-dragon-generator-modal .saving-throws:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transform: translateY(-1px);
-}
-
-.old-dragon-generator-modal .saving-throws h4 {
-    color: #8B0000; /* Vermelho escuro como na ficha */
-    margin-bottom: 12px;
-    font-size: 1.4em; /* Fonte ainda maior */
-    font-weight: bold;
-    border-bottom: 2px solid #8B0000;
-    padding-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.old-dragon-generator-modal .saving-throws-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.old-dragon-generator-modal .saving-throw-item {
-    background: #f5f5f0; /* Fundo ligeiramente mais claro para contraste */
-    padding: 8px;
-    border-radius: 4px;
-    text-align: center;
-    border: 1px solid #d3d3d3;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.old-dragon-generator-modal .saving-throw-item:hover {
-    background: #e8e8e0;
-    border-color: #8B0000;
-    transform: scale(1.02);
-}
-
-.old-dragon-generator-modal .saving-throw-name {
-    font-weight: bold;
-    color: #333; /* Texto escuro como na ficha */
-    font-size: 1.2em; /* Fonte ainda maior */
-}
-
-.old-dragon-generator-modal .saving-throw-value {
-    font-size: 1.6em; /* Fonte ainda maior */
-    font-weight: bold;
-    color: #333;
-}
-
-.old-dragon-generator-modal .saving-throw-breakdown {
-    margin-top: 4px;
-    font-size: 0.8em;
-    color: #666;
-    line-height: 1.2;
-}
-
-.old-dragon-generator-modal .saving-throw-breakdown small {
-    display: block;
-    margin: 1px 0;
-}
 
 .old-dragon-generator-modal .character-details {
     background: #ede9d5; /* Cor de fundo solicitada */
@@ -512,9 +436,6 @@
         grid-template-columns: 1fr;
     }
     
-    .old-dragon-generator-modal .saving-throws-grid {
-        grid-template-columns: 1fr;
-    }
     
     .old-dragon-generator-modal .buttons {
         display: flex;

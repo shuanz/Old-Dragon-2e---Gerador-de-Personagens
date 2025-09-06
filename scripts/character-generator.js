@@ -2449,10 +2449,6 @@ class OldDragon2eCharacterGenerator {
         this.loadEquipmentDescriptions(character.equipment, equipmentItems);
 
 
-        // Atualiza jogadas de proteção
-        html.find('.saving-throw-item').eq(0).find('.saving-throw-value').text(character.savingThrows.JPD);
-        html.find('.saving-throw-item').eq(1).find('.saving-throw-value').text(character.savingThrows.JPC);
-        html.find('.saving-throw-item').eq(2).find('.saving-throw-value').text(character.savingThrows.JPS);
 
         // Atualiza detalhes do personagem
         html.find('.detail-section').eq(0).find('p').text(
@@ -2669,41 +2665,8 @@ class OldDragon2eCharacterGenerator {
                             </div>
                         </div>
                         
-                        <!-- Segunda linha: Jogadas de Proteção e Detalhes -->
+                        <!-- Segunda linha: Detalhes -->
                         <div class="bottom-row">
-                            <div class="saving-throws">
-                                <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
-                                <div class="saving-throws-grid">
-                                    <div class="saving-throw-item">
-                                        <div class="saving-throw-name">JPD</div>
-                                        <div class="saving-throw-value">${character.savingThrows.JPD}</div>
-                                        <div class="saving-throw-breakdown">
-                                            <small>Base: ${character.savingThrows.base?.JPD || 'N/A'}</small>
-                                            <small>Mod: ${character.savingThrows.modifiers?.JPD || 0}</small>
-                                            <small>Raça: ${character.savingThrows.raceBonus?.JPD || 0}</small>
-                                        </div>
-                                    </div>
-                                    <div class="saving-throw-item">
-                                        <div class="saving-throw-name">JPC</div>
-                                        <div class="saving-throw-value">${character.savingThrows.JPC}</div>
-                                        <div class="saving-throw-breakdown">
-                                            <small>Base: ${character.savingThrows.base?.JPC || 'N/A'}</small>
-                                            <small>Mod: ${character.savingThrows.modifiers?.JPC || 0}</small>
-                                            <small>Raça: ${character.savingThrows.raceBonus?.JPC || 0}</small>
-                                        </div>
-                                    </div>
-                                    <div class="saving-throw-item">
-                                        <div class="saving-throw-name">JPS</div>
-                                        <div class="saving-throw-value">${character.savingThrows.JPS}</div>
-                                        <div class="saving-throw-breakdown">
-                                            <small>Base: ${character.savingThrows.base?.JPS || 'N/A'}</small>
-                                            <small>Mod: ${character.savingThrows.modifiers?.JPS || 0}</small>
-                                            <small>Raça: ${character.savingThrows.raceBonus?.JPS || 0}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             <div class="character-details">
                                 <h4><i class="fas fa-user"></i> Detalhes</h4>
                                 
