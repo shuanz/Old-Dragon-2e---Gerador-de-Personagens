@@ -377,13 +377,8 @@
 /* Responsividade para layout de 3 colunas */
 @media (max-width: 1400px) {
     .old-dragon-generator-modal .main-layout {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr; /* Mantém 3 colunas mesmo em telas menores */
         gap: 15px;
-    }
-    
-    .old-dragon-generator-modal .middle-column {
-        grid-column: 1 / -1;
-        margin-top: 10px;
     }
 }
 

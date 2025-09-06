@@ -2624,10 +2624,9 @@ class OldDragon2eCharacterGenerator {
                                 <div class="attribute-modifier">${character.modifiers[attr] >= 0 ? '+' : ''}${character.modifiers[attr]}</div>
                             </div>
                         `).join('')}
-                    </div>
-                        </div>
                             </div>
-                            
+                        </div>
+                    </div>
                             
                     <div class="equipment-section">
                     <div class="equipment-list">
