@@ -599,16 +599,16 @@ class OldDragon2eCharacterGenerator {
         // Arqueiro (Guerreiro)
         else if (/arqueiro|archer/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Especialização em Arco: +1 de dano com arcos');
+                abilities.push('Tiros em Curva: Não são ataques difíceis - cobertura, distância além do arco, alvos em combate corpo a corpo');
             }
             if (level >= 3) {
-                abilities.push('Tiro Preciso: Ignora cobertura parcial');
+                abilities.push('Puxada Aprimorada: Acrescenta modificador de Força nos danos com arcos');
             }
             if (level >= 6) {
-                abilities.push('Tiro Múltiplo: Ataca múltiplos alvos');
+                abilities.push('Truques com Flechas: Grampear, desarmar, efeitos especiais (alvo escolhe consequência ou dano normal)');
             }
             if (level >= 10) {
-                abilities.push('Tiro Mortal: Chance de causar dano crítico');
+                abilities.push('Tiro Rápido: Segundo disparo durante ação de combate');
             }
         }
         
