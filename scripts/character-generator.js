@@ -663,16 +663,16 @@ class OldDragon2eCharacterGenerator {
         // Proscrito (Clérigo)
         else if (/proscrito|outcast/i.test(classNameLower)) {
             if (level >= 1) {
-                abilities.push('Cura Natural: Cura 1d6 PV por dia divididos entre alvos desejados');
+                abilities.push('Cura Natural: Cura como curandeiro/médico (2 PV ou 1d4+1 em repouso), pode evitar morte de agonizantes');
             }
             if (level >= 3) {
-                abilities.push('Treinamento em Combate: +1 BA e pode usar qualquer arma ou armadura');
+                abilities.push('Treinamento em Combate: +1 BA em relação a Clérigo padrão, pode usar qualquer arma ou armadura');
             }
             if (level >= 6) {
-                abilities.push('Afetar Mortos-Vivos: Força mortos-vivos a teste de moral (ataques difíceis se falharem)');
+                abilities.push('Afetar Mortos-Vivos: 1x/dia força mortos-vivos a teste de moral (ataques difíceis se falharem)');
             }
             if (level >= 10) {
-                abilities.push('Misticismo: Conjura magias divinas de 1º círculo conforme tabela de Clérigo');
+                abilities.push('Misticismo: Conjura magias divinas de 1º círculo conforme tabela padrão de Clérigo');
             }
         }
         
