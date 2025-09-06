@@ -354,6 +354,40 @@
     gap: 8px;
 }
 
+/* Dadinhos clicáveis para re-rolar atributos */
+.old-dragon-generator-modal .btn-reroll-attributes {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 2px 4px;
+    border-radius: 4px;
+    margin-right: 6px;
+    display: inline-block;
+    position: relative;
+}
+
+.old-dragon-generator-modal .btn-reroll-attributes:hover {
+    color: #228B22;
+    background: rgba(34, 139, 34, 0.1);
+    transform: scale(1.1);
+}
+
+.old-dragon-generator-modal .btn-reroll-attributes:active {
+    transform: scale(0.95);
+    color: #006400;
+}
+
+.old-dragon-generator-modal .btn-reroll-attributes:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+}
+
+.old-dragon-generator-modal .btn-reroll-attributes:disabled:hover {
+    color: #8B0000;
+    background: none;
+    transform: none;
+}
+
 .old-dragon-generator-modal .attribute-item {
     background: linear-gradient(135deg, #ffffff, #f5f5f0);
     padding: 8px 6px;

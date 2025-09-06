@@ -1572,6 +1572,120 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Re-rola apenas os atributos do personagem atual
+     */
+    async rerollAttributes(dialog, html) {
+        try {
+            // Mostra indicador de carregamento no botão
+            const rerollBtn = html.find('#reroll-attributes');
+            const originalContent = rerollBtn.html();
+            rerollBtn.html('<i class="fas fa-spinner fa-spin"></i>');
+            rerollBtn.prop('disabled', true);
+
+            // Gera novos atributos
+            const newAttributes = this.generateAttributes();
+            const newModifiers = this.calculateModifiers(newAttributes);
+            
+            // Atualiza o personagem atual
+            dialog.currentCharacter.attributes = newAttributes;
+            dialog.currentCharacter.modifiers = newModifiers;
+            
+            // Recalcula valores que dependem dos atributos
+            if (dialog.currentCharacter.race && dialog.currentCharacter.class) {
+                dialog.currentCharacter.hitPoints = this.calculateHitPoints(
+                    this.mapClassToArchetype(dialog.currentCharacter.class), 
+                    newAttributes.constitution
+                );
+                dialog.currentCharacter.armorClass = this.calculateArmorClass(
+                    newAttributes.dexterity, 
+                    dialog.currentCharacter.equipment
+                );
+                dialog.currentCharacter.baseAttack = this.calculateBaseAttack(
+                    dialog.currentCharacter.class, 
+                    dialog.currentCharacter.level, 
+                    newAttributes
+                );
+                dialog.currentCharacter.languages = this.calculateLanguages(
+                    newAttributes.intelligence, 
+                    dialog.currentCharacter.race
+                );
+            }
+
+            // Atualiza apenas os atributos no HTML
+            this.updateAttributesInModal(html, dialog.currentCharacter);
+            
+            // Atualiza informações básicas que dependem dos atributos
+            this.updateBasicInfoInModal(html, dialog.currentCharacter);
+
+            // Restaura o botão
+            rerollBtn.html(originalContent);
+            rerollBtn.prop('disabled', false);
+
+        } catch (error) {
+            console.error('Erro ao re-rolar atributos:', error);
+            ui.notifications.error('Erro ao re-rolar atributos: ' + error.message);
+            
+            // Restaura o botão mesmo em caso de erro
+            const rerollBtn = html.find('#reroll-attributes');
+            rerollBtn.html('<i class="fas fa-redo"></i>');
+            rerollBtn.prop('disabled', false);
+        }
+    }
+
+    /**
+     * Atualiza apenas os atributos no modal
+     */
+    updateAttributesInModal(html, character) {
+        const attributeItems = html.find('.attribute-item');
+        this.attributes.forEach((attr, index) => {
+            const attributeItem = attributeItems.eq(index);
+            attributeItem.find('.attribute-value').text(character.attributes[attr]);
+            const modifier = character.modifiers[attr];
+            attributeItem.find('.attribute-modifier').text(modifier >= 0 ? `+${modifier}` : modifier);
+        });
+    }
+
+    /**
+     * Atualiza informações básicas que dependem dos atributos
+     */
+    updateBasicInfoInModal(html, character) {
+        const infoItems = html.find('.info-item');
+        
+        // Atualiza PV
+        infoItems.eq(4).find('span').text(character.hitPoints);
+        
+        // Atualiza CA
+        infoItems.eq(5).find('span').text(character.armorClass);
+        
+        // Atualiza BAC e BAD
+        let bacUpdated = false;
+        const bacBadElement = infoItems.filter((index, element) => {
+            return $(element).text().includes('BAC:');
+        });
+        
+        if (bacBadElement.length > 0) {
+            const spanElement = bacBadElement.find('span');
+            if (spanElement.length > 0) {
+                spanElement.html(`${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
+                bacUpdated = true;
+            }
+        }
+        
+        if (!bacUpdated) {
+            const bacElement = infoItems.eq(6);
+            if (bacElement.length > 0) {
+                const spanElement = bacElement.find('span');
+                if (spanElement.length > 0) {
+                    spanElement.html(`${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
+                }
+            }
+        }
+        
+        // Atualiza idiomas
+        infoItems.eq(8).find('span').text(character.languages.languages.join(', '));
+    }
+
+    /**
      * Atualiza o conteúdo do modal com um novo personagem
      */
     async updateModalContent(dialog, html) {
@@ -1829,7 +1943,7 @@ class OldDragon2eCharacterGenerator {
                             </div>
                             
                             <div class="attributes-grid">
-                                <h4><i class="fas fa-dice"></i> Atributos</h4>
+                                <h4><i class="fas fa-dice btn-reroll-attributes" id="reroll-attributes" title="Re-rolar atributos"></i> Atributos</h4>
                                 ${this.attributes.map(attr => `
                                     <div class="attribute-item">
                                         <div class="attribute-name">${this.attributeNames[attr]}</div>
@@ -1957,6 +2071,10 @@ class OldDragon2eCharacterGenerator {
 
                 html.find('#regenerate-character').click(async () => {
                     await this.updateModalContent(dialog, html);
+                });
+
+                html.find('#reroll-attributes').click(async () => {
+                    await this.rerollAttributes(dialog, html);
                 });
 
                 html.find('#close-modal').click(() => {
