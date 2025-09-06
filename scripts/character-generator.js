@@ -2327,6 +2327,33 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
+     * Formata o texto das habilidades para melhor legibilidade
+     * @param {string} abilityText - Texto da habilidade
+     * @returns {string} - Texto formatado
+     */
+    formatAbilityText(abilityText) {
+        // Se o texto for muito longo, adiciona quebras de linha em pontos estratégicos
+        if (abilityText.length > 60) {
+            // Quebra após dois pontos seguido de espaço
+            let formatted = abilityText.replace(/:\s+/g, ':<br>&nbsp;&nbsp;');
+            
+            // Quebra após vírgulas em textos muito longos
+            if (formatted.length > 80) {
+                formatted = formatted.replace(/,\s+/g, ',<br>&nbsp;&nbsp;');
+            }
+            
+            // Quebra após parênteses em textos muito longos
+            if (formatted.length > 100) {
+                formatted = formatted.replace(/\)\s+/g, ')<br>&nbsp;&nbsp;');
+            }
+            
+            return formatted;
+        }
+        
+        return abilityText;
+    }
+
+    /**
      * Atualiza o HTML do modal com os novos dados do personagem
      */
     updateModalHTML(html, character) {
@@ -2365,14 +2392,16 @@ class OldDragon2eCharacterGenerator {
         const raceAbilities = html.find('.race-abilities ul');
         raceAbilities.empty();
         character.raceAbilities.forEach(ability => {
-            raceAbilities.append(`<li>${ability}</li>`);
+            const formattedAbility = this.formatAbilityText(ability);
+            raceAbilities.append(`<li>${formattedAbility}</li>`);
         });
 
         // Atualiza habilidades de classe
         const classAbilities = html.find('.class-abilities ul');
         classAbilities.empty();
         character.classAbilities.forEach(ability => {
-            classAbilities.append(`<li>${ability}</li>`);
+            const formattedAbility = this.formatAbilityText(ability);
+            classAbilities.append(`<li>${formattedAbility}</li>`);
         });
 
         // Atualiza jogadas de proteção
@@ -2600,16 +2629,16 @@ class OldDragon2eCharacterGenerator {
                             <div class="race-abilities">
                                 <h4><i class="fas fa-star"></i> Habilidades de Raça</h4>
                                 <ul>
-                                    ${character.raceAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                    ${character.raceAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
                                 </ul>
                             </div>
                             
                             <div class="class-abilities">
                                 <h4><i class="fas fa-shield-alt"></i> Habilidades de Classe</h4>
                                 <ul>
-                                    ${character.classAbilities.map(ability => `<li>${ability}</li>`).join('')}
+                                    ${character.classAbilities.map(ability => `<li>${this.formatAbilityText(ability)}</li>`).join('')}
                                 </ul>
-                    </div>
+                            </div>
                             
                             <div class="saving-throws">
                                 <h4><i class="fas fa-shield"></i> Jogadas de Proteção</h4>
