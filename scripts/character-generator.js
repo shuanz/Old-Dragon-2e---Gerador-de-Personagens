@@ -1943,7 +1943,7 @@ class OldDragon2eCharacterGenerator {
                             </div>
                             
                             <div class="attributes-grid">
-                                <h4><i class="fas fa-dice btn-reroll-attributes" id="reroll-attributes" title="Re-rolar atributos"></i> Atributos</h4>
+                                <h4><i class="fas fa-dice btn-reroll-attributes" id="reroll-attributes" title="Clique para re-rolar todos os atributos"></i> Atributos</h4>
                                 ${this.attributes.map(attr => `
                                     <div class="attribute-item">
                                         <div class="attribute-name">${this.attributeNames[attr]}</div>

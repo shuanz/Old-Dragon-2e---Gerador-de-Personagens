@@ -363,12 +363,20 @@
     margin-right: 6px;
     display: inline-block;
     position: relative;
+    animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:hover {
     color: #228B22;
-    background: rgba(34, 139, 34, 0.1);
-    transform: scale(1.1);
+    background: rgba(34, 139, 34, 0.15);
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(34, 139, 34, 0.3);
+    animation: none;
 }
 
 .old-dragon-generator-modal .btn-reroll-attributes:active {
