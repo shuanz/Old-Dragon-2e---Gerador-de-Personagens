@@ -786,7 +786,12 @@ class OldDragon2eCharacterGenerator {
             gnome: 6
         };
 
-        console.log('Calculando movimento para raça:', race, 'Resultado:', movement[race] || 9);
+        console.log('=== DEBUG MOVIMENTO ===');
+        console.log('Raça recebida:', race);
+        console.log('Tipo da raça:', typeof race);
+        console.log('Valor encontrado:', movement[race]);
+        console.log('Resultado final:', movement[race] || 9);
+        console.log('=== FIM DEBUG ===');
         return movement[race] || 9;
     }
 
