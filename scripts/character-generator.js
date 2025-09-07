@@ -434,30 +434,246 @@ class OldDragon2eCharacterGenerator {
      * Gera equipamento básico baseado na classe
      */
     async generateEquipment(characterClass) {
-        const data = await this.loadSrdEquipment();
+        console.log(`CharacterGenerator: Gerando equipamento para classe "${characterClass}"`);
+        console.log(`CharacterGenerator: EquipmentManager disponível:`, typeof EquipmentManager);
+        
+        // Verifica se EquipmentManager está disponível antes de tentar usá-lo
+        if (typeof EquipmentManager !== 'undefined') {
+            try {
+                // Usa o EquipmentManager para gerar equipamentos apropriados para a classe
+                const equipmentManager = new EquipmentManager();
+                const equipment = await equipmentManager.generateBasicEquipment(characterClass);
+                
+                // Converte os objetos de equipamento para nomes de strings para compatibilidade
+                const equipmentNames = equipment.map(item => item.name || item);
+                console.log(`CharacterGenerator: Equipamentos finais para "${characterClass}":`, equipmentNames);
+                
+                return equipmentNames;
+            } catch (error) {
+                console.error('Erro ao usar EquipmentManager:', error);
+                console.log(`CharacterGenerator: Usando fallback devido a erro no EquipmentManager`);
+                return this.generateEquipmentFallback(characterClass);
+            }
+        } else {
+            // EquipmentManager não está disponível, usa fallback diretamente
+            console.log(`CharacterGenerator: EquipmentManager não disponível, usando fallback`);
+            return this.generateEquipmentFallback(characterClass);
+        }
+    }
+
+    /**
+     * Método fallback para gerar equipamento quando EquipmentManager não está disponível
+     * Implementa restrições detalhadas baseadas nas tabelas de armas e armaduras
+     */
+    async generateEquipmentFallback(characterClass) {
+        const className = characterClass.toLowerCase();
         const equipment = [];
         
-        // Adiciona uma arma básica
-        if (data.weapons && data.weapons.length > 0) {
-            const randomWeapon = data.weapons[Math.floor(Math.random() * data.weapons.length)];
-            equipment.push(randomWeapon);
+        // Arrays compartilhados para todos os equipamentos
+        const allGeneralItems = ['Algema', 'Água Benta', 'Apito', 'Arpéu', 'Cadeado', 'Coberta de Inverno', 'Corda de Cânhamo', 'Corrente', 'Escada', 'Espelho', 'Ferramentas de Ladrão', 'Cravos/Ganchos', 'Giz', 'Grimório', 'Lamparina', 'Lanterna furta-fogo', 'Martelo', 'Manto', 'Óleo', 'Pá ou Picareta', 'Pé de Cabra', 'Pederneira', 'Pena e Tinta', 'Pergaminho', 'Ração de viagem', 'Rede', 'Saco de Dormir', 'Símbolo divino', 'Tenda pequena', 'Tocha', 'Traje de exploração', 'Traje nobre', 'Traje de Inverno', 'Vara de exploração', 'Vela'];
+        const allContainers = ['Algibeira', 'Aljava', 'Barril/Caixa Pequena', 'Barril/Caixa Grande', 'Mochila', 'Odre', 'Porta Mapas', 'Saco de estopa'];
+        
+        // Função para sortear quantidade aleatória de itens de uma lista
+        function getRandomItemsFromList(itemList, minItems = 0, maxItems = 3) {
+            const numItems = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
+            const shuffled = [...itemList].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, numItems);
         }
         
-        // Adiciona equipamentos básicos
-        if (data.gear && data.gear.length > 0) {
-            const basicGear = ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha'];
-            const availableGear = data.gear.filter(item => basicGear.includes(item));
-            
-            // Adiciona 2-3 itens básicos aleatórios
-            const gearCount = Math.min(3, availableGear.length);
-            for (let i = 0; i < gearCount; i++) {
-                const randomGear = availableGear[Math.floor(Math.random() * availableGear.length)];
-                if (!equipment.includes(randomGear)) {
-                    equipment.push(randomGear);
-                }
+        // Define equipamentos por classe seguindo as restrições específicas
+        
+        // GUERREIRO (Bárbaro, Paladino, Anão Aventureiro, Arqueiro)
+        if (/guerreiro|warrior|bárbaro|barbarian|paladino|paladin/.test(className)) {
+            if (/bárbaro|barbarian/.test(className)) {
+                // Bárbaro: todas as armas, só armaduras leves
+                const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/arqueiro|archer/.test(className)) {
+                // Arqueiro: armas específicas, só couro
+                const weapons = ['Arco Curto', 'Arco Longo', 'Adaga', 'Azagaia', 'Funda', 'Bordão/Cajado', 'Espada Curta'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/anão|anao|dwarf/.test(className)) {
+                // Anão Aventureiro: todas as armas e armaduras
+                const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.7) equipment.push('Escudo'); // 70% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else {
+                // Guerreiro/Paladino padrão: todas as armas e armaduras
+                const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.7) equipment.push('Escudo'); // 70% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             }
         }
         
+        // CLÉRIGO (Druida, Acadêmico, Xamã, Proscrito)
+        else if (/clérigo|cleric|druida|druid|xamã|xama|shaman|acadêmico|academic|proscrito|outlaw/.test(className)) {
+            if (/druida|druid/.test(className)) {
+                // Druida: armas não metálicas, armaduras leves
+                const weapons = ['Bordão/Cajado', 'Porrete/Clava', 'Lança', 'Azagaia', 'Funda'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/xamã|xama|shaman/.test(className)) {
+                // Xamã: armas não metálicas, armaduras leves
+                const weapons = ['Bordão/Cajado', 'Porrete/Clava', 'Lança', 'Azagaia', 'Funda'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/acadêmico|academic/.test(className)) {
+                // Acadêmico: apenas armas impactantes, todas armaduras
+                const weapons = ['Bordão/Cajado', 'Maça', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/proscrito|outlaw/.test(className)) {
+                // Proscrito: pode usar todas as armas e armaduras
+                const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else {
+                // Clérigo padrão: apenas armas impactantes, todas armaduras
+                const weapons = ['Bordão/Cajado', 'Maça', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            }
+        }
+        
+        // LADRÃO (Ranger, Bardo, Assassino, Halfling Aventureiro)
+        else if (/ladino|thief|ladrão|ranger|bardo|bard|assassino|assassin|halfling/.test(className)) {
+            if (/ranger/.test(className)) {
+                // Ranger: armas específicas + escudo, armaduras leves
+                const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava', 'Alabarda', 'Arco Longo', 'Machado de Batalha', 'Martelo de Batalha', 'Montante', 'Pique', 'Lança Montada'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/bardo|bard/.test(className)) {
+                // Bardo: armas específicas, armaduras leves, sem escudo
+                const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/halfling/.test(className)) {
+                // Halfling Aventureiro: armas específicas, armaduras leves
+                const weapons = ['Adaga', 'Azagaia', 'Funda', 'Lança', 'Bordão/Cajado', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else {
+                // Ladino/Assassino padrão: armas específicas, armaduras leves
+                const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            }
+        }
+        
+        // MAGO (Ilusionista, Necromante, Bruxo, Elfo Aventureiro)
+        else if (/mago|wizard|bruxo|feiticeiro|sorcerer|warlock|necromante|necromancer|ilusionista|illusionist|elfo|elf/.test(className)) {
+            if (/bruxo|feiticeiro|sorcerer|warlock/.test(className)) {
+                // Bruxo: armas específicas por nível (1º nível)
+                const weapons = ['Adaga', 'Azagaia', 'Bordão/Cajado', 'Espada Curta', 'Funda', 'Cimitarra', 'Espada Longa', 'Maça', 'Machado'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else if (/elfo|elf/.test(className)) {
+                // Elfo Aventureiro: pode usar todas as armas e armaduras
+                const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
+                const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            } else {
+                // Mago/Ilusionista/Necromante padrão: armas específicas, sem armadura
+                const weapons = ['Adaga', 'Azagaia', 'Bordão/Cajado', 'Espada Curta', 'Funda'];
+                // Sorteia 1-2 armas, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
+            }
+        }
+        
+        // Fallback genérico
+        else {
+            equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
+        }
+        
+        console.log(`CharacterGenerator: Equipamentos fallback para "${characterClass}":`, equipment);
         return equipment;
     }
 
@@ -475,11 +691,17 @@ class OldDragon2eCharacterGenerator {
         }
         
         // Classes normais
-        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'mage';
-        if (/clérigo|clerigo|druida|xamã|xama|acadêmico|academico/.test(n)) return 'cleric';
-        if (/paladino|bárbaro|barbaro|guerreiro|fighter/.test(n)) return 'fighter';
-        if (/ladrão|ladrao|ladino|thief|bardo|ranger|assassino|assassin/.test(n)) return 'thief';
-        return 'fighter';
+        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'wizard';
+        if (/clérigo|clerigo|acadêmico|academico/.test(n)) return 'cleric';
+        if (/druida|xamã|xama/.test(n)) return 'druid';
+        if (/guerreiro|fighter/.test(n)) return 'warrior';
+        if (/paladino/.test(n)) return 'paladin';
+        if (/bárbaro|barbaro|barbarian/.test(n)) return 'barbarian';
+        if (/ladrão|ladrao|ladino|thief/.test(n)) return 'thief';
+        if (/bardo|bard/.test(n)) return 'bard';
+        if (/ranger/.test(n)) return 'ranger';
+        if (/assassino|assassin/.test(n)) return 'assassin';
+        return 'warrior';
     }
 
     getClassRestrictions(className) {
@@ -595,7 +817,7 @@ class OldDragon2eCharacterGenerator {
      */
     calculateHitPoints(characterClass, constitution) {
         const archetype = this.mapClassToArchetype(characterClass);
-        const hitDie = { fighter: 10, cleric: 8, thief: 6, mage: 4 };
+        const hitDie = { warrior: 10, cleric: 8, thief: 6, wizard: 4 };
         const die = hitDie[archetype] || 6;
         const modifier = this.calculateModifiers({ constitution }).constitution;
         // Para o primeiro nível, usa o valor máximo do dado + modificador
@@ -635,13 +857,13 @@ class OldDragon2eCharacterGenerator {
         
         // Tabela base de ataque por classe e nível
         const baseAttackTable = {
-            fighter: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            warrior: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             cleric: [1, 1, 1, 3, 3, 3, 5, 5, 5, 7],
             thief: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
-            mage: [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
+            wizard: [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
         };
         
-        const baseAttack = (baseAttackTable[archetype] || baseAttackTable.fighter)[level - 1] ?? 1;
+        const baseAttack = (baseAttackTable[archetype] || baseAttackTable.warrior)[level - 1] ?? 1;
         
         // Calcula modificadores de atributos
         const modifiers = this.calculateModifiers(attributes);
@@ -670,18 +892,18 @@ class OldDragon2eCharacterGenerator {
     calculateSavingThrows(characterClass, level) {
         const archetype = this.mapClassToArchetype(characterClass);
         const baseTable = {
-            fighter: [5, 5, 6, 6, 8, 8, 10, 10, 11, 11],
+            warrior: [5, 5, 6, 6, 8, 8, 10, 10, 11, 11],
             cleric: [5, 5, 5, 7, 7, 7, 9, 9, 9, 11],
             thief: [5, 5, 5, 5, 8, 8, 8, 8, 11, 11],
-            mage: [5, 5, 5, 5, 7, 7, 7, 7, 7, 10]
+            wizard: [5, 5, 5, 5, 7, 7, 7, 7, 7, 10]
         };
-        const value = (baseTable[archetype] || baseTable.fighter)[level - 1] || 5;
+        const value = (baseTable[archetype] || baseTable.warrior)[level - 1] || 5;
         let JPD = value;
         let JPC = value;
         let JPS = value;
         if (archetype === 'cleric') JPS = value - 2;
         if (archetype === 'thief') { JPD = value - 2; JPS = value - 2; }
-        if (archetype === 'mage') JPS = value - 2;
+        if (archetype === 'wizard') JPS = value - 2;
         return { JPD, JPC, JPS };
     }
 
