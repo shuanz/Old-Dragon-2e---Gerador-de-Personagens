@@ -907,8 +907,9 @@ class OldDragon2eCharacterGenerator {
         ];
         
         // Idiomas base por raça (normalmente os idiomas da raça ou local de origem)
+        // Todas as raças têm 2 idiomas iniciais: Comum + idioma específico da raça
         const raceLanguages = {
-            humano: ['Comum'],
+            humano: ['Comum'], // Humano fala apenas Comum
             elfo: ['Comum', 'Élfico'],
             'half-elf': ['Comum', 'Élfico'],
             anao: ['Comum', 'Anão'],
@@ -917,10 +918,23 @@ class OldDragon2eCharacterGenerator {
             gnome: ['Comum', 'Gnomo']
         };
         
-        // Começa com idiomas da raça (até o limite de idiomas totais)
+        // Começa com idiomas da raça
         let knownLanguages = [...(raceLanguages[race] || ['Comum'])];
         
-        // Se tem mais idiomas disponíveis que os da raça, adiciona aleatórios
+        // Garante que todas as raças tenham pelo menos 2 idiomas iniciais
+        // Se a raça tem menos de 2 idiomas, adiciona idiomas aleatórios até completar 2
+        const initialLanguagesNeeded = Math.min(2, totalLanguages);
+        while (knownLanguages.length < initialLanguagesNeeded) {
+            const availableForRandom = availableLanguages.filter(lang => !knownLanguages.includes(lang));
+            if (availableForRandom.length > 0) {
+                const randomIndex = Math.floor(Math.random() * availableForRandom.length);
+                knownLanguages.push(availableForRandom[randomIndex]);
+            } else {
+                break; // Não há mais idiomas disponíveis
+            }
+        }
+        
+        // Se ainda tem slots disponíveis para idiomas adicionais (por modificador de Inteligência)
         const remainingSlots = totalLanguages - knownLanguages.length;
         if (remainingSlots > 0) {
             const availableForRandom = availableLanguages.filter(lang => !knownLanguages.includes(lang));
