@@ -910,16 +910,16 @@ class OldDragon2eCharacterGenerator {
         ];
         
         // Idiomas base por raça (normalmente os idiomas da raça ou local de origem)
-        // Todas as raças têm 2 idiomas iniciais: idioma específico da raça + Comum
+        // Humanos sempre têm acesso ao Comum, outras raças só se tiverem Inteligência suficiente
         const raceLanguages = {
-            humano: ['Comum'], // Humano fala apenas Comum
-            elfo: ['Élfico', 'Comum'], // Élfico como idioma principal
-            'half-elf': ['Élfico', 'Comum'], // Élfico como idioma principal
-            anao: ['Anão', 'Comum'], // Anão como idioma principal (sem til)
-            'anão': ['Anão', 'Comum'], // Anão como idioma principal (com til)
-            halfling: ['Halfling', 'Comum'], // Halfling como idioma principal
-            meio_elfo: ['Élfico', 'Comum'], // Élfico como idioma principal
-            gnome: ['Gnomo', 'Comum'] // Gnomo como idioma principal
+            humano: ['Comum'], // Humano sempre fala Comum
+            elfo: ['Élfico'], // Elfo fala apenas Élfico (Comum só se Int >= 4)
+            'half-elf': ['Élfico'], // Meio-Elfo fala apenas Élfico (Comum só se Int >= 4)
+            anao: ['Anão'], // Anão fala apenas Anão (Comum só se Int >= 4)
+            'anão': ['Anão'], // Anão fala apenas Anão (Comum só se Int >= 4)
+            halfling: ['Halfling'], // Halfling fala apenas Halfling (Comum só se Int >= 4)
+            meio_elfo: ['Élfico'], // Meio-Elfo fala apenas Élfico (Comum só se Int >= 4)
+            gnome: ['Gnomo'] // Gnomo fala apenas Gnomo (Comum só se Int >= 4)
         };
         
         // Começa com idiomas da raça
@@ -928,7 +928,13 @@ class OldDragon2eCharacterGenerator {
         
         let knownLanguages = [...(raceSpecificLanguages || ['Comum'])];
         
-        // Garante que todas as raças tenham pelo menos 2 idiomas iniciais
+        // Adiciona "Comum" se a Inteligência for suficiente (>= 4) e não for humano
+        // Humanos sempre têm Comum, outras raças só se tiverem Inteligência suficiente
+        if (raceKey !== 'humano' && intelligence >= 4 && !knownLanguages.includes('Comum')) {
+            knownLanguages.push('Comum');
+        }
+        
+        // Garante que todas as raças tenham pelo menos 2 idiomas iniciais (se Inteligência permitir)
         // Se a raça tem menos de 2 idiomas, adiciona idiomas aleatórios até completar 2
         const initialLanguagesNeeded = Math.min(2, totalLanguages);
         while (knownLanguages.length < initialLanguagesNeeded) {
