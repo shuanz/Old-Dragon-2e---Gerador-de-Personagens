@@ -434,24 +434,29 @@ class OldDragon2eCharacterGenerator {
      * Gera equipamento básico baseado na classe
      */
     async generateEquipment(characterClass) {
-        try {
-            console.log(`CharacterGenerator: Gerando equipamento para classe "${characterClass}"`);
-            console.log(`CharacterGenerator: EquipmentManager disponível:`, typeof EquipmentManager);
-            
-            // Usa o EquipmentManager para gerar equipamentos apropriados para a classe
-            const equipmentManager = new EquipmentManager();
-            const equipment = await equipmentManager.generateBasicEquipment(characterClass);
-            
-            // Converte os objetos de equipamento para nomes de strings para compatibilidade
-            const equipmentNames = equipment.map(item => item.name || item);
-            console.log(`CharacterGenerator: Equipamentos finais para "${characterClass}":`, equipmentNames);
-            
-            return equipmentNames;
-        } catch (error) {
-            console.error('Erro ao gerar equipamento:', error);
-            
-            // Fallback: usa lógica simplificada baseada na classe
-            console.log(`CharacterGenerator: Usando fallback para classe "${characterClass}"`);
+        console.log(`CharacterGenerator: Gerando equipamento para classe "${characterClass}"`);
+        console.log(`CharacterGenerator: EquipmentManager disponível:`, typeof EquipmentManager);
+        
+        // Verifica se EquipmentManager está disponível antes de tentar usá-lo
+        if (typeof EquipmentManager !== 'undefined') {
+            try {
+                // Usa o EquipmentManager para gerar equipamentos apropriados para a classe
+                const equipmentManager = new EquipmentManager();
+                const equipment = await equipmentManager.generateBasicEquipment(characterClass);
+                
+                // Converte os objetos de equipamento para nomes de strings para compatibilidade
+                const equipmentNames = equipment.map(item => item.name || item);
+                console.log(`CharacterGenerator: Equipamentos finais para "${characterClass}":`, equipmentNames);
+                
+                return equipmentNames;
+            } catch (error) {
+                console.error('Erro ao usar EquipmentManager:', error);
+                console.log(`CharacterGenerator: Usando fallback devido a erro no EquipmentManager`);
+                return this.generateEquipmentFallback(characterClass);
+            }
+        } else {
+            // EquipmentManager não está disponível, usa fallback diretamente
+            console.log(`CharacterGenerator: EquipmentManager não disponível, usando fallback`);
             return this.generateEquipmentFallback(characterClass);
         }
     }
