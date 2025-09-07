@@ -883,6 +883,9 @@ class OldDragon2eCharacterGenerator {
      * - Capacidade de ler/escrever baseada na Inteligência
      */
     calculateLanguages(intelligence, race) {
+        // Se race é um objeto (documento do SRD), usa o nome
+        const raceName = typeof race === 'object' ? race.name : race;
+        
         // Regras de idiomas baseadas em Inteligência
         let totalLanguages = 2; // Base: 2 idiomas iniciais
         
@@ -919,7 +922,7 @@ class OldDragon2eCharacterGenerator {
         };
         
         // Começa com idiomas da raça
-        let knownLanguages = [...(raceLanguages[race] || ['Comum'])];
+        let knownLanguages = [...(raceLanguages[raceName.toLowerCase()] || ['Comum'])];
         
         // Garante que todas as raças tenham pelo menos 2 idiomas iniciais
         // Se a raça tem menos de 2 idiomas, adiciona idiomas aleatórios até completar 2
