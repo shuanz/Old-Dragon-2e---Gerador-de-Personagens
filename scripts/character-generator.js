@@ -606,7 +606,8 @@ class OldDragon2eCharacterGenerator {
         const hitDie = { fighter: 10, cleric: 8, thief: 6, mage: 4 };
         const die = hitDie[archetype] || 6;
         const modifier = this.calculateModifiers({ constitution }).constitution;
-        return Math.max(1, this.rollDie(die) + modifier);
+        // Para o primeiro nível, usa o valor máximo do dado + modificador
+        return Math.max(1, die + modifier);
     }
 
     /**
