@@ -1587,10 +1587,8 @@ class OldDragon2eCharacterGenerator {
             character.classData = selectedClass.system;
 
             // Ajusta equipamento para respeitar restrições da classe selecionada
-            const archetype = this.mapClassToArchetype(selectedClass.name);
-            const baseEquip = await this.generateEquipment(archetype);
-            const restrictions = this.getClassRestrictions(selectedClass.name);
-            character.equipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+            const baseEquip = await this.generateEquipment(selectedClass.name);
+            character.equipment = baseEquip;
             
             // Gera magias iniciais apenas para classes arcanas (Mago e especializações)
             const isArcaneClass = /mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/i.test(selectedClass.name);
@@ -1930,10 +1928,7 @@ class OldDragon2eCharacterGenerator {
 
             // Gera novo equipamento respeitando a classe atual
             const characterClass = dialog.currentCharacter.class;
-            const archetype = this.mapClassToArchetype(characterClass);
-            const baseEquip = await this.generateEquipment(archetype);
-            const restrictions = this.getClassRestrictions(characterClass);
-            const newEquipment = this.filterEquipmentNamesByRestrictions(baseEquip, restrictions);
+            const newEquipment = await this.generateEquipment(characterClass);
             
             // Atualiza o personagem atual
             dialog.currentCharacter.equipment = newEquipment;
