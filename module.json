@@ -1,6 +1,6 @@
 {
   "title": "Old Dragon 2e - Gerador de Personagens",
-  "id": "old-dragon-2e-gerador-de-personagens",
+  "id": "old-dragon-2e---gerador-de-personagens",
   "description": "Um módulo para gerar personagens automaticamente para o sistema Old Dragon 2e. Permite criar personagens com atributos aleatórios, classes, raças e equipamentos seguindo as regras do sistema. Inclui arquitetura modular com classes especializadas para melhor organização e manutenibilidade.",
   "compatibility": {
     "minimum": 13,

@@ -4,7 +4,7 @@
 
 Hooks.on('init', function() {
     // Registra as configurações do módulo
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'enableAutoGeneration', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'enableAutoGeneration', {
         name: 'Habilitar Geração Automática',
         hint: 'Permite gerar personagens automaticamente ao clicar no botão',
         scope: 'world',
@@ -13,7 +13,7 @@ Hooks.on('init', function() {
         default: true
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'defaultLevel', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'defaultLevel', {
         name: 'Nível Padrão',
         hint: 'Nível inicial dos personagens gerados',
         scope: 'world',
@@ -27,7 +27,7 @@ Hooks.on('init', function() {
         }
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'enableEquipment', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'enableEquipment', {
         name: 'Incluir Equipamento',
         hint: 'Adiciona equipamento básico aos personagens gerados',
         scope: 'world',
@@ -36,7 +36,7 @@ Hooks.on('init', function() {
         default: true
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'enableNames', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'enableNames', {
         name: 'Gerar Nomes',
         hint: 'Gera nomes aleatórios para os personagens',
         scope: 'world',
@@ -45,7 +45,7 @@ Hooks.on('init', function() {
         default: true
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'allowedRaces', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'allowedRaces', {
         name: 'Raças Permitidas',
         hint: 'Selecione quais raças podem ser geradas',
         scope: 'world',
@@ -62,7 +62,7 @@ Hooks.on('init', function() {
         }
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'allowedClasses', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'allowedClasses', {
         name: 'Classes Permitidas',
         hint: 'Selecione quais classes podem ser geradas',
         scope: 'world',
@@ -80,7 +80,7 @@ Hooks.on('init', function() {
         }
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'buttonPosition', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'buttonPosition', {
         name: 'Posição do Botão',
         hint: 'Onde o botão de geração deve aparecer',
         scope: 'world',
@@ -94,7 +94,7 @@ Hooks.on('init', function() {
         }
     });
 
-    game.settings.register('old-dragon-2e-gerador-de-personagens', 'buttonStyle', {
+    game.settings.register('old-dragon-2e---gerador-de-personagens', 'buttonStyle', {
         name: 'Estilo do Botão',
         hint: 'Aparência visual do botão de geração',
         scope: 'world',

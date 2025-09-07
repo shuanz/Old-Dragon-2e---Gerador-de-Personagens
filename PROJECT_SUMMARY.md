@@ -7,7 +7,7 @@ Criado um módulo completo para Foundry Virtual Tabletop que permite gerar perso
 ## Estrutura do Projeto
 
 ```
-old-dragon-2e-gerador-de-personagens/
+old-dragon-2e---gerador-de-personagens/
 ├── module.json                    # Manifesto principal do módulo
 ├── README.md                      # Documentação principal
 ├── EXAMPLES.md                    # Exemplos de uso

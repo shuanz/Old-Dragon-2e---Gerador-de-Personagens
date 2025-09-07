@@ -45,7 +45,7 @@ O módulo não requer configurações especiais. Ele funciona automaticamente co
 ## Estrutura do Projeto
 
 ```
-old-dragon-2e-gerador-de-personagens/
+old-dragon-2e---gerador-de-personagens/
 ├── module.json              # Configuração do módulo
 ├── scripts/
 │   ├── character-generator.js  # Lógica principal
