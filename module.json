@@ -21,13 +21,13 @@
   ],
   "esmodules": [
     "scripts/settings.js",
-    "scripts/character-generator.js",
     "scripts/modules/Character.js",
     "scripts/modules/AttributeCalculator.js",
     "scripts/modules/RaceManager.js",
     "scripts/modules/ClassManager.js",
+    "scripts/modules/EquipmentManager.js",
     "scripts/modules/SpellManager.js",
-    "scripts/modules/EquipmentManager.js"
+    "scripts/character-generator.js"
   ],
   "styles": [
     "styles/character-generator.css"
