@@ -46,7 +46,7 @@ class OldDragon2eCharacterGenerator {
             place: ['numa fazenda nos campos', 'numa pequena e distante vila', 'numa grande e importante cidade', 'numa vila à beira do mar', 'numa aldeia nas montanhas', 'numa pequena cidade no meio da floresta'],
             motive: ['ficar rico e poderoso', 'vingar seu passado', 'trazer glória e fama para você', 'matar a curiosidade sobre o mundo', 'tentar dar uma vida melhor aos seus descendentes', 'realizar seu sonho de ser um herói'],
             family: ['família muito pobre de camponeses', 'família de comerciantes', 'família de fazendeiros', 'família disfuncional', 'família adotiva', 'família de nobres falidos'],
-            tragedy: ['de um ataque de orcs e goblins', 'de uma guerra sanguinária', 'de um erro judiciário', 'de um terremoto misterioso', 'de uma experiência mágica', 'de uma epidemia de peste']
+            tragedy: ['de um ataque de criaturas malignas', 'de uma guerra sanguinária', 'de um erro judiciário', 'de um terremoto misterioso', 'de uma experiência mágica', 'de uma epidemia de peste']
         };
 
         this.alignments = ['Ordem', 'Neutralidade', 'Caos'];
@@ -73,14 +73,6 @@ class OldDragon2eCharacterGenerator {
                 first: ['Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna','Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna','Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna','Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna','Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna','Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna','Alston','Bodrin','Bimpnottin','Donella','Fonkin','Jebeddo','Nissa','Orla','Zanna'],
                 last: ['Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen','Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen','Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen','Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen','Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen','Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen','Beren','Daergel','Folkor','Garrick','Nackle','Murnig','Ningel','Raulnor','Scheppen']
             },
-            orc: {
-                first: ['Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog','Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog','Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog','Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog','Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog','Borg','Drog','Ghak','Grish','Karg','Lug','Mog','Oshk','Ragh','Snaga','Urzog'],
-                last: ['Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang','Skullcleaver','Bonechewer','Bloodfist','Ironjaw','Ragefang']
-            },
-            goblin: {
-                first: ['Grik','Snag','Zog','Brik','Drik','Frik','Hrik','Krik','Mrik','Prik','Rrik','Trik','Vrik','Wrik','Yrik','Grik','Snag','Zog','Brik','Drik','Frik','Hrik','Krik','Mrik','Prik','Rrik','Trik','Vrik','Wrik','Yrik','Grik','Snag','Zog','Brik','Drik','Frik','Hrik','Krik','Mrik','Prik','Rrik','Trik','Vrik','Wrik','Yrik','Grik','Snag','Zog','Brik','Drik','Frik','Hrik','Krik','Mrik','Prik','Rrik','Trik','Vrik','Wrik','Yrik','Grik','Snag','Zog','Brik','Drik','Frik','Hrik','Krik','Mrik','Prik','Rrik','Trik','Vrik','Wrik','Yrik'],
-                last: ['Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang','Skullbasher','Bonegnawer','Bloodspitter','Ironclaw','Ragefang']
-            }
         };
 
         // Padrões para identificação simples por nome (pré-exibição do equipamento)
@@ -892,7 +884,7 @@ class OldDragon2eCharacterGenerator {
         
         // Idiomas disponíveis no Old Dragon 2e
         const availableLanguages = [
-            'Comum', 'Élfico', 'Anão', 'Halfling', 'Orc', 'Goblin', 
+            'Comum', 'Élfico', 'Anão', 'Halfling', 'Gnomo', 
             'Gigante', 'Dragão', 'Abissal', 'Infernal', 'Celestial',
             'Druídico', 'Thieves\' Cant', 'Dracônico', 'Primordial'
         ];
@@ -905,7 +897,6 @@ class OldDragon2eCharacterGenerator {
             anao: ['Comum', 'Anão'],
             halfling: ['Comum', 'Halfling'],
             meio_elfo: ['Comum', 'Élfico'],
-            meio_orc: ['Comum', 'Orc']
         };
         
         // Começa com idiomas da raça
@@ -991,7 +982,7 @@ class OldDragon2eCharacterGenerator {
         
         // Para o template 5, precisa de outra raça
         if (templateIndex === 4) {
-            const otherRaces = ['humano', 'elfo', 'anão', 'halfling', 'gnomo', 'orc'];
+            const otherRaces = ['humano', 'elfo', 'anão', 'halfling', 'gnomo', 'meio-elfo'];
             const filteredRaces = otherRaces.filter(race => race !== characterRace.toLowerCase());
             const otherRace = filteredRaces[Math.floor(Math.random() * filteredRaces.length)];
             template = template.replace(/\[OUTRA RAÇA\]/g, otherRace);
