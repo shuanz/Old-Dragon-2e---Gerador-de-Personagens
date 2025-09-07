@@ -51,14 +51,14 @@ Hooks.on('init', function() {
         scope: 'world',
         config: true,
         type: Array,
-        default: ['human', 'elf', 'dwarf', 'halfling', 'orc', 'goblin'],
+        default: ['human', 'elf', 'dwarf', 'halfling', 'half-elf', 'gnome'],
         choices: {
             'human': 'Humano',
             'elf': 'Elfo',
             'dwarf': 'Anão',
             'halfling': 'Halfling',
-            'orc': 'Orc',
-            'goblin': 'Goblin'
+            'half-elf': 'Meio-Elfo',
+            'gnome': 'Gnomo'
         }
     });
 
