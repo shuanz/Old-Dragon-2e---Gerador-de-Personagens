@@ -886,9 +886,6 @@ class OldDragon2eCharacterGenerator {
         // Se race é um objeto (documento do SRD), usa o nome
         const raceName = typeof race === 'object' ? race.name : race;
         
-        // Debug: mostra o nome da raça sendo processado
-        console.log('calculateLanguages - race:', race, 'raceName:', raceName);
-        
         // Regras de idiomas baseadas em Inteligência
         let totalLanguages = 2; // Base: 2 idiomas iniciais
         
@@ -918,7 +915,8 @@ class OldDragon2eCharacterGenerator {
             humano: ['Comum'], // Humano fala apenas Comum
             elfo: ['Élfico', 'Comum'], // Élfico como idioma principal
             'half-elf': ['Élfico', 'Comum'], // Élfico como idioma principal
-            anao: ['Anão', 'Comum'], // Anão como idioma principal
+            anao: ['Anão', 'Comum'], // Anão como idioma principal (sem til)
+            'anão': ['Anão', 'Comum'], // Anão como idioma principal (com til)
             halfling: ['Halfling', 'Comum'], // Halfling como idioma principal
             meio_elfo: ['Élfico', 'Comum'], // Élfico como idioma principal
             gnome: ['Gnomo', 'Comum'] // Gnomo como idioma principal
@@ -927,7 +925,6 @@ class OldDragon2eCharacterGenerator {
         // Começa com idiomas da raça
         const raceKey = raceName.toLowerCase();
         const raceSpecificLanguages = raceLanguages[raceKey];
-        console.log('calculateLanguages - raceKey:', raceKey, 'raceSpecificLanguages:', raceSpecificLanguages);
         
         let knownLanguages = [...(raceSpecificLanguages || ['Comum'])];
         
