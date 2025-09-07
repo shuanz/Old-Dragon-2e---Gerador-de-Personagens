@@ -469,6 +469,10 @@ class OldDragon2eCharacterGenerator {
         const className = characterClass.toLowerCase();
         const equipment = [];
         
+        // Arrays compartilhados para todos os equipamentos
+        const allGeneralItems = ['Algema', 'Água Benta', 'Apito', 'Arpéu', 'Cadeado', 'Coberta de Inverno', 'Corda de Cânhamo', 'Corrente', 'Escada', 'Espelho', 'Ferramentas de Ladrão', 'Cravos/Ganchos', 'Giz', 'Grimório', 'Lamparina', 'Lanterna furta-fogo', 'Martelo', 'Manto', 'Óleo', 'Pá ou Picareta', 'Pé de Cabra', 'Pederneira', 'Pena e Tinta', 'Pergaminho', 'Ração de viagem', 'Rede', 'Saco de Dormir', 'Símbolo divino', 'Tenda pequena', 'Tocha', 'Traje de exploração', 'Traje nobre', 'Traje de Inverno', 'Vara de exploração', 'Vela'];
+        const allContainers = ['Algibeira', 'Aljava', 'Barril/Caixa Pequena', 'Barril/Caixa Grande', 'Mochila', 'Odre', 'Porta Mapas', 'Saco de estopa'];
+        
         // Define equipamentos por classe seguindo as restrições específicas
         
         // GUERREIRO (Bárbaro, Paladino, Anão Aventureiro, Arqueiro)
@@ -479,36 +483,36 @@ class OldDragon2eCharacterGenerator {
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Saco de Dormir', 'Ração de viagem', 'Corda de Cânhamo', 'Tocha', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGeneralItem, randomContainer);
             } else if (/arqueiro|archer/.test(className)) {
                 // Arqueiro: armas específicas, só couro
                 const weapons = ['Arco Curto', 'Arco Longo', 'Adaga', 'Azagaia', 'Funda', 'Bordão/Cajado', 'Espada Curta'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Flecha de Guerra', 'Aljava', 'Corda de Cânhamo', 'Saco de Dormir', 'Ração de viagem'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGeneralItem, randomContainer);
             } else if (/anão|anao|dwarf/.test(className)) {
                 // Anão Aventureiro: todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Saco de Dormir', 'Ração de viagem', 'Corda de Cânhamo', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else {
                 // Guerreiro/Paladino padrão: todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Saco de Dormir', 'Ração de viagem', 'Corda de Cânhamo', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             }
         }
         
@@ -520,45 +524,45 @@ class OldDragon2eCharacterGenerator {
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Símbolo divino', 'Saco de Dormir', 'Ração de viagem', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else if (/xamã|xama|shaman/.test(className)) {
                 // Xamã: armas não metálicas, armaduras leves
                 const weapons = ['Bordão/Cajado', 'Porrete/Clava', 'Lança', 'Azagaia', 'Funda'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Símbolo divino', 'Saco de Dormir', 'Ração de viagem', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else if (/acadêmico|academic/.test(className)) {
                 // Acadêmico: apenas armas impactantes, todas armaduras
                 const weapons = ['Bordão/Cajado', 'Maça', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Grimório', 'Pena e Tinta', 'Pergaminho', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else if (/proscrito|outlaw/.test(className)) {
                 // Proscrito: pode usar todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Saco de Dormir', 'Ração de viagem', 'Corda de Cânhamo', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else {
                 // Clérigo padrão: apenas armas impactantes, todas armaduras
                 const weapons = ['Bordão/Cajado', 'Maça', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Símbolo divino', 'Água Benta', 'Saco de Dormir', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             }
         }
         
@@ -570,36 +574,36 @@ class OldDragon2eCharacterGenerator {
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Saco de Dormir', 'Ração de viagem', 'Corda de Cânhamo', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else if (/bardo|bard/.test(className)) {
                 // Bardo: armas específicas, armaduras leves, sem escudo
                 const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Saco de Dormir', 'Ração de viagem', 'Mochila', 'Tocha', 'Corda de Cânhamo'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGeneralItem, randomContainer);
             } else if (/halfling/.test(className)) {
                 // Halfling Aventureiro: armas específicas, armaduras leves
                 const weapons = ['Adaga', 'Azagaia', 'Funda', 'Lança', 'Bordão/Cajado', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Ferramentas de Ladrão', 'Saco de Dormir', 'Ração de viagem', 'Mochila', 'Corda de Cânhamo'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGeneralItem, randomContainer);
             } else {
                 // Ladino/Assassino padrão: armas específicas, armaduras leves
                 const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Ferramentas de Ladrão', 'Saco de Dormir', 'Ração de viagem', 'Mochila', 'Corda de Cânhamo'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGeneralItem, randomContainer);
             }
         }
         
@@ -611,25 +615,25 @@ class OldDragon2eCharacterGenerator {
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Grimório', 'Pergaminho', 'Pena e Tinta', 'Mochila', 'Tocha'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, randomGeneralItem, randomContainer);
             } else if (/elfo|elf/.test(className)) {
                 // Elfo Aventureiro: pode usar todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
                 const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const gear = ['Escudo', 'Grimório', 'Pergaminho', 'Pena e Tinta', 'Mochila'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomArmor, 'Escudo', randomGeneralItem, randomContainer);
             } else {
                 // Mago/Ilusionista/Necromante padrão: armas específicas, sem armadura
                 const weapons = ['Adaga', 'Azagaia', 'Bordão/Cajado', 'Espada Curta', 'Funda'];
                 const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
-                const gear = ['Grimório', 'Pergaminho', 'Pena e Tinta', 'Mochila', 'Tocha', 'Vela'];
-                const randomGear = gear[Math.floor(Math.random() * gear.length)];
-                equipment.push(randomWeapon, 'Adaga', randomGear);
+                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
+                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
+                equipment.push(randomWeapon, 'Adaga', randomGeneralItem, randomContainer);
             }
         }
         
