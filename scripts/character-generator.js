@@ -435,12 +435,14 @@ class OldDragon2eCharacterGenerator {
      */
     async generateEquipment(characterClass) {
         try {
+            console.log(`CharacterGenerator: Gerando equipamento para classe "${characterClass}"`);
             // Usa o EquipmentManager para gerar equipamentos apropriados para a classe
             const equipmentManager = new EquipmentManager();
             const equipment = await equipmentManager.generateBasicEquipment(characterClass);
             
             // Converte os objetos de equipamento para nomes de strings para compatibilidade
             const equipmentNames = equipment.map(item => item.name || item);
+            console.log(`CharacterGenerator: Equipamentos finais para "${characterClass}":`, equipmentNames);
             
             return equipmentNames;
         } catch (error) {
