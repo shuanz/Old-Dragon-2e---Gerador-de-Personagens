@@ -434,31 +434,45 @@ class OldDragon2eCharacterGenerator {
      * Gera equipamento básico baseado na classe
      */
     async generateEquipment(characterClass) {
-        const data = await this.loadSrdEquipment();
-        const equipment = [];
-        
-        // Adiciona uma arma básica
-        if (data.weapons && data.weapons.length > 0) {
-            const randomWeapon = data.weapons[Math.floor(Math.random() * data.weapons.length)];
-            equipment.push(randomWeapon);
-        }
-        
-        // Adiciona equipamentos básicos
-        if (data.gear && data.gear.length > 0) {
-            const basicGear = ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha'];
-            const availableGear = data.gear.filter(item => basicGear.includes(item));
+        try {
+            // Usa o EquipmentManager para gerar equipamentos apropriados para a classe
+            const equipmentManager = new EquipmentManager();
+            const equipment = await equipmentManager.generateBasicEquipment(characterClass);
             
-            // Adiciona 2-3 itens básicos aleatórios
-            const gearCount = Math.min(3, availableGear.length);
-            for (let i = 0; i < gearCount; i++) {
-                const randomGear = availableGear[Math.floor(Math.random() * availableGear.length)];
-                if (!equipment.includes(randomGear)) {
-                    equipment.push(randomGear);
+            // Converte os objetos de equipamento para nomes de strings para compatibilidade
+            const equipmentNames = equipment.map(item => item.name || item);
+            
+            return equipmentNames;
+        } catch (error) {
+            console.error('Erro ao gerar equipamento:', error);
+            
+            // Fallback para o método antigo se houver erro
+            const data = await this.loadSrdEquipment();
+            const equipment = [];
+            
+            // Adiciona uma arma básica
+            if (data.weapons && data.weapons.length > 0) {
+                const randomWeapon = data.weapons[Math.floor(Math.random() * data.weapons.length)];
+                equipment.push(randomWeapon);
+            }
+            
+            // Adiciona equipamentos básicos
+            if (data.gear && data.gear.length > 0) {
+                const basicGear = ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha'];
+                const availableGear = data.gear.filter(item => basicGear.includes(item));
+                
+                // Adiciona 2-3 itens básicos aleatórios
+                const gearCount = Math.min(3, availableGear.length);
+                for (let i = 0; i < gearCount; i++) {
+                    const randomGear = availableGear[Math.floor(Math.random() * availableGear.length)];
+                    if (!equipment.includes(randomGear)) {
+                        equipment.push(randomGear);
+                    }
                 }
             }
+            
+            return equipment;
         }
-        
-        return equipment;
     }
 
     mapClassToArchetype(className) {
@@ -475,11 +489,17 @@ class OldDragon2eCharacterGenerator {
         }
         
         // Classes normais
-        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'mage';
-        if (/clérigo|clerigo|druida|xamã|xama|acadêmico|academico/.test(n)) return 'cleric';
-        if (/paladino|bárbaro|barbaro|guerreiro|fighter/.test(n)) return 'fighter';
-        if (/ladrão|ladrao|ladino|thief|bardo|ranger|assassino|assassin/.test(n)) return 'thief';
-        return 'fighter';
+        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(n)) return 'wizard';
+        if (/clérigo|clerigo|acadêmico|academico/.test(n)) return 'cleric';
+        if (/druida|xamã|xama/.test(n)) return 'druid';
+        if (/guerreiro|fighter/.test(n)) return 'warrior';
+        if (/paladino/.test(n)) return 'paladin';
+        if (/bárbaro|barbaro|barbarian/.test(n)) return 'barbarian';
+        if (/ladrão|ladrao|ladino|thief/.test(n)) return 'thief';
+        if (/bardo|bard/.test(n)) return 'bard';
+        if (/ranger/.test(n)) return 'ranger';
+        if (/assassino|assassin/.test(n)) return 'assassin';
+        return 'warrior';
     }
 
     getClassRestrictions(className) {
@@ -595,7 +615,7 @@ class OldDragon2eCharacterGenerator {
      */
     calculateHitPoints(characterClass, constitution) {
         const archetype = this.mapClassToArchetype(characterClass);
-        const hitDie = { fighter: 10, cleric: 8, thief: 6, mage: 4 };
+        const hitDie = { warrior: 10, cleric: 8, thief: 6, wizard: 4 };
         const die = hitDie[archetype] || 6;
         const modifier = this.calculateModifiers({ constitution }).constitution;
         // Para o primeiro nível, usa o valor máximo do dado + modificador
@@ -635,13 +655,13 @@ class OldDragon2eCharacterGenerator {
         
         // Tabela base de ataque por classe e nível
         const baseAttackTable = {
-            fighter: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            warrior: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             cleric: [1, 1, 1, 3, 3, 3, 5, 5, 5, 7],
             thief: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
-            mage: [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
+            wizard: [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
         };
         
-        const baseAttack = (baseAttackTable[archetype] || baseAttackTable.fighter)[level - 1] ?? 1;
+        const baseAttack = (baseAttackTable[archetype] || baseAttackTable.warrior)[level - 1] ?? 1;
         
         // Calcula modificadores de atributos
         const modifiers = this.calculateModifiers(attributes);
@@ -670,18 +690,18 @@ class OldDragon2eCharacterGenerator {
     calculateSavingThrows(characterClass, level) {
         const archetype = this.mapClassToArchetype(characterClass);
         const baseTable = {
-            fighter: [5, 5, 6, 6, 8, 8, 10, 10, 11, 11],
+            warrior: [5, 5, 6, 6, 8, 8, 10, 10, 11, 11],
             cleric: [5, 5, 5, 7, 7, 7, 9, 9, 9, 11],
             thief: [5, 5, 5, 5, 8, 8, 8, 8, 11, 11],
-            mage: [5, 5, 5, 5, 7, 7, 7, 7, 7, 10]
+            wizard: [5, 5, 5, 5, 7, 7, 7, 7, 7, 10]
         };
-        const value = (baseTable[archetype] || baseTable.fighter)[level - 1] || 5;
+        const value = (baseTable[archetype] || baseTable.warrior)[level - 1] || 5;
         let JPD = value;
         let JPC = value;
         let JPS = value;
         if (archetype === 'cleric') JPS = value - 2;
         if (archetype === 'thief') { JPD = value - 2; JPS = value - 2; }
-        if (archetype === 'mage') JPS = value - 2;
+        if (archetype === 'wizard') JPS = value - 2;
         return { JPD, JPC, JPS };
     }
 
