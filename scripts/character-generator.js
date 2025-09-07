@@ -278,14 +278,6 @@ class OldDragon2eCharacterGenerator {
 
             const allSpells = await spellPack.getDocuments();
             
-            // Debug: mostra algumas magias para entender o formato
-            console.log('Exemplos de magias disponíveis:', allSpells.slice(0, 3).map(s => ({ 
-                name: s.name, 
-                circle: s.system?.circle, 
-                system: s.system,
-                type: s.type,
-                systemKeys: Object.keys(s.system || {})
-            })));
             
             const firstCircleSpells = allSpells.filter(spell => {
                 // No Old Dragon 2e, as magias de 1º círculo têm valor "1" nos campos de escola
@@ -956,13 +948,6 @@ class OldDragon2eCharacterGenerator {
             else if (raceName.includes('anão') || raceName.includes('anao')) jpRaceBonus = 'jpc';
             else if (raceName.includes('halfling')) jpRaceBonus = 'jps';
 
-            // Debug: verifica os PV antes de criar o personagem
-            console.log('Debug PV - characterData.hitPoints:', characterData.hitPoints);
-            console.log('Debug PV - characterData:', characterData);
-            
-            // Debug: verifica a estrutura do sistema Old Dragon 2e
-            console.log('Debug - Sistema Old Dragon 2e:', game.system);
-            console.log('Debug - Template de personagem:', game.system.template?.Actor?.character);
             
             // Cria o personagem com estrutura do sistema Old Dragon 2e
             const actorData = {
@@ -1050,19 +1035,6 @@ class OldDragon2eCharacterGenerator {
             };
 
             const actor = await Actor.create(actorData);
-            
-            // Debug: verifica a estrutura do personagem criado
-            console.log('Debug - Personagem criado:', actor);
-            console.log('Debug - System do personagem:', actor.system);
-            
-            // Força a atualização dos PV após a criação
-            await actor.update({
-                'system.hp.value': characterData.hitPoints,
-                'system.hp.max': characterData.hitPoints
-            });
-            
-            // Debug: verifica se a atualização funcionou
-            console.log('Debug - PV após atualização:', actor.system.hp.value, actor.system.hp.max);
             
             // Importa Raça e Classe do SRD como Itens do Ator
             try {
@@ -1487,8 +1459,6 @@ class OldDragon2eCharacterGenerator {
             return false;
         });
         
-        // Debug: mostra as classes filtradas
-        console.log(`Classes disponíveis para raça ${raceId} (${raceName}):`, filteredClasses.map(c => c.name));
         
         return filteredClasses;
     }
@@ -1539,7 +1509,6 @@ class OldDragon2eCharacterGenerator {
         // Se apenas a classe foi alterada, recalcula valores dependentes da classe
         else if (selectedClass && !selectedRace) {
             const archetype = this.mapClassToArchetype(selectedClass.name);
-            console.log('Atualizando apenas classe:', selectedClass.name, '-> archetype:', archetype);
             
             character.hitPoints = this.calculateHitPoints(archetype, character.attributes.constitution);
             character.armorClass = this.calculateArmorClass(character.attributes.dexterity, character.equipment);
@@ -2082,7 +2051,6 @@ class OldDragon2eCharacterGenerator {
             if (bacElement.length > 0) {
                 const spanElement = bacElement.find('span');
                 if (spanElement.length > 0) {
-                    console.log('Atualizando BAC via índice 6');
                     spanElement.html(`${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
                     bacUpdated = true;
                 }
@@ -2091,14 +2059,12 @@ class OldDragon2eCharacterGenerator {
         
         // Se ainda não funcionou, força a atualização usando todos os elementos
         if (!bacUpdated) {
-            console.log('Forçando atualização de BAC');
             infoItems.each((index, element) => {
                 const $element = $(element);
                 if ($element.text().includes('BAC:')) {
                     const span = $element.find('span');
                     if (span.length > 0) {
                         span.html(`${character.baseAttack.bac} <strong>BAD:</strong> ${character.baseAttack.bad}`);
-                        console.log('BAC atualizado via força bruta');
                         bacUpdated = true;
                     }
                 }
@@ -2154,10 +2120,6 @@ class OldDragon2eCharacterGenerator {
         const allRaces = await this.loadAllRaces();
         const allClasses = await this.loadAllClasses();
         
-        // Debug: mostra todas as classes disponíveis
-        console.log('Todas as classes disponíveis no SRD:', allClasses.map(c => c.name));
-        console.log('Classes que contêm "aventureiro":', allClasses.filter(c => c.name.toLowerCase().includes('aventureiro')).map(c => c.name));
-        console.log('Classes que contêm "adventurer":', allClasses.filter(c => c.name.toLowerCase().includes('adventurer')).map(c => c.name));
         
         // Seleciona raça e classe aleatórias iniciais
         const selectedRace = allRaces.length > 0 ? allRaces[Math.floor(Math.random() * allRaces.length)] : null;
