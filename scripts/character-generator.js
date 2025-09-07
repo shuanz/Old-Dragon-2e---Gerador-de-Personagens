@@ -907,15 +907,15 @@ class OldDragon2eCharacterGenerator {
         ];
         
         // Idiomas base por raça (normalmente os idiomas da raça ou local de origem)
-        // Todas as raças têm 2 idiomas iniciais: Comum + idioma específico da raça
+        // Todas as raças têm 2 idiomas iniciais: idioma específico da raça + Comum
         const raceLanguages = {
             humano: ['Comum'], // Humano fala apenas Comum
-            elfo: ['Comum', 'Élfico'],
-            'half-elf': ['Comum', 'Élfico'],
-            anao: ['Comum', 'Anão'],
-            halfling: ['Comum', 'Halfling'],
-            meio_elfo: ['Comum', 'Élfico'],
-            gnome: ['Comum', 'Gnomo']
+            elfo: ['Élfico', 'Comum'], // Élfico como idioma principal
+            'half-elf': ['Élfico', 'Comum'], // Élfico como idioma principal
+            anao: ['Anão', 'Comum'], // Anão como idioma principal
+            halfling: ['Halfling', 'Comum'], // Halfling como idioma principal
+            meio_elfo: ['Élfico', 'Comum'], // Élfico como idioma principal
+            gnome: ['Gnomo', 'Comum'] // Gnomo como idioma principal
         };
         
         // Começa com idiomas da raça
