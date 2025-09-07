@@ -1002,12 +1002,10 @@ class OldDragon2eCharacterGenerator {
                     bad: characterData.baseAttack.bad,
                     
                     // Vida e Movimento
-                    pv: characterData.hitPoints,
-                    pv_max: characterData.hitPoints,
-                    hp: characterData.hitPoints,
-                    hp_max: characterData.hitPoints,
-                    hitPoints: characterData.hitPoints,
-                    hitPointsMax: characterData.hitPoints,
+                    hp: {
+                        value: characterData.hitPoints,
+                        max: characterData.hitPoints
+                    },
                     movimento: characterData.movement,
                     
                     // Informações básicas
@@ -1059,16 +1057,12 @@ class OldDragon2eCharacterGenerator {
             
             // Força a atualização dos PV após a criação
             await actor.update({
-                'system.pv': characterData.hitPoints,
-                'system.pv_max': characterData.hitPoints,
-                'system.hp': characterData.hitPoints,
-                'system.hp_max': characterData.hitPoints,
-                'system.hitPoints': characterData.hitPoints,
-                'system.hitPointsMax': characterData.hitPoints
+                'system.hp.value': characterData.hitPoints,
+                'system.hp.max': characterData.hitPoints
             });
             
             // Debug: verifica se a atualização funcionou
-            console.log('Debug - PV após atualização:', actor.system.pv, actor.system.hp, actor.system.hitPoints);
+            console.log('Debug - PV após atualização:', actor.system.hp.value, actor.system.hp.max);
             
             // Importa Raça e Classe do SRD como Itens do Ator
             try {
