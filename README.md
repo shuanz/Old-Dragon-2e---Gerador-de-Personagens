@@ -1,23 +1,29 @@
 # Old Dragon 2e - Gerador de Personagens
 
-Um módulo para Foundry Virtual Tabletop que permite gerar personagens automaticamente para o sistema Old Dragon 2e. Agora com arquitetura modular e programação orientada a objetos para melhor organização e manutenibilidade.
+Um módulo para Foundry Virtual Tabletop que permite gerar personagens automaticamente para o sistema Old Dragon 2e.
 
 ## Características
 
 - **Geração Automática**: Cria personagens com atributos aleatórios usando 3d6
 - **Raças Oficiais SRD**: Suporte para Humanos, Elfos, Anões, Halflings, Meio-Elfos e Gnomos
-- **Todas as Classes**: Guerreiro, Mago, Clérigo, Ladino, Druida, Paladino e Ranger
-- **Equipamento Automático**: Cada classe recebe equipamento apropriado buscado exclusivamente no compêndio oficial do sistema
+- **Todas as Classes**: Guerreiro, Mago, Clérigo, Ladino, Druida, Paladino, Ranger, Bárbaro, Bardo, Assassino, Necromante, Ilusionista, Bruxo e Feiticeiro
+- **Equipamento Automático**: Cada classe recebe equipamento apropriado do compêndio oficial
 - **Cálculo de HP**: Pontos de vida calculados automaticamente baseado na classe e constituição
 - **Sistema de Idiomas**: Idiomas baseados em Inteligência com regras de leitura/escrita
 - **Magias Iniciais**: Geração automática de magias iniciais para classes arcanas
 - **Interface Intuitiva**: Botão integrado no menu de atores do Foundry VTT
-- **Arquitetura Modular**: Código organizado em classes especializadas
 
 ## Instalação
 
-1. Baixe o módulo do GitHub ou clone o repositório
-2. Coloque a pasta do módulo em `{userData}/Data/modules/`
+### Via Foundry VTT (Recomendado)
+1. No Foundry VTT, vá em **Configurações** → **Gerenciar Módulos**
+2. Clique em **Instalar Módulo**
+3. Cole o link do manifest: `https://github.com/shuanz/Old-Dragon-2e---Gerador-de-Personagens/releases/download/v2.2.0/module.json`
+4. Clique em **Instalar** e depois **Ativar**
+
+### Instalação Manual
+1. Baixe o arquivo ZIP da [última release](https://github.com/shuanz/Old-Dragon-2e---Gerador-de-Personagens/releases/latest)
+2. Extraia na pasta `{userData}/Data/modules/`
 3. Ative o módulo nas configurações do Foundry VTT
 4. Certifique-se de que o sistema Old Dragon 2e está instalado
 
@@ -42,30 +48,6 @@ O módulo não requer configurações especiais. Ele funciona automaticamente co
 - **Sistema**: Old Dragon 2e
 - **Idioma**: Português Brasileiro
 
-## Estrutura do Projeto
-
-```
-old-dragon-2e---gerador-de-personagens/
-├── module.json              # Configuração do módulo
-├── scripts/
-│   ├── character-generator.js  # Lógica principal
-│   ├── settings.js            # Configurações
-│   ├── srd-equipment.json     # Dados de equipamentos do SRD
-│   └── modules/               # Classes modulares (OOP)
-│       ├── Character.js       # Gerenciamento de dados do personagem
-│       ├── AttributeCalculator.js # Cálculos de atributos
-│       ├── RaceManager.js     # Gerenciamento de raças e idiomas
-│       ├── ClassManager.js    # Gerenciamento de classes
-│       ├── SpellManager.js    # Gerenciamento de magias
-│       └── EquipmentManager.js # Gerenciamento de equipamentos
-├── styles/
-│   └── character-generator.css # Estilos do modal
-├── templates/
-│   └── character-generator.html # Template HTML
-├── lang/
-│   └── pt-BR.json            # Traduções
-└── README.md                 # Este arquivo
-```
 
 ## Funcionalidades Detalhadas
 
@@ -118,38 +100,6 @@ Cada classe recebe equipamento apropriado:
 - **Lista de 12 magias**: Abrir/Trancar, Cerrar Portas, Disco Flutuante, etc.
 - **Magias Exclusivas**: Som Ilusório (Ilusionista), Aterrorizar (Necromante), etc.
 
-## Arquitetura Modular
-
-O módulo utiliza programação orientada a objetos com classes especializadas:
-
-### Classes Principais
-- **`Character.js`** - Gerenciamento de dados do personagem
-- **`AttributeCalculator.js`** - Cálculos de atributos e modificadores
-- **`RaceManager.js`** - Gerenciamento de raças e idiomas
-- **`ClassManager.js`** - Gerenciamento de classes e restrições
-- **`SpellManager.js`** - Gerenciamento de magias e especializações
-- **`EquipmentManager.js`** - Gerenciamento de equipamentos
-
-### Benefícios
-- **Separação de Responsabilidades**: Cada classe tem uma função específica
-- **Manutenibilidade**: Código organizado e fácil de manter
-- **Escalabilidade**: Fácil adicionar novas funcionalidades
-- **Testabilidade**: Classes independentes para testes unitários
-
-## Desenvolvimento
-
-### Pré-requisitos
-- Node.js (opcional, para desenvolvimento)
-- Foundry VTT
-- Sistema Old Dragon 2e
-
-### Estrutura do Código
-- `character-generator.js`: Lógica principal e orquestração
-- `settings.js`: Configurações do módulo
-- `modules/`: Classes modulares especializadas
-- `character-generator.css`: Estilos do modal
-- `character-generator.html`: Template do modal
-- `srd-equipment.json`: Dados de equipamentos do SRD
 
 ## Licença
 
@@ -157,19 +107,16 @@ Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes
 
 ## Changelog
 
-### v2.0.0
-- **Arquitetura Modular**: Implementação de programação orientada a objetos
-- **Classes Especializadas**: 6 novas classes modulares para organização
-- **Sistema de Idiomas**: Regras completas baseadas em Inteligência
-- **Magias Iniciais**: Geração automática com 12 magias aleatórias
-- **Raças SRD**: Apenas raças oficiais (removido Orc e Goblin)
-- **Saneamento de Código**: Remoção de funções não utilizadas
-- **Melhorias na Manutenibilidade**: Código mais limpo e organizado
-
-### v1.1.0
+### v2.2.0
 - Melhorias na geração de equipamentos
 - Correções de bugs menores
 - Otimizações de performance
+
+### v2.0.0
+- **Arquitetura Modular**: Implementação de programação orientada a objetos
+- **Sistema de Idiomas**: Regras completas baseadas em Inteligência
+- **Magias Iniciais**: Geração automática com 12 magias aleatórias
+- **Raças SRD**: Apenas raças oficiais (removido Orc e Goblin)
 
 ### v1.0.0
 - Lançamento inicial
