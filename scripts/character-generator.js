@@ -91,7 +91,18 @@ class OldDragon2eCharacterGenerator {
             metalArmor: /(malha|escama|placa|cota|chain|scale|plate|completa|pesada)/i,
             smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o|azagaia|virote pequeno|besta de mão)/i,
             mediumWeapons: /(espada curta|espada longa|arco curto|arco longo|lança|lança montada|machado|machado de batalha|cimitarra|espada bastarda)/i,
-            largeWeapons: /(montante|alabarda|pique|lança montada|glaive|halberd)/i
+            largeWeapons: /(montante|alabarda|pique|lança montada|glaive|halberd)/i,
+            metalWeapons: /(espada|sword|machado|axe|martelo|hammer|ma[cç]a|mace|lança|spear|alabarda|halberd|montante|glaive|pique|pike)/i,
+            nonMetalWeapons: /(cajado|bast[aã]o|porrete|clava|arco|bow|besta|crossbow|funda|sling|dardo|dart|azagaia|javelin)/i
+        };
+
+        // Categorização de equipamentos para geração dinâmica
+        this.equipmentCategories = {
+            essential: ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha', 'Pederneira'],
+            survival: ['Tenda pequena', 'Coberta de Inverno', 'Traje de exploração', 'Vara de exploração', 'Pá ou Picareta'],
+            utility: ['Ferramentas de Ladrão', 'Pé de Cabra', 'Cravos/Ganchos', 'Escada', 'Rede', 'Apito'],
+            magical: ['Grimório', 'Pergaminho', 'Pena e Tinta', 'Símbolo divino', 'Água Benta'],
+            luxury: ['Traje nobre', 'Espelho', 'Lanterna furta-fogo', 'Vela', 'Óleo', 'Lamparina']
         };
 
     }
@@ -261,6 +272,132 @@ class OldDragon2eCharacterGenerator {
     isItemAllowedForClass(itemName, characterClass) {
         const restrictions = this.getClassRestrictions(characterClass);
         return this.filterEquipmentNamesByRestrictions([itemName], restrictions).length > 0;
+    }
+
+    /**
+     * Categoriza uma arma por tamanho
+     */
+    getWeaponSize(weaponName) {
+        const p = this.patterns;
+        if (p.smallWeapons.test(weaponName)) return 'small';
+        if (p.mediumWeapons.test(weaponName)) return 'medium';
+        if (p.largeWeapons.test(weaponName)) return 'large';
+        return 'medium'; // Default
+    }
+
+    /**
+     * Verifica se uma arma é impactante
+     */
+    isImpactWeapon(weaponName) {
+        return this.patterns.impactWeapons.test(weaponName);
+    }
+
+    /**
+     * Verifica se uma arma é metálica
+     */
+    isMetalWeapon(weaponName) {
+        return this.patterns.metalWeapons.test(weaponName);
+    }
+
+    /**
+     * Categoriza uma armadura por tipo
+     */
+    getArmorType(armorName) {
+        const p = this.patterns;
+        if (p.leatherArmor.test(armorName)) return 'light';
+        if (p.metalArmor.test(armorName)) return 'heavy';
+        return 'medium'; // Default
+    }
+
+    /**
+     * Verifica se uma armadura é metálica
+     */
+    isMetalArmor(armorName) {
+        return this.patterns.metalArmor.test(armorName);
+    }
+
+    /**
+     * Gera equipamento dinâmico baseado na classe e categoria
+     */
+    generateDynamicEquipment(characterClass, equipmentData) {
+        const restrictions = this.getClassRestrictions(characterClass);
+        const equipment = [];
+
+        // 1. Arma principal (obrigatória)
+        const allowedWeapons = equipmentData.weapons.filter(weapon => {
+            if (restrictions.onlyImpact && !this.isImpactWeapon(weapon)) return false;
+            if (restrictions.onlySmall && this.getWeaponSize(weapon) !== 'small') return false;
+            if (restrictions.noLarge && this.getWeaponSize(weapon) === 'large') return false;
+            if (restrictions.noMetal && this.isMetalWeapon(weapon)) return false;
+            if (restrictions.weaponSize !== 'any' && this.getWeaponSize(weapon) !== restrictions.weaponSize) return false;
+            return true;
+        });
+
+        if (allowedWeapons.length > 0) {
+            const weapon = allowedWeapons[Math.floor(Math.random() * allowedWeapons.length)];
+            equipment.push(weapon);
+        }
+
+        // 2. Armadura (se permitida)
+        if (restrictions.armor !== 'none') {
+            const allowedArmors = equipmentData.armors.filter(armor => {
+                if (restrictions.armor === 'light' && this.getArmorType(armor) !== 'light') return false;
+                if (restrictions.leatherOnly && !this.patterns.leatherArmor.test(armor)) return false;
+                if (restrictions.noMetal && this.isMetalArmor(armor)) return false;
+                return true;
+            });
+
+            if (allowedArmors.length > 0 && Math.random() < 0.8) { // 80% chance de ter armadura
+                const armor = allowedArmors[Math.floor(Math.random() * allowedArmors.length)];
+                equipment.push(armor);
+            }
+        }
+
+        // 3. Escudo (se permitido)
+        if (restrictions.shield && Math.random() < 0.6) { // 60% chance de ter escudo
+            equipment.push('Escudo');
+        }
+
+        // 4. Equipamentos diversos (2-4 itens aleatórios)
+        const miscCount = 2 + Math.floor(Math.random() * 3); // 2-4 itens
+        
+        // Seleciona categorias baseado na classe
+        let availableCategories = ['essential'];
+        
+        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(characterClass.toLowerCase())) {
+            availableCategories.push('magical');
+        }
+        
+        if (/ladr[aã]o|ladino|thief|bardo|bard|assassino|assassin/.test(characterClass.toLowerCase())) {
+            availableCategories.push('utility');
+        }
+        
+        if (/guerreiro|fighter|b[aá]rbaro|barbarian|paladino|paladin/.test(characterClass.toLowerCase())) {
+            availableCategories.push('survival');
+        }
+        
+        // Sempre adiciona algumas categorias aleatórias
+        availableCategories.push('survival', 'utility', 'luxury');
+        
+        // Remove duplicatas
+        availableCategories = [...new Set(availableCategories)];
+        
+        const selectedItems = [];
+        for (let i = 0; i < miscCount; i++) {
+            const category = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+            const categoryItems = this.equipmentCategories[category] || [];
+            
+            if (categoryItems.length > 0) {
+                const item = categoryItems[Math.floor(Math.random() * categoryItems.length)];
+                if (!selectedItems.includes(item)) {
+                    selectedItems.push(item);
+                }
+            }
+        }
+
+        equipment.push(...selectedItems);
+
+        return equipment;
     }
 
     /**
@@ -449,51 +586,11 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-     * Gera equipamento básico baseado na classe com restrições
+     * Gera equipamento dinâmico baseado na classe com restrições do Old Dragon 2e
      */
     async generateEquipment(characterClass) {
-        const cls = (characterClass || '').toLowerCase();
         const data = await this.loadSrdEquipment();
-
-        const randSubset = (arr, count) => {
-            const copy = [...arr];
-            for (let i = copy.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [copy[i], copy[j]] = [copy[j], copy[i]];
-            }
-            return copy.slice(0, count);
-        };
-
-        const randAllowedItem = (pool) => {
-            const available = [...pool];
-            while (available.length) {
-                const idx = Math.floor(Math.random() * available.length);
-                const candidate = available.splice(idx, 1)[0];
-                if (this.isItemAllowedForClass(candidate, cls)) return candidate;
-            }
-            return null;
-        };
-
-        const equipment = [];
-
-        const weapon = randAllowedItem(data.weapons);
-        if (weapon) equipment.push(weapon);
-
-        const armor = randAllowedItem(data.armors);
-        if (armor) equipment.push(armor);
-
-        const shieldClasses = new Set(['fighter', 'cleric', 'paladin', 'ranger']);
-        if (shieldClasses.has(cls)) {
-            const shield = randAllowedItem(data.shields);
-            if (shield && Math.random() < 0.5) equipment.push(shield);
-        }
-
-        const baseItems = ['Mochila', 'Ração de viagem', 'Saco de Dormir'];
-        equipment.push(...baseItems);
-        const miscItems = randSubset(data.gear, 3).filter(item => this.isItemAllowedForClass(item, cls));
-        equipment.push(...miscItems);
-
-        return equipment;
+        return this.generateDynamicEquipment(characterClass, data);
     }
 
     mapClassToArchetype(className) {
@@ -519,22 +616,68 @@ class OldDragon2eCharacterGenerator {
 
     getClassRestrictions(className) {
         const n = (className || '').toLowerCase();
-        const r = { armor: 'any', shield: true, onlyImpact: false, onlySmall: false, noLarge: false, leatherOnly: false };
+        const r = { 
+            armor: 'any', 
+            shield: true, 
+            onlyImpact: false, 
+            onlySmall: false, 
+            noLarge: false, 
+            leatherOnly: false,
+            noMetal: false,
+            weaponSize: 'any' // 'small', 'medium', 'large', 'any'
+        };
         
         // Classes Arcanas (Mago e especializações)
         if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista|necromancer|illusionist/.test(n)) { 
             r.armor = 'none'; 
             r.shield = false; 
             r.onlySmall = true; 
+            r.weaponSize = 'small';
+            
+            // Bruxo tem restrições especiais por nível
+            if (/bruxo|warlock/.test(n)) {
+                r.armor = 'light'; // Pode usar armaduras leves desde o 1º nível
+                r.weaponSize = 'medium'; // Pode usar armas médias desde o 1º nível
+            }
         }
         // Classes Divinas (Clérigo e especializações)
         else if (/cl[eê]rigo|cleric|druida|druid|acad[eê]mico|academic|xam[aã]|shaman|proscrito|outcast/.test(n)) { 
             r.onlyImpact = true; 
             r.armor = 'any'; 
             r.shield = true; 
+            r.weaponSize = 'any';
+            
             if (/druida|druid/.test(n)) {
                 r.leatherOnly = true;
                 r.noLarge = true;
+                r.noMetal = true;
+                r.weaponSize = 'medium';
+            }
+            
+            if (/xam[aã]|shaman/.test(n)) {
+                r.noMetal = true;
+            }
+            
+            if (/acad[eê]mico|academic/.test(n)) {
+                r.onlyImpact = true; // Não pode usar cortantes/perfurantes
+            }
+            
+            if (/proscrito|outcast/.test(n)) {
+                r.onlyImpact = false; // Proscrito pode usar qualquer arma
+            }
+        }
+        // Classes de Combate (Guerreiro e especializações) - DEVE VIR ANTES das outras
+        else if (/guerreiro|fighter|b[aá]rbaro|barbarian|paladino|paladin|arqueiro|archer/.test(n)) { 
+            r.armor = 'any'; 
+            r.shield = true; 
+            r.weaponSize = 'any';
+            
+            if (/b[aá]rbaro|barbarian/.test(n)) {
+                r.armor = 'light';
+            }
+            
+            if (/arqueiro|archer/.test(n)) {
+                r.armor = 'light'; // Só couro, outras removem habilidades
             }
         }
         // Classes de Habilidade (Ladrão e especializações)
@@ -542,20 +685,14 @@ class OldDragon2eCharacterGenerator {
             r.armor = 'light'; 
             r.shield = false; 
             r.noLarge = true; 
+            r.weaponSize = 'medium';
         }
         // Ranger (especialização de Ladrão com algumas diferenças)
         else if (/ranger/.test(n)) { 
             r.armor = 'light'; 
             r.shield = true; 
             r.noLarge = false; 
-        }
-        // Classes de Combate (Guerreiro e especializações)
-        else if (/guerreiro|fighter|b[aá]rbaro|barbarian|paladino|paladin|arqueiro|archer/.test(n)) { 
-            r.armor = 'any'; 
-            r.shield = true; 
-            if (/b[aá]rbaro|barbarian/.test(n)) {
-                r.armor = 'light';
-            }
+            r.weaponSize = 'any';
         }
         // Classes específicas de raça (herdam restrições da classe base)
         else if (/aventureiro|adventurer/.test(n)) {
@@ -564,18 +701,20 @@ class OldDragon2eCharacterGenerator {
                 r.onlyImpact = true;
                 r.armor = 'any';
                 r.shield = true;
+                r.weaponSize = 'any';
             }
-            // Elfo Aventureiro - herda de Ladrão
+            // Elfo Aventureiro - herda de Ladrão mas pode usar qualquer arma/armadura
             else if (/elfo|elf/.test(n)) {
-                r.armor = 'light';
-                r.shield = false;
-                r.noLarge = true;
+                r.armor = 'any';
+                r.shield = true;
+                r.weaponSize = 'any';
             }
             // Halfling Aventureiro - herda de Ladrão
             else if (/halfling/.test(n)) {
                 r.armor = 'light';
                 r.shield = false;
                 r.noLarge = true;
+                r.weaponSize = 'medium';
             }
         }
         
