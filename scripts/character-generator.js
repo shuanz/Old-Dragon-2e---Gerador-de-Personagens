@@ -473,6 +473,13 @@ class OldDragon2eCharacterGenerator {
         const allGeneralItems = ['Algema', 'Água Benta', 'Apito', 'Arpéu', 'Cadeado', 'Coberta de Inverno', 'Corda de Cânhamo', 'Corrente', 'Escada', 'Espelho', 'Ferramentas de Ladrão', 'Cravos/Ganchos', 'Giz', 'Grimório', 'Lamparina', 'Lanterna furta-fogo', 'Martelo', 'Manto', 'Óleo', 'Pá ou Picareta', 'Pé de Cabra', 'Pederneira', 'Pena e Tinta', 'Pergaminho', 'Ração de viagem', 'Rede', 'Saco de Dormir', 'Símbolo divino', 'Tenda pequena', 'Tocha', 'Traje de exploração', 'Traje nobre', 'Traje de Inverno', 'Vara de exploração', 'Vela'];
         const allContainers = ['Algibeira', 'Aljava', 'Barril/Caixa Pequena', 'Barril/Caixa Grande', 'Mochila', 'Odre', 'Porta Mapas', 'Saco de estopa'];
         
+        // Função para sortear quantidade aleatória de itens de uma lista
+        function getRandomItemsFromList(itemList, minItems = 0, maxItems = 3) {
+            const numItems = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
+            const shuffled = [...itemList].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, numItems);
+        }
+        
         // Define equipamentos por classe seguindo as restrições específicas
         
         // GUERREIRO (Bárbaro, Paladino, Anão Aventureiro, Arqueiro)
@@ -480,39 +487,45 @@ class OldDragon2eCharacterGenerator {
             if (/bárbaro|barbarian/.test(className)) {
                 // Bárbaro: todas as armas, só armaduras leves
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/arqueiro|archer/.test(className)) {
                 // Arqueiro: armas específicas, só couro
                 const weapons = ['Arco Curto', 'Arco Longo', 'Adaga', 'Azagaia', 'Funda', 'Bordão/Cajado', 'Espada Curta'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/anão|anao|dwarf/.test(className)) {
                 // Anão Aventureiro: todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.7) equipment.push('Escudo'); // 70% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else {
                 // Guerreiro/Paladino padrão: todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.7) equipment.push('Escudo'); // 70% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             }
         }
         
@@ -521,48 +534,58 @@ class OldDragon2eCharacterGenerator {
             if (/druida|druid/.test(className)) {
                 // Druida: armas não metálicas, armaduras leves
                 const weapons = ['Bordão/Cajado', 'Porrete/Clava', 'Lança', 'Azagaia', 'Funda'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/xamã|xama|shaman/.test(className)) {
                 // Xamã: armas não metálicas, armaduras leves
                 const weapons = ['Bordão/Cajado', 'Porrete/Clava', 'Lança', 'Azagaia', 'Funda'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/acadêmico|academic/.test(className)) {
                 // Acadêmico: apenas armas impactantes, todas armaduras
                 const weapons = ['Bordão/Cajado', 'Maça', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/proscrito|outlaw/.test(className)) {
                 // Proscrito: pode usar todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else {
                 // Clérigo padrão: apenas armas impactantes, todas armaduras
                 const weapons = ['Bordão/Cajado', 'Maça', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             }
         }
         
@@ -571,39 +594,44 @@ class OldDragon2eCharacterGenerator {
             if (/ranger/.test(className)) {
                 // Ranger: armas específicas + escudo, armaduras leves
                 const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava', 'Alabarda', 'Arco Longo', 'Machado de Batalha', 'Martelo de Batalha', 'Montante', 'Pique', 'Lança Montada'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/bardo|bard/.test(className)) {
                 // Bardo: armas específicas, armaduras leves, sem escudo
                 const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/halfling/.test(className)) {
                 // Halfling Aventureiro: armas específicas, armaduras leves
                 const weapons = ['Adaga', 'Azagaia', 'Funda', 'Lança', 'Bordão/Cajado', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else {
                 // Ladino/Assassino padrão: armas específicas, armaduras leves
                 const weapons = ['Adaga', 'Arco Curto', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Maça', 'Machado', 'Martelo', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             }
         }
         
@@ -612,28 +640,31 @@ class OldDragon2eCharacterGenerator {
             if (/bruxo|feiticeiro|sorcerer|warlock/.test(className)) {
                 // Bruxo: armas específicas por nível (1º nível)
                 const weapons = ['Adaga', 'Azagaia', 'Bordão/Cajado', 'Espada Curta', 'Funda', 'Cimitarra', 'Espada Longa', 'Maça', 'Machado'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else if (/elfo|elf/.test(className)) {
                 // Elfo Aventureiro: pode usar todas as armas e armaduras
                 const weapons = ['Adaga', 'Alabarda', 'Arco Curto', 'Arco Longo', 'Azagaia', 'Besta de Mão', 'Besta', 'Bordão/Cajado', 'Cimitarra', 'Espada Bastarda', 'Espada Curta', 'Espada Longa', 'Funda', 'Lança', 'Lança Montada', 'Maça', 'Machado', 'Machado de Batalha', 'Mangual', 'Martelo', 'Martelo de Batalha', 'Montante', 'Pique', 'Porrete/Clava'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
                 const armors = ['Armadura Acolchoada', 'Armadura de Couro', 'Armadura de Couro Batido', 'Cota de Malha', 'Armadura de Placas', 'Armadura Completa'];
-                const randomArmor = armors[Math.floor(Math.random() * armors.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomArmor, 'Escudo', randomGeneralItem, randomContainer);
+                
+                // Sorteia 1-2 armas, 0-1 armadura, 0-1 escudo, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(armors, 0, 1));
+                if (Math.random() < 0.8) equipment.push('Escudo'); // 80% chance de escudo
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             } else {
                 // Mago/Ilusionista/Necromante padrão: armas específicas, sem armadura
                 const weapons = ['Adaga', 'Azagaia', 'Bordão/Cajado', 'Espada Curta', 'Funda'];
-                const randomWeapon = weapons[Math.floor(Math.random() * weapons.length)];
-                const randomGeneralItem = allGeneralItems[Math.floor(Math.random() * allGeneralItems.length)];
-                const randomContainer = allContainers[Math.floor(Math.random() * allContainers.length)];
-                equipment.push(randomWeapon, randomGeneralItem, randomContainer);
+                // Sorteia 1-2 armas, 1-3 itens gerais, 1-2 recipientes
+                equipment.push(...getRandomItemsFromList(weapons, 1, 2));
+                equipment.push(...getRandomItemsFromList(allGeneralItems, 1, 3));
+                equipment.push(...getRandomItemsFromList(allContainers, 1, 2));
             }
         }
         
