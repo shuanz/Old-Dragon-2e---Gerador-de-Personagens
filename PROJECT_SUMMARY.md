@@ -31,10 +31,12 @@ old-dragon-2e---gerador-de-personagens/
 ### ✅ Geração de Personagens
 - **Atributos**: Geração aleatória usando 3d6 para todos os atributos
 - **Modificadores**: Cálculo automático baseado na tabela do Old Dragon 2e
-- **Raças**: Suporte para 6 raças (Humano, Elfo, Anão, Halfling, Orc, Goblin)
-- **Classes**: Suporte para 7 classes (Guerreiro, Mago, Clérigo, Ladino, Druida, Paladino, Ranger)
+- **Raças**: Suporte para 6 raças SRD (Humano, Elfo, Anão, Halfling, Meio-Elfo, Gnomo)
+- **Classes**: Suporte para 15 classes (Guerreiro, Mago, Clérigo, Ladino, Druida, Paladino, Ranger, Bárbaro, Bardo, Assassino, Necromante, Ilusionista, Bruxo, Feiticeiro)
 - **Nomes**: Geração de nomes aleatórios
 - **HP**: Cálculo automático baseado na classe e constituição
+- **Idiomas**: Sistema completo baseado em Inteligência
+- **Magias**: Geração automática de magias iniciais para classes arcanas
 
 ### ✅ Interface do Usuário
 - **Botão Integrado**: Adicionado ao menu de atores do Foundry VTT
@@ -141,5 +143,5 @@ O módulo está completo e funcional, seguindo todas as melhores práticas de de
 ---
 
 **Status**: ✅ Completo e Funcional
-**Versão**: 1.0.0
+**Versão**: 2.2.0
 **Data**: 2024
