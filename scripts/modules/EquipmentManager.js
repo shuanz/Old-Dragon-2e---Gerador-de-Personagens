@@ -160,13 +160,16 @@ class EquipmentManager {
         try {
             const allEquipment = await this.loadAllEquipment();
             const archetype = this.mapClassToArchetype(className);
+            console.log(`EquipmentManager: Classe "${className}" mapeada para arquétipo "${archetype}"`);
             const classEquipment = this.equipmentByClass[archetype] || this.equipmentByClass.warrior;
+            console.log(`EquipmentManager: Equipamentos para ${archetype}:`, classEquipment);
             
             const generatedEquipment = [];
 
             // Adiciona armas
             for (const weaponName of classEquipment.weapons) {
                 const weapon = await this.findEquipmentByName(allEquipment, weaponName);
+                console.log(`EquipmentManager: Buscando arma "${weaponName}", encontrado:`, weapon?.name || 'não encontrado');
                 if (weapon) {
                     generatedEquipment.push(weapon);
                 }
@@ -196,6 +199,7 @@ class EquipmentManager {
                 }
             }
 
+            console.log(`EquipmentManager: Equipamentos gerados para ${className}:`, generatedEquipment.map(e => e.name || e));
             return generatedEquipment;
 
         } catch (error) {
@@ -211,6 +215,7 @@ class EquipmentManager {
      */
     mapClassToArchetype(className) {
         const n = (className || '').toLowerCase();
+        console.log(`EquipmentManager: Mapeando classe "${className}" (normalizada: "${n}")`);
         
         // Classes específicas de raça (aventureiro) - devem ser tratadas primeiro
         if (/aventureiro|adventurer/.test(n)) {
@@ -223,24 +228,73 @@ class EquipmentManager {
         }
         
         // Classes gerais
-        if (/guerreiro|warrior/.test(n)) return 'warrior';
-        if (/mago|wizard|bruxo|feiticeiro|sorcerer|warlock/.test(n)) return 'wizard';
-        if (/clérigo|clerigo|cleric/.test(n)) return 'cleric';
-        if (/ladino|thief|ladrão/.test(n)) return 'thief';
-        if (/druida|druid/.test(n)) return 'druid';
-        if (/paladino|paladin/.test(n)) return 'paladin';
-        if (/ranger/.test(n)) return 'ranger';
-        if (/bárbaro|barbaro|barbarian/.test(n)) return 'barbarian';
-        if (/bardo|bard/.test(n)) return 'bard';
-        if (/xamã|xama|shaman/.test(n)) return 'shaman';
-        if (/necromante|necromancer/.test(n)) return 'necromancer';
-        if (/ilusionista|illusionist/.test(n)) return 'illusionist';
-        if (/assassino|assassin/.test(n)) return 'assassin';
-        if (/arqueiro|archer/.test(n)) return 'archer';
-        if (/proscrito|outlaw/.test(n)) return 'outlaw';
-        if (/acadêmico|academico|academic/.test(n)) return 'academic';
+        if (/guerreiro|warrior/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para warrior`);
+            return 'warrior';
+        }
+        if (/mago|wizard|bruxo|feiticeiro|sorcerer|warlock/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para wizard`);
+            return 'wizard';
+        }
+        if (/clérigo|clerigo|cleric/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para cleric`);
+            return 'cleric';
+        }
+        if (/ladino|thief|ladrão/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para thief`);
+            return 'thief';
+        }
+        if (/druida|druid/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para druid`);
+            return 'druid';
+        }
+        if (/paladino|paladin/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para paladin`);
+            return 'paladin';
+        }
+        if (/ranger/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para ranger`);
+            return 'ranger';
+        }
+        if (/bárbaro|barbaro|barbarian/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para barbarian`);
+            return 'barbarian';
+        }
+        if (/bardo|bard/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para bard`);
+            return 'bard';
+        }
+        if (/xamã|xama|shaman/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para shaman`);
+            return 'shaman';
+        }
+        if (/necromante|necromancer/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para necromancer`);
+            return 'necromancer';
+        }
+        if (/ilusionista|illusionist/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para illusionist`);
+            return 'illusionist';
+        }
+        if (/assassino|assassin/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para assassin`);
+            return 'assassin';
+        }
+        if (/arqueiro|archer/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para archer`);
+            return 'archer';
+        }
+        if (/proscrito|outlaw/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para outlaw`);
+            return 'outlaw';
+        }
+        if (/acadêmico|academico|academic/.test(n)) {
+            console.log(`EquipmentManager: Classe "${className}" mapeada para academic`);
+            return 'academic';
+        }
         
         // Fallback para warrior se não encontrar
+        console.log(`EquipmentManager: Classe "${className}" não encontrada, usando fallback warrior`);
         return 'warrior';
     }
 
