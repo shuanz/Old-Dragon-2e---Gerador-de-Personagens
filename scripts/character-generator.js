@@ -926,7 +926,16 @@ class OldDragon2eCharacterGenerator {
         const raceKey = raceName.toLowerCase();
         const raceSpecificLanguages = raceLanguages[raceKey];
         
-        let knownLanguages = [...(raceSpecificLanguages || ['Comum'])];
+        // Se não encontrar a raça, usa fallback baseado na Inteligência
+        let knownLanguages = [];
+        if (raceSpecificLanguages) {
+            knownLanguages = [...raceSpecificLanguages];
+            console.log('DEBUG - raceKey:', raceKey, 'raceSpecificLanguages:', raceSpecificLanguages, 'knownLanguages:', knownLanguages);
+        } else {
+            // Fallback: se não encontrar a raça, usa Comum apenas se Inteligência >= 4
+            knownLanguages = intelligence >= 4 ? ['Comum'] : [];
+            console.log('DEBUG - raceKey:', raceKey, 'NOT FOUND, intelligence:', intelligence, 'knownLanguages:', knownLanguages);
+        }
         
         // Adiciona "Comum" se a Inteligência for suficiente (>= 4) e não for humano
         // Humanos sempre têm Comum, outras raças só se tiverem Inteligência suficiente
