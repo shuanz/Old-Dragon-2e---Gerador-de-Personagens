@@ -960,6 +960,10 @@ class OldDragon2eCharacterGenerator {
             console.log('Debug PV - characterData.hitPoints:', characterData.hitPoints);
             console.log('Debug PV - characterData:', characterData);
             
+            // Debug: verifica a estrutura do sistema Old Dragon 2e
+            console.log('Debug - Sistema Old Dragon 2e:', game.system);
+            console.log('Debug - Template de personagem:', game.system.template?.Actor?.character);
+            
             // Cria o personagem com estrutura do sistema Old Dragon 2e
             const actorData = {
                 name: characterData.name,
@@ -1049,6 +1053,10 @@ class OldDragon2eCharacterGenerator {
 
             const actor = await Actor.create(actorData);
             
+            // Debug: verifica a estrutura do personagem criado
+            console.log('Debug - Personagem criado:', actor);
+            console.log('Debug - System do personagem:', actor.system);
+            
             // Força a atualização dos PV após a criação
             await actor.update({
                 'system.pv': characterData.hitPoints,
@@ -1058,6 +1066,9 @@ class OldDragon2eCharacterGenerator {
                 'system.hitPoints': characterData.hitPoints,
                 'system.hitPointsMax': characterData.hitPoints
             });
+            
+            // Debug: verifica se a atualização funcionou
+            console.log('Debug - PV após atualização:', actor.system.pv, actor.system.hp, actor.system.hitPoints);
             
             // Importa Raça e Classe do SRD como Itens do Ator
             try {
