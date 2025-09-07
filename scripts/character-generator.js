@@ -75,18 +75,6 @@ class OldDragon2eCharacterGenerator {
             },
         };
 
-        // Padrões para identificação simples por nome (pré-exibição do equipamento)
-        this.patterns = {
-            impactWeapons: /(ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|hammer|mace|club|flail|martelo de batalha|maça|mangual)/i,
-            twoHandedHints: /(duas m[aã]os|two[- ]hand|alabarda|montante|espad[aã]o|glaive|halberd|lanca longa|lança montada|montante|alabarda|pique)/i,
-            leatherArmor: /(couro|leather|acolchoada|leve)/i,
-            metalArmor: /(malha|escama|placa|cota|chain|scale|plate|completa|pesada)/i,
-            smallWeapons: /(adaga|punhal|faca|dardo|sling|fund[aã]|clava|porrete|cajado|bast[aã]o|azagaia|virote pequeno|besta de mão)/i,
-            mediumWeapons: /(espada curta|espada longa|arco curto|arco longo|lança|lança montada|machado|machado de batalha|cimitarra|espada bastarda)/i,
-            largeWeapons: /(montante|alabarda|pique|lança montada|glaive|halberd)/i,
-            metalWeapons: /(espada|sword|machado|axe|martelo|hammer|ma[cç]a|mace|lança|spear|alabarda|halberd|montante|glaive|pique|pike)/i,
-            nonMetalWeapons: /(cajado|bast[aã]o|porrete|clava|arco|bow|besta|crossbow|funda|sling|dardo|dart|azagaia|javelin)/i
-        };
 
         // Categorização de equipamentos para geração dinâmica
         this.equipmentCategories = {
@@ -258,139 +246,8 @@ class OldDragon2eCharacterGenerator {
         return `${first} ${last}`;
     }
 
-    /**
-     * Verifica se um item é permitido para a classe
-     */
-    isItemAllowedForClass(itemName, characterClass) {
-        const restrictions = this.getClassRestrictions(characterClass);
-        return this.filterEquipmentNamesByRestrictions([itemName], restrictions).length > 0;
-    }
 
-    /**
-     * Categoriza uma arma por tamanho
-     */
-    getWeaponSize(weaponName) {
-        const p = this.patterns;
-        if (p.smallWeapons.test(weaponName)) return 'small';
-        if (p.mediumWeapons.test(weaponName)) return 'medium';
-        if (p.largeWeapons.test(weaponName)) return 'large';
-        return 'medium'; // Default
-    }
 
-    /**
-     * Verifica se uma arma é impactante
-     */
-    isImpactWeapon(weaponName) {
-        return this.patterns.impactWeapons.test(weaponName);
-    }
-
-    /**
-     * Verifica se uma arma é metálica
-     */
-    isMetalWeapon(weaponName) {
-        return this.patterns.metalWeapons.test(weaponName);
-    }
-
-    /**
-     * Categoriza uma armadura por tipo
-     */
-    getArmorType(armorName) {
-        const p = this.patterns;
-        if (p.leatherArmor.test(armorName)) return 'light';
-        if (p.metalArmor.test(armorName)) return 'heavy';
-        return 'medium'; // Default
-    }
-
-    /**
-     * Verifica se uma armadura é metálica
-     */
-    isMetalArmor(armorName) {
-        return this.patterns.metalArmor.test(armorName);
-    }
-
-    /**
-     * Gera equipamento dinâmico baseado na classe e categoria
-     */
-    generateDynamicEquipment(characterClass, equipmentData) {
-        const restrictions = this.getClassRestrictions(characterClass);
-        const equipment = [];
-
-        // 1. Arma principal (obrigatória)
-        const allowedWeapons = equipmentData.weapons.filter(weapon => {
-            if (restrictions.onlyImpact && !this.isImpactWeapon(weapon)) return false;
-            if (restrictions.onlySmall && this.getWeaponSize(weapon) !== 'small') return false;
-            if (restrictions.noLarge && this.getWeaponSize(weapon) === 'large') return false;
-            if (restrictions.noMetal && this.isMetalWeapon(weapon)) return false;
-            if (restrictions.weaponSize !== 'any' && this.getWeaponSize(weapon) !== restrictions.weaponSize) return false;
-            return true;
-        });
-
-        if (allowedWeapons.length > 0) {
-            const weapon = allowedWeapons[Math.floor(Math.random() * allowedWeapons.length)];
-            equipment.push(weapon);
-        }
-
-        // 2. Armadura (se permitida)
-        if (restrictions.armor !== 'none') {
-            const allowedArmors = equipmentData.armors.filter(armor => {
-                if (restrictions.armor === 'light' && this.getArmorType(armor) !== 'light') return false;
-                if (restrictions.leatherOnly && !this.patterns.leatherArmor.test(armor)) return false;
-                if (restrictions.noMetal && this.isMetalArmor(armor)) return false;
-                return true;
-            });
-
-            if (allowedArmors.length > 0 && Math.random() < 0.8) { // 80% chance de ter armadura
-                const armor = allowedArmors[Math.floor(Math.random() * allowedArmors.length)];
-                equipment.push(armor);
-            }
-        }
-
-        // 3. Escudo (se permitido)
-        if (restrictions.shield && Math.random() < 0.6) { // 60% chance de ter escudo
-            equipment.push('Escudo');
-        }
-
-        // 4. Equipamentos diversos (2-4 itens aleatórios)
-        const miscCount = 2 + Math.floor(Math.random() * 3); // 2-4 itens
-        
-        // Seleciona categorias baseado na classe
-        let availableCategories = ['essential'];
-        
-        if (/mago|bruxo|feiticeiro|wizard|warlock|necromante|ilusionista/.test(characterClass.toLowerCase())) {
-            availableCategories.push('magical');
-        }
-        
-        if (/ladr[aã]o|ladino|thief|bardo|bard|assassino|assassin/.test(characterClass.toLowerCase())) {
-            availableCategories.push('utility');
-        }
-        
-        if (/guerreiro|fighter|b[aá]rbaro|barbarian|paladino|paladin/.test(characterClass.toLowerCase())) {
-            availableCategories.push('survival');
-        }
-        
-        // Sempre adiciona algumas categorias aleatórias
-        availableCategories.push('survival', 'utility', 'luxury');
-        
-        // Remove duplicatas
-        availableCategories = [...new Set(availableCategories)];
-        
-        const selectedItems = [];
-        for (let i = 0; i < miscCount; i++) {
-            const category = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-            const categoryItems = this.equipmentCategories[category] || [];
-            
-            if (categoryItems.length > 0) {
-                const item = categoryItems[Math.floor(Math.random() * categoryItems.length)];
-                if (!selectedItems.includes(item)) {
-                    selectedItems.push(item);
-                }
-            }
-        }
-
-        equipment.push(...selectedItems);
-
-        return equipment;
-    }
 
     /**
      * Gera magias iniciais para o Mago (3 escolhidas + 1 aleatória) + magias exclusivas se especializado
@@ -582,11 +439,34 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-     * Gera equipamento dinâmico baseado na classe com restrições do Old Dragon 2e
+     * Gera equipamento básico baseado na classe
      */
     async generateEquipment(characterClass) {
         const data = await this.loadSrdEquipment();
-        return this.generateDynamicEquipment(characterClass, data);
+        const equipment = [];
+        
+        // Adiciona uma arma básica
+        if (data.weapons && data.weapons.length > 0) {
+            const randomWeapon = data.weapons[Math.floor(Math.random() * data.weapons.length)];
+            equipment.push(randomWeapon);
+        }
+        
+        // Adiciona equipamentos básicos
+        if (data.gear && data.gear.length > 0) {
+            const basicGear = ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha'];
+            const availableGear = data.gear.filter(item => basicGear.includes(item));
+            
+            // Adiciona 2-3 itens básicos aleatórios
+            const gearCount = Math.min(3, availableGear.length);
+            for (let i = 0; i < gearCount; i++) {
+                const randomGear = availableGear[Math.floor(Math.random() * availableGear.length)];
+                if (!equipment.includes(randomGear)) {
+                    equipment.push(randomGear);
+                }
+            }
+        }
+        
+        return equipment;
     }
 
     mapClassToArchetype(className) {
@@ -717,43 +597,6 @@ class OldDragon2eCharacterGenerator {
         return r;
     }
 
-    filterEquipmentNamesByRestrictions(list, restrictions) {
-        const p = this.patterns;
-        return list.filter(name => {
-            const lower = (name || '').toLowerCase();
-            
-            // armor
-            if (/armadura|armor/.test(lower)) {
-                if (restrictions.armor === 'none') return false;
-                if (restrictions.armor === 'light' && !p.leatherArmor.test(lower)) return false;
-                if (restrictions.leatherOnly && !p.leatherArmor.test(lower)) return false;
-                return true;
-            }
-            
-            // shield
-            if (/escudo|shield/.test(lower)) return !!restrictions.shield;
-            
-            // weapons (heurístico por nome)
-            if (/espada|lan[cç]a|adaga|punhal|faca|arco|besta|flecha|ma[cç]a|mangual|martelo|porrete|clava|cajado|bast[aã]o|machado|alabarda|glaive|montante|azagaia|virote|pique|cimitarra/.test(lower)) {
-                // Apenas armas de impacto (Clérigo e especializações)
-                if (restrictions.onlyImpact && !p.impactWeapons.test(lower)) return false;
-                
-                // Apenas armas pequenas (Mago e especializações)
-                if (restrictions.onlySmall && !p.smallWeapons.test(lower)) return false;
-                
-                // Não armas grandes (Ladrão, Druida, etc.)
-                if (restrictions.noLarge && p.largeWeapons.test(lower)) return false;
-                
-                // Não armas de duas mãos (Ladrão, Druida, etc.)
-                if (restrictions.noLarge && p.twoHandedHints.test(lower)) return false;
-                
-                return true;
-            }
-            
-            // outros itens são sempre permitidos
-            return true;
-        });
-    }
 
     /**
      * Calcula pontos de vida baseado na classe e constituição
