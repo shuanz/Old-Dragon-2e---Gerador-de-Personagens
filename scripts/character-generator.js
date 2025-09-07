@@ -450,33 +450,42 @@ class OldDragon2eCharacterGenerator {
         } catch (error) {
             console.error('Erro ao gerar equipamento:', error);
             
-            // Fallback para o método antigo se houver erro
-            const data = await this.loadSrdEquipment();
-            const equipment = [];
-            
-            // Adiciona uma arma básica
-            if (data.weapons && data.weapons.length > 0) {
-                const randomWeapon = data.weapons[Math.floor(Math.random() * data.weapons.length)];
-                equipment.push(randomWeapon);
-            }
-            
-            // Adiciona equipamentos básicos
-            if (data.gear && data.gear.length > 0) {
-                const basicGear = ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha'];
-                const availableGear = data.gear.filter(item => basicGear.includes(item));
-                
-                // Adiciona 2-3 itens básicos aleatórios
-                const gearCount = Math.min(3, availableGear.length);
-                for (let i = 0; i < gearCount; i++) {
-                    const randomGear = availableGear[Math.floor(Math.random() * availableGear.length)];
-                    if (!equipment.includes(randomGear)) {
-                        equipment.push(randomGear);
-                    }
-                }
-            }
-            
-            return equipment;
+            // Fallback: usa lógica simplificada baseada na classe
+            console.log(`CharacterGenerator: Usando fallback para classe "${characterClass}"`);
+            return this.generateEquipmentFallback(characterClass);
         }
+    }
+
+    /**
+     * Método fallback para gerar equipamento quando EquipmentManager não está disponível
+     */
+    async generateEquipmentFallback(characterClass) {
+        const className = characterClass.toLowerCase();
+        const equipment = [];
+        
+        // Define equipamentos por classe usando lógica simples
+        if (/mago|wizard|bruxo|feiticeiro|sorcerer|warlock|necromante|necromancer|ilusionista|illusionist|acadêmico|academic/.test(className)) {
+            // Classes arcanas: apenas armas simples e itens básicos
+            equipment.push('Cajado', 'Adaga', 'Túnica', 'Pergaminhos', 'Kit de Alquimia');
+        } else if (/clérigo|cleric|druida|druid|xamã|shaman/.test(className)) {
+            // Classes divinas: armas de impacto e armadura leve
+            equipment.push('Martelo de Guerra', 'Adaga', 'Armadura de Couro', 'Escudo', 'Símbolo Sagrado');
+        } else if (/guerreiro|warrior|paladino|paladin|bárbaro|barbarian/.test(className)) {
+            // Classes marciais: armas pesadas e armadura
+            equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
+        } else if (/ladino|thief|ladrão|bardo|bard|assassino|assassin/.test(className)) {
+            // Classes ágeis: armas leves e sem escudo
+            equipment.push('Adaga', 'Funda', 'Armadura de Couro', 'Ferramentas de Ladrão');
+        } else if (/ranger/.test(className)) {
+            // Ranger: arco e equipamentos de sobrevivência
+            equipment.push('Arco Curto', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Sobrevivência');
+        } else {
+            // Fallback genérico
+            equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
+        }
+        
+        console.log(`CharacterGenerator: Equipamentos fallback para "${characterClass}":`, equipment);
+        return equipment;
     }
 
     mapClassToArchetype(className) {
