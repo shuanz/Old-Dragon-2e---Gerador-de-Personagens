@@ -436,6 +436,8 @@ class OldDragon2eCharacterGenerator {
     async generateEquipment(characterClass) {
         try {
             console.log(`CharacterGenerator: Gerando equipamento para classe "${characterClass}"`);
+            console.log(`CharacterGenerator: EquipmentManager disponível:`, typeof EquipmentManager);
+            
             // Usa o EquipmentManager para gerar equipamentos apropriados para a classe
             const equipmentManager = new EquipmentManager();
             const equipment = await equipmentManager.generateBasicEquipment(characterClass);
