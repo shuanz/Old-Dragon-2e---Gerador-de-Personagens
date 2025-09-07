@@ -459,35 +459,39 @@ class OldDragon2eCharacterGenerator {
 
             const initialSpells = [];
 
-            // 1. Adiciona 3 magias escolhidas pelo Mago (conforme documentação oficial)
-            const recommendedSpells = [
+            // 1. Lista das 12 magias de 1º círculo que podem ser sorteadas como iniciais
+            const availableInitialSpells = [
+                'Abrir/Trancar',
+                'Cerrar Portas',
+                'Disco Flutuante',
+                'Enfeitiçar Pessoas',
+                'Escudo Arcano',
+                'Ler Idiomas',
+                'Luz/Escuridão',
+                'Mãos Flamejantes',
                 'Mísseis Mágicos',
-                'Escudo Arcano', 
-                'Luz'
+                'Patas de Aranha',
+                'Sono',
+                'Ventriloquismo'
             ];
 
-            // Adiciona as 3 magias escolhidas se existirem
-            for (const spellName of recommendedSpells) {
+            // 2. Filtra as magias disponíveis que existem no sistema e não são exclusivas
+            const eligibleSpells = [];
+            for (const spellName of availableInitialSpells) {
                 const spell = firstCircleSpells.find(s => 
                     s.name.toLowerCase().includes(spellName.toLowerCase())
                 );
-                if (spell) {
-                    initialSpells.push(spell);
+                if (spell && !this.isExclusiveSpell(spell.name, characterClass)) {
+                    eligibleSpells.push(spell);
                 }
             }
 
-            // 2. Adiciona 1 magia aleatória da lista de 1º círculo (conforme documentação oficial)
-            const remainingSpells = firstCircleSpells.filter(spell => 
-                !initialSpells.some(initial => initial.id === spell.id) &&
-                !this.isExclusiveSpell(spell.name, characterClass)
-            );
+            // 3. Sorteia 3 magias aleatórias da lista elegível
+            const shuffledSpells = [...eligibleSpells].sort(() => Math.random() - 0.5);
+            const selectedSpells = shuffledSpells.slice(0, 3);
+            initialSpells.push(...selectedSpells);
 
-            if (remainingSpells.length > 0) {
-                const randomSpell = remainingSpells[Math.floor(Math.random() * remainingSpells.length)];
-                initialSpells.push(randomSpell);
-            }
-
-            // 3. Adiciona magias exclusivas da especialização (se aplicável)
+            // 4. Adiciona magias exclusivas da especialização (se aplicável)
             const exclusiveSpells = this.getExclusiveSpells(characterClass, firstCircleSpells);
             initialSpells.push(...exclusiveSpells);
 
