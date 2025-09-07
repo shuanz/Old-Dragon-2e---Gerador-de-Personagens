@@ -439,11 +439,34 @@ class OldDragon2eCharacterGenerator {
     }
 
     /**
-     * Gera equipamento dinâmico baseado na classe com restrições do Old Dragon 2e
+     * Gera equipamento básico baseado na classe
      */
     async generateEquipment(characterClass) {
         const data = await this.loadSrdEquipment();
-        return this.generateDynamicEquipment(characterClass, data);
+        const equipment = [];
+        
+        // Adiciona uma arma básica
+        if (data.weapons && data.weapons.length > 0) {
+            const randomWeapon = data.weapons[Math.floor(Math.random() * data.weapons.length)];
+            equipment.push(randomWeapon);
+        }
+        
+        // Adiciona equipamentos básicos
+        if (data.gear && data.gear.length > 0) {
+            const basicGear = ['Mochila', 'Ração de viagem', 'Saco de Dormir', 'Corda de Cânhamo', 'Tocha'];
+            const availableGear = data.gear.filter(item => basicGear.includes(item));
+            
+            // Adiciona 2-3 itens básicos aleatórios
+            const gearCount = Math.min(3, availableGear.length);
+            for (let i = 0; i < gearCount; i++) {
+                const randomGear = availableGear[Math.floor(Math.random() * availableGear.length)];
+                if (!equipment.includes(randomGear)) {
+                    equipment.push(randomGear);
+                }
+            }
+        }
+        
+        return equipment;
     }
 
     mapClassToArchetype(className) {
