@@ -877,10 +877,30 @@ class OldDragon2eCharacterGenerator {
 
     /**
      * Calcula idiomas conhecidos baseado na inteligência e raça
+     * Conforme regras oficiais do Old Dragon 2e:
+     * - 2 idiomas iniciais (normalmente da raça ou local de origem)
+     * - Idiomas adicionais baseados no modificador de Inteligência
+     * - Capacidade de ler/escrever baseada na Inteligência
      */
     calculateLanguages(intelligence, race) {
+        // Se race é um objeto (documento do SRD), usa o nome
+        const raceName = typeof race === 'object' ? race.name : race;
+        
+        // Regras de idiomas baseadas em Inteligência
+        let totalLanguages = 2; // Base: 2 idiomas iniciais
+        
+        // Adiciona idiomas baseados no modificador de Inteligência
         const intModifier = this.calculateModifiers({ intelligence }).intelligence;
-        const totalLanguages = Math.max(2, 2 + intModifier); // Mínimo 2 idiomas
+        if (intModifier > 0) {
+            totalLanguages += intModifier;
+        }
+        
+        // Regras especiais para Inteligência muito baixa
+        if (intelligence <= 3) {
+            totalLanguages = 0; // Não consegue falar nenhum idioma
+        } else if (intelligence >= 4 && intelligence <= 8) {
+            totalLanguages = Math.max(1, totalLanguages); // Mínimo 1 idioma falado
+        }
         
         // Idiomas disponíveis no Old Dragon 2e
         const availableLanguages = [
@@ -889,20 +909,53 @@ class OldDragon2eCharacterGenerator {
             'Druídico', 'Thieves\' Cant', 'Dracônico', 'Primordial'
         ];
         
-        // Idiomas base por raça
+        // Idiomas base por raça (normalmente os idiomas da raça ou local de origem)
+        // Humanos sempre têm acesso ao Comum, outras raças só se tiverem Inteligência suficiente
         const raceLanguages = {
-            humano: ['Comum'],
-            elfo: ['Comum', 'Élfico'],
-            'half-elf': ['Comum', 'Élfico'],
-            anao: ['Comum', 'Anão'],
-            halfling: ['Comum', 'Halfling'],
-            meio_elfo: ['Comum', 'Élfico'],
+            humano: ['Comum'], // Humano sempre fala Comum
+            elfo: ['Élfico'], // Elfo fala apenas Élfico (Comum só se Int >= 4)
+            'half-elf': ['Élfico'], // Meio-Elfo fala apenas Élfico (Comum só se Int >= 4)
+            anao: ['Anão'], // Anão fala apenas Anão (Comum só se Int >= 4)
+            'anão': ['Anão'], // Anão fala apenas Anão (Comum só se Int >= 4)
+            halfling: ['Halfling'], // Halfling fala apenas Halfling (Comum só se Int >= 4)
+            meio_elfo: ['Élfico'], // Meio-Elfo fala apenas Élfico (Comum só se Int >= 4)
+            gnome: ['Gnomo'], // Gnomo fala apenas Gnomo (Comum só se Int >= 4)
+            'gnomo': ['Gnomo'] // Gnomo fala apenas Gnomo (Comum só se Int >= 4) - variação com acento
         };
         
         // Começa com idiomas da raça
-        let knownLanguages = [...(raceLanguages[race] || ['Comum'])];
+        const raceKey = raceName.toLowerCase();
+        const raceSpecificLanguages = raceLanguages[raceKey];
         
-        // Adiciona idiomas aleatórios se necessário
+        // Se não encontrar a raça, usa fallback baseado na Inteligência
+        let knownLanguages = [];
+        if (raceSpecificLanguages) {
+            knownLanguages = [...raceSpecificLanguages];
+        } else {
+            // Fallback: se não encontrar a raça, usa Comum apenas se Inteligência >= 4
+            knownLanguages = intelligence >= 4 ? ['Comum'] : [];
+        }
+        
+        // Adiciona "Comum" se a Inteligência for suficiente (>= 4) e não for humano
+        // Humanos sempre têm Comum, outras raças só se tiverem Inteligência suficiente
+        if (raceKey !== 'humano' && intelligence >= 4 && !knownLanguages.includes('Comum')) {
+            knownLanguages.push('Comum');
+        }
+        
+        // Garante que todas as raças tenham pelo menos 2 idiomas iniciais (se Inteligência permitir)
+        // Se a raça tem menos de 2 idiomas, adiciona idiomas aleatórios até completar 2
+        const initialLanguagesNeeded = Math.min(2, totalLanguages);
+        while (knownLanguages.length < initialLanguagesNeeded) {
+            const availableForRandom = availableLanguages.filter(lang => !knownLanguages.includes(lang));
+            if (availableForRandom.length > 0) {
+                const randomIndex = Math.floor(Math.random() * availableForRandom.length);
+                knownLanguages.push(availableForRandom[randomIndex]);
+            } else {
+                break; // Não há mais idiomas disponíveis
+            }
+        }
+        
+        // Se ainda tem slots disponíveis para idiomas adicionais (por modificador de Inteligência)
         const remainingSlots = totalLanguages - knownLanguages.length;
         if (remainingSlots > 0) {
             const availableForRandom = availableLanguages.filter(lang => !knownLanguages.includes(lang));
@@ -914,9 +967,18 @@ class OldDragon2eCharacterGenerator {
             }
         }
         
+        // Determina capacidade de leitura/escrita baseada na Inteligência
+        let canReadWrite = false;
+        if (intelligence >= 9) {
+            canReadWrite = true; // Capaz de escrever qualquer idioma conhecido
+        }
+        
         return {
             count: totalLanguages,
-            languages: knownLanguages
+            languages: knownLanguages,
+            canReadWrite: canReadWrite,
+            intelligence: intelligence,
+            intModifier: intModifier
         };
     }
 
@@ -1105,6 +1167,7 @@ class OldDragon2eCharacterGenerator {
                         languages: Array.isArray(characterData.languages?.languages)
                             ? characterData.languages.languages.join(', ')
                             : (characterData.languages || ''),
+                        canReadWrite: characterData.languages?.canReadWrite || false,
                         reputation: 0,
                         appearance: characterData.appearance
                             ? `${characterData.appearance.body}; ${characterData.appearance.hair}; ${characterData.appearance.general}`
@@ -1839,7 +1902,9 @@ class OldDragon2eCharacterGenerator {
         }
         
         // Atualiza idiomas
-        infoItems.eq(8).find('span').text(character.languages.languages.join(', '));
+        const languageText = character.languages.languages.join(', ');
+        const readWriteText = character.languages.canReadWrite ? ' (Lê/Escreve)' : ' (Apenas fala)';
+        infoItems.eq(8).find('span').text(languageText + readWriteText);
     }
 
     /**
@@ -2176,7 +2241,9 @@ class OldDragon2eCharacterGenerator {
         
         
         infoItems.eq(7).find('span').text(`${character.movement}m`);
-        infoItems.eq(8).find('span').text(character.languages.languages.join(', '));
+        const languageText = character.languages.languages.join(', ');
+        const readWriteText = character.languages.canReadWrite ? ' (Lê/Escreve)' : ' (Apenas fala)';
+        infoItems.eq(8).find('span').text(languageText + readWriteText);
         infoItems.eq(9).find('span').text(character.alignment);
         
 
@@ -2297,7 +2364,7 @@ class OldDragon2eCharacterGenerator {
                                     </div>
                                     <div class="info-item">
                                         <strong>Idiomas:</strong> 
-                                        <span>${character.languages.languages.join(', ')}</span>
+                                        <span>${character.languages.languages.join(', ')} ${character.languages.canReadWrite ? '(Lê/Escreve)' : '(Apenas fala)'}</span>
                                     </div>
                                     <div class="info-item">
                                         <strong>Alinhamento:</strong> 
