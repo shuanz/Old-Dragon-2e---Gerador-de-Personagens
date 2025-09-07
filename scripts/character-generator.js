@@ -463,29 +463,84 @@ class OldDragon2eCharacterGenerator {
 
     /**
      * Método fallback para gerar equipamento quando EquipmentManager não está disponível
+     * Implementa restrições detalhadas baseadas nas tabelas de armas e armaduras
      */
     async generateEquipmentFallback(characterClass) {
         const className = characterClass.toLowerCase();
         const equipment = [];
         
-        // Define equipamentos por classe usando lógica simples
-        if (/mago|wizard|bruxo|feiticeiro|sorcerer|warlock|necromante|necromancer|ilusionista|illusionist|acadêmico|academic/.test(className)) {
-            // Classes arcanas: apenas armas simples e itens básicos
-            equipment.push('Cajado', 'Adaga', 'Túnica', 'Pergaminhos', 'Kit de Alquimia');
-        } else if (/clérigo|cleric|druida|druid|xamã|shaman/.test(className)) {
-            // Classes divinas: armas de impacto e armadura leve
-            equipment.push('Martelo de Guerra', 'Adaga', 'Armadura de Couro', 'Escudo', 'Símbolo Sagrado');
-        } else if (/guerreiro|warrior|paladino|paladin|bárbaro|barbarian/.test(className)) {
-            // Classes marciais: armas pesadas e armadura
-            equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
-        } else if (/ladino|thief|ladrão|bardo|bard|assassino|assassin/.test(className)) {
-            // Classes ágeis: armas leves e sem escudo
-            equipment.push('Adaga', 'Funda', 'Armadura de Couro', 'Ferramentas de Ladrão');
-        } else if (/ranger/.test(className)) {
-            // Ranger: arco e equipamentos de sobrevivência
-            equipment.push('Arco Curto', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Sobrevivência');
-        } else {
-            // Fallback genérico
+        // Define equipamentos por classe seguindo as restrições específicas
+        
+        // GUERREIRO (Bárbaro, Paladino, Anão Aventureiro, Arqueiro)
+        if (/guerreiro|warrior|bárbaro|barbarian|paladino|paladin/.test(className)) {
+            if (/bárbaro|barbarian/.test(className)) {
+                // Bárbaro: só couro
+                equipment.push('Machado de Batalha', 'Adaga', 'Armadura de Couro', 'Kit de Sobrevivência');
+            } else if (/arqueiro|archer/.test(className)) {
+                // Arqueiro: armas pequenas + arcos, só couro
+                equipment.push('Arco Longo', 'Adaga', 'Armadura de Couro', 'Flecha de Guerra', 'Kit de Rastreamento');
+            } else if (/anão|anao|dwarf/.test(className)) {
+                // Anão Aventureiro: foco em machado ou martelo
+                equipment.push('Machado de Batalha', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
+            } else {
+                // Guerreiro/Paladino padrão: todas as armas e armaduras
+                equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
+            }
+        }
+        
+        // CLÉRIGO (Druida, Acadêmico, Xamã, Proscrito)
+        else if (/clérigo|cleric|druida|druid|xamã|xama|shaman|acadêmico|academic|proscrito|outlaw/.test(className)) {
+            if (/druida|druid/.test(className)) {
+                // Druida: não metálicas (impactantes), armaduras não metálicas
+                equipment.push('Bordão/Cajado', 'Adaga', 'Armadura de Couro', 'Escudo', 'Símbolo Druídico');
+            } else if (/xamã|xama|shaman/.test(className)) {
+                // Xamã: não metálicas
+                equipment.push('Bordão/Cajado', 'Adaga', 'Armadura de Couro', 'Escudo', 'Símbolo Xamânico');
+            } else if (/acadêmico|academic/.test(className)) {
+                // Acadêmico: não pode usar cortantes/perfurantes, só impactantes
+                equipment.push('Bordão/Cajado', 'Martelo', 'Armadura de Couro', 'Escudo', 'Kit de Estudos');
+            } else if (/proscrito|outlaw/.test(className)) {
+                // Proscrito: pode usar quaisquer
+                equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Sobrevivência');
+            } else {
+                // Clérigo padrão: apenas impactantes
+                equipment.push('Martelo de Batalha', 'Adaga', 'Armadura de Couro', 'Escudo', 'Símbolo Sagrado');
+            }
+        }
+        
+        // LADRÃO (Ranger, Bardo, Assassino, Halfling Aventureiro)
+        else if (/ladino|thief|ladrão|ranger|bardo|bard|assassino|assassin|halfling/.test(className)) {
+            if (/ranger/.test(className)) {
+                // Ranger: armas pequenas/médias + arcos, armaduras leves
+                equipment.push('Arco Curto', 'Adaga', 'Armadura de Couro', 'Kit de Sobrevivência', 'Kit de Rastreamento');
+            } else if (/bardo|bard/.test(className)) {
+                // Bardo: armas pequenas/médias, armaduras leves, sem escudo
+                equipment.push('Adaga', 'Funda', 'Armadura de Couro', 'Instrumento Musical', 'Kit de Entretenimento');
+            } else if (/halfling/.test(className)) {
+                // Halfling Aventureiro: ênfase em arma de arremesso
+                equipment.push('Funda', 'Adaga', 'Armadura de Couro', 'Ferramentas de Ladrão', 'Kit de Disfarces');
+            } else {
+                // Ladino/Assassino padrão: armas pequenas/médias, armaduras leves
+                equipment.push('Adaga', 'Funda', 'Armadura de Couro', 'Ferramentas de Ladrão', 'Kit de Disfarces');
+            }
+        }
+        
+        // MAGO (Ilusionista, Necromante, Bruxo, Elfo Aventureiro)
+        else if (/mago|wizard|bruxo|feiticeiro|sorcerer|warlock|necromante|necromancer|ilusionista|illusionist|elfo|elf/.test(className)) {
+            if (/bruxo|feiticeiro|sorcerer|warlock/.test(className)) {
+                // Bruxo: pode usar armas médias e armaduras leves (nível 1)
+                equipment.push('Espada Curta', 'Adaga', 'Armadura de Couro', 'Túnica', 'Pergaminhos');
+            } else if (/elfo|elf/.test(className)) {
+                // Elfo Aventureiro: pode usar quaisquer armas e armaduras
+                equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Túnica', 'Pergaminhos');
+            } else {
+                // Mago/Ilusionista/Necromante padrão: apenas armas pequenas, sem armadura
+                equipment.push('Bordão/Cajado', 'Adaga', 'Túnica', 'Pergaminhos', 'Kit de Alquimia');
+            }
+        }
+        
+        // Fallback genérico
+        else {
             equipment.push('Espada Longa', 'Adaga', 'Armadura de Couro', 'Escudo', 'Kit de Escalada');
         }
         
