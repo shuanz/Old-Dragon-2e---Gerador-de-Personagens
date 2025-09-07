@@ -38,7 +38,7 @@ O módulo não requer configurações especiais. Ele funciona automaticamente co
 
 ## Compatibilidade
 
-- **Foundry VTT**: v10+
+- **Foundry VTT**: v13+
 - **Sistema**: Old Dragon 2e
 - **Idioma**: Português Brasileiro
 
@@ -90,6 +90,13 @@ old-dragon-2e-gerador-de-personagens/
 - **Druida**: D8 de vida, magias divinas da natureza
 - **Paladino**: D10 de vida, habilidades sagradas
 - **Ranger**: D6 de vida, habilidades de sobrevivência
+- **Bárbaro**: D10 de vida, combate feroz
+- **Bardo**: D6 de vida, habilidades sociais e magias
+- **Assassino**: D6 de vida, habilidades furtivas avançadas
+- **Necromante**: D4 de vida, magias de necromancia
+- **Ilusionista**: D4 de vida, magias de ilusão
+- **Bruxo**: D4 de vida, magias arcanas especiais
+- **Feiticeiro**: D4 de vida, magias arcanas naturais
 
 ### Equipamento por Classe
 Cada classe recebe equipamento apropriado:
@@ -113,52 +120,21 @@ Cada classe recebe equipamento apropriado:
 
 ## Arquitetura Modular
 
-O módulo agora utiliza programação orientada a objetos com classes especializadas:
+O módulo utiliza programação orientada a objetos com classes especializadas:
 
 ### Classes Principais
+- **`Character.js`** - Gerenciamento de dados do personagem
+- **`AttributeCalculator.js`** - Cálculos de atributos e modificadores
+- **`RaceManager.js`** - Gerenciamento de raças e idiomas
+- **`ClassManager.js`** - Gerenciamento de classes e restrições
+- **`SpellManager.js`** - Gerenciamento de magias e especializações
+- **`EquipmentManager.js`** - Gerenciamento de equipamentos
 
-#### `Character.js`
-- Gerencia dados completos do personagem
-- Métodos para definir/obter atributos, raça, classe
-- Serialização para objeto e reset de dados
-
-#### `AttributeCalculator.js`
-- Geração de atributos aleatórios (3d6)
-- Cálculo de modificadores
-- Cálculo de PV, CA, BAC, BAD
-- Mapeamento de tipos de classe
-
-#### `RaceManager.js`
-- Carregamento de raças do SRD
-- Cálculo de idiomas baseado em Inteligência
-- Cálculo de movimento por raça
-- Filtragem de classes por raça
-
-#### `ClassManager.js`
-- Carregamento de classes do SRD
-- Mapeamento de classes para arquétipos
-- Restrições de equipamento por classe
-- Identificação de classes específicas de raça
-
-#### `SpellManager.js`
-- Carregamento de magias do SRD
-- Geração de magias iniciais aleatórias
-- Magias exclusivas por especialização
-- Identificação de classes conjuradoras
-
-#### `EquipmentManager.js`
-- Carregamento de equipamentos do SRD
-- Geração de equipamento básico por classe
-- Padrões de identificação de armas/armaduras
-- Mapeamento de equipamentos por arquétipo
-
-### Benefícios da Arquitetura Modular
-
+### Benefícios
 - **Separação de Responsabilidades**: Cada classe tem uma função específica
 - **Manutenibilidade**: Código organizado e fácil de manter
 - **Escalabilidade**: Fácil adicionar novas funcionalidades
 - **Testabilidade**: Classes independentes para testes unitários
-- **Reutilização**: Código modular e reutilizável
 
 ## Desenvolvimento
 
