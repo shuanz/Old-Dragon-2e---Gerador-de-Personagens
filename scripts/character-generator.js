@@ -956,6 +956,10 @@ class OldDragon2eCharacterGenerator {
             else if (raceName.includes('anão') || raceName.includes('anao')) jpRaceBonus = 'jpc';
             else if (raceName.includes('halfling')) jpRaceBonus = 'jps';
 
+            // Debug: verifica os PV antes de criar o personagem
+            console.log('Debug PV - characterData.hitPoints:', characterData.hitPoints);
+            console.log('Debug PV - characterData:', characterData);
+            
             // Cria o personagem com estrutura do sistema Old Dragon 2e
             const actorData = {
                 name: characterData.name,
@@ -996,6 +1000,8 @@ class OldDragon2eCharacterGenerator {
                     // Vida e Movimento
                     pv: characterData.hitPoints,
                     pv_max: characterData.hitPoints,
+                    hp: characterData.hitPoints,
+                    hp_max: characterData.hitPoints,
                     movimento: characterData.movement,
                     
                     // Informações básicas
