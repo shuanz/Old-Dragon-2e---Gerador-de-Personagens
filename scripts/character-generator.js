@@ -919,7 +919,8 @@ class OldDragon2eCharacterGenerator {
             'anão': ['Anão'], // Anão fala apenas Anão (Comum só se Int >= 4)
             halfling: ['Halfling'], // Halfling fala apenas Halfling (Comum só se Int >= 4)
             meio_elfo: ['Élfico'], // Meio-Elfo fala apenas Élfico (Comum só se Int >= 4)
-            gnome: ['Gnomo'] // Gnomo fala apenas Gnomo (Comum só se Int >= 4)
+            gnome: ['Gnomo'], // Gnomo fala apenas Gnomo (Comum só se Int >= 4)
+            'gnomo': ['Gnomo'] // Gnomo fala apenas Gnomo (Comum só se Int >= 4) - variação com acento
         };
         
         // Começa com idiomas da raça
@@ -930,11 +931,9 @@ class OldDragon2eCharacterGenerator {
         let knownLanguages = [];
         if (raceSpecificLanguages) {
             knownLanguages = [...raceSpecificLanguages];
-            console.log('DEBUG - raceKey:', raceKey, 'raceSpecificLanguages:', raceSpecificLanguages, 'knownLanguages:', knownLanguages);
         } else {
             // Fallback: se não encontrar a raça, usa Comum apenas se Inteligência >= 4
             knownLanguages = intelligence >= 4 ? ['Comum'] : [];
-            console.log('DEBUG - raceKey:', raceKey, 'NOT FOUND, intelligence:', intelligence, 'knownLanguages:', knownLanguages);
         }
         
         // Adiciona "Comum" se a Inteligência for suficiente (>= 4) e não for humano
